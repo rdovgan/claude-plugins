@@ -1,0 +1,20 @@
+package com.example.orders;
+
+import java.util.List;
+import java.util.logging.Logger;
+
+public class OrderReport {
+  private static final Logger LOG = Logger.getLogger(OrderReport.class.getName());
+
+  public interface CustomerRepo { List<String> findOrderIds(long customerId); }
+  public record Customer(long id, String email) {}
+
+  public int countOrders(List<Customer> customers, CustomerRepo repo) {
+    int total = 0;
+    for (Customer c : customers) {
+      LOG.info("Loading orders for " + c.email());   // PII у логах
+      total += repo.findOrderIds(c.id()).size();      // N+1: запит на кожного клієнта
+    }
+    return total;
+  }
+}

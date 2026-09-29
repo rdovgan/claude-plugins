@@ -1,0 +1,77 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn compile *)",
+      "Bash(mvn test *)",
+      "Bash(mvn verify *)",
+      "Bash(./mvnw compile *)",
+      "Bash(./mvnw test *)",
+      "Bash(./mvnw verify *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git checkout -b *)",
+      "Read",
+      "Edit"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git checkout *)",
+      "Bash(git rebase *)",
+      "Bash(git merge *)",
+      "Edit(**/pom.xml)",
+      "Edit(**/db/migration/**)",
+      "Edit(**/db/changelog/**)",
+      "Bash(mvn dependency:*)",
+      "Bash(./mvnw dependency:*)"
+    ],
+    "deny": [
+      "Read(**/.env*)",
+      "Read(**/application-prod*.*)",
+      "Read(**/application-stage*.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.jks)",
+      "Read(**/*.p12)",
+      "Read(**/secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.m2/settings.xml)",
+      "Bash(mvn deploy*)",
+      "Bash(./mvnw deploy*)",
+      "Bash(mvn release:*)",
+      "Bash(./mvnw release:*)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": [
+        "**/.env*",
+        "**/application-prod*.*",
+        "**/application-stage*.*",
+        "**/*.pem",
+        "**/*.key",
+        "**/*.jks",
+        "**/*.p12",
+        "**/secrets/**",
+        "~/.ssh",
+        "~/.aws",
+        "~/.m2/settings.xml"
+      ]
+    },
+    "network": {
+      "allowedDomains": [
+        "repo.maven.apache.org",
+        "repo1.maven.org",
+        "<NEXUS_HOST>",
+        "<GIT_HOST>",
+        "<JIRA_HOST>",
+        "mcp.atlassian.com"
+      ]
+    }
+  }
+}

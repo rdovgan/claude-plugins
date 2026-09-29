@@ -1,0 +1,16 @@
+{
+  "name": "team-plugins",
+  "owner": {
+    "name": "Java Team Tech Lead"
+  },
+  "metadata": {
+    "description": "Командний маркетплейс плагінів Claude Code для Java-команди"
+  },
+  "plugins": [
+    {
+      "name": "java-team",
+      "source": "./plugins/java-team",
+      "description": "Налаштування Maven-проєкту для Claude Code, захист секретів, хуки перевірок і єдиний процес задачі"
+    }
+  ]
+}

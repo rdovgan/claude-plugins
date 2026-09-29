@@ -1,0 +1,6 @@
+# ФІКТИВНИЙ файл для тесту захисту; справжніх секретів немає
+spring:
+  datasource:
+    url: jdbc:postgresql://prod.invalid:5432/orders
+    username: fake_user
+    password: FAKE-NOT-A-SECRET
