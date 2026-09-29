@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PostToolUse Edit|Write: форматування *.java і перевірка checkstyle (якщо налаштовані в pom.xml).
+# PostToolUse Edit|Write: format *.java and run checkstyle (if configured in pom.xml).
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 jt_require_jq
@@ -12,7 +12,7 @@ case "$file" in *.java) ;; *) exit 0 ;; esac
 mod="$(jt_module_dir "$file")" || exit 0
 root="$(jt_project_dir)"
 pom="$mod/pom.xml"
-# Налаштування можуть бути в кореневому pom (pluginManagement/build).
+# Configuration may live in the root pom (pluginManagement/build).
 poms="$pom $root/pom.xml"
 has() { grep -qs "$1" $poms; }
 
@@ -26,7 +26,7 @@ fi
 
 if has maven-checkstyle-plugin; then
   if ! out="$(jt_mvn -q -f "$pom" checkstyle:check 2>&1)"; then
-    echo "Порушення checkstyle після зміни $file:" >&2
+    echo "Checkstyle violations after changing $file:" >&2
     printf '%s\n' "$out" | grep -E 'WARN|ERROR' | head -n 30 >&2
     exit 2
   fi

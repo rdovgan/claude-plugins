@@ -1,4 +1,4 @@
-# ФІКТИВНИЙ файл для тесту захисту; справжніх секретів немає
+# FAKE file for protection tests; contains no real secrets
 spring:
   datasource:
     url: jdbc:postgresql://prod.invalid:5432/orders

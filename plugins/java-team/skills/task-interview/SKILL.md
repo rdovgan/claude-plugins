@@ -5,13 +5,13 @@ description: Close gaps in a task before implementation by interviewing the user
 
 # task-interview
 
-Прибирає прогалини до початку реалізації.
+Removes gaps in the task before implementation starts.
 
-## Кроки
+## Steps
 
-1. Сформуй питання з відкритих питань `task-research` і з чеклиста: граничні випадки; обробка помилок; транзакційність; зворотна сумісність API; міграції БД; продуктивність; логування й PII; конфігурація; вплив на інтеграції.
-2. Став питання групами до 5. Для кожного запропонуй варіант за замовчуванням.
-3. Не вигадуй відповідей: питання без відповіді запиши як відкрите.
-4. Заверши, коли всі питання закриті або користувач явно каже продовжувати. Далі — `task-spec`.
+1. Build questions from the open questions of `task-research` and from the checklist: edge cases; error handling; transactionality; API backward compatibility; DB migrations; performance; logging and PII; configuration; impact on integrations.
+2. Ask in groups of up to 5 questions. Offer a default answer for each.
+3. Do not invent answers: an unanswered question is recorded as open.
+4. Finish when all questions are closed or the user explicitly says to continue. Then go to `task-spec`.
 
-Питання мають бути конкретні й стосуватись саме цієї задачі, без загальних порад.
+Each question must be concrete and specific to this task, not generic advice.

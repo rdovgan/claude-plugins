@@ -1,39 +1,39 @@
-# {{KEY або назва}}: {{коротка назва}}
+# {{KEY or name}}: {{short title}}
 
-## Задача
+## Task
 
-- Ключ: {{ключ Jira або —}}
-- Посилання: {{URL або —}}
-- Суть: {{одне речення}}
+- Key: {{Jira key or -}}
+- Link: {{URL or -}}
+- Essence: {{one sentence}}
 
-## Контекст
+## Context
 
-Зачеплені модулі й класи (з `task-research`):
+Affected modules and classes (from `task-research`):
 
-- {{модуль/клас — навіщо}}
+- {{module/class - why}}
 
-## Рішення з інтерв'ю
+## Interview decisions
 
-- {{питання → рішення}}
+- {{question -> decision}}
 
-## Поза межами задачі
+## Out of scope
 
-- {{що свідомо не робимо}}
+- {{what we deliberately do not do}}
 
-## Кроки
+## Steps
 
-### Крок 1. {{назва}}
+### Step 1. {{name}}
 
-- Опис: {{що змінюється}}
-- Критерії приймання:
-  - [ ] {{перевіряваний критерій}}
-- Тести:
-  - {{клас/метод тесту: що перевіряє}}
+- Description: {{what changes}}
+- Acceptance criteria:
+  - [ ] {{verifiable criterion}}
+- Tests:
+  - {{test class/method: what it verifies}}
 
-## Ризики
+## Risks
 
-- {{ризик і як зменшуємо}}
+- {{risk and how we mitigate it}}
 
-## Відкриті питання
+## Open questions
 
-- {{питання без відповіді або «немає»}}
+- {{unanswered question or "none"}}

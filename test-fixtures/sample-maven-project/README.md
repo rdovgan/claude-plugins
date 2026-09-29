@@ -1,3 +1,3 @@
 # sample-maven-project
 
-Тестовий Spring Boot-проєкт (3 модулі, тести, spotless) для приймання плагіна `java-team`. `.env` і `application-prod.yml` — фіктивні. Приманка для рев'ю: `../review-bait/`.
+Test Spring Boot project (3 modules, tests, spotless) for acceptance testing of the `java-team` plugin. `.env` and `application-prod.yml` are fake. Review bait: `../review-bait/`.

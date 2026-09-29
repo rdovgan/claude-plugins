@@ -5,13 +5,13 @@ description: Record agreements as a task specification with steps and acceptance
 
 # task-spec
 
-Фіксує домовленості як специфікацію.
+Records the agreements as a specification.
 
-## Кроки
+## Steps
 
-1. Заповни шаблон `${CLAUDE_PLUGIN_ROOT}/templates/spec.md`.
-2. Збережи в `.claude/specs/<ключ-задачі>.md` або `.claude/specs/<YYYY-MM-DD>-<коротка-назва>.md`. Переконайся, що `.claude/specs/` є в `.gitignore` проєкту; якщо ні — додай.
-3. Покажи специфікацію користувачу й чекай підтвердження.
-4. Після підтвердження запропонуй перейти в режим plan для реалізації першого кроку.
+1. Fill in the template `${CLAUDE_PLUGIN_ROOT}/templates/spec.md`.
+2. Save to `.claude/specs/<task-key>.md` or `.claude/specs/<YYYY-MM-DD>-<short-name>.md`. Make sure `.claude/specs/` is in the project's `.gitignore`; add it if not.
+3. Show the specification to the user and wait for confirmation.
+4. After confirmation, suggest switching to plan mode to implement the first step.
 
-Кожен крок має перевірювані критерії приймання й перелік тестів.
+Every step must have verifiable acceptance criteria and a list of tests.

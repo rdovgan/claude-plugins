@@ -12,8 +12,8 @@ public class OrderReport {
   public int countOrders(List<Customer> customers, CustomerRepo repo) {
     int total = 0;
     for (Customer c : customers) {
-      LOG.info("Loading orders for " + c.email());   // PII у логах
-      total += repo.findOrderIds(c.id()).size();      // N+1: запит на кожного клієнта
+      LOG.info("Loading orders for " + c.email());   // PII in logs
+      total += repo.findOrderIds(c.id()).size();      // N+1: one query per customer
     }
     return total;
   }

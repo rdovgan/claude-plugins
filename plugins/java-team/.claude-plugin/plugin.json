@@ -1,7 +1,7 @@
 {
   "name": "java-team",
   "version": "0.1.0",
-  "description": "Ініціалізація Maven-проєкту для Claude Code, захист секретів, автоматичні перевірки та єдиний процес задачі для Java-команди",
+  "description": "Maven project setup for Claude Code, secret protection, automatic checks and a single task workflow for Java teams",
   "author": {
     "name": "Java Team Tech Lead"
   }

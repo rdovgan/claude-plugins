@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PreToolUse Read|Edit|Write: другий рівень захисту чутливих файлів.
+# PreToolUse Read|Edit|Write: second layer of protection for sensitive files.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 jt_require_jq
@@ -10,17 +10,17 @@ file="$(jq -r '.tool_input.file_path // .tool_input.path // empty' <<<"$input")"
 [ -n "$file" ] || exit 0
 
 if jt_is_sensitive "$file"; then
-  echo "java-team: доступ до '$file' заблоковано (секрети, прод-конфіги, персональні дані). Працюй із application-local*/application-test* або попроси розробника надати потрібні значення." >&2
+  echo "java-team: access to '$file' is blocked (secrets, prod configs, personal data). Use application-local*/application-test* or ask the developer to provide the needed values." >&2
   exit 2
 fi
 
-# test-writer змінює лише src/test/**
+# test-writer changes only src/test/**
 agent="$(jq -r '.agent_type // empty' <<<"$input")"
 if [ "$agent" = "test-writer" ] && [ "$tool" != "Read" ]; then
   case "$file" in
     */src/test/*|src/test/*) ;;
     *)
-      echo "java-team: test-writer може змінювати лише src/test/**. Якщо тест виявив баг — повідом про нього, не виправляй продакшн-код." >&2
+      echo "java-team: test-writer may change only src/test/**. If a test reveals a bug, report it; do not fix production code." >&2
       exit 2
       ;;
   esac

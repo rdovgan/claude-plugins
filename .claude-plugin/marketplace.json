@@ -4,13 +4,13 @@
     "name": "Java Team Tech Lead"
   },
   "metadata": {
-    "description": "Командний маркетплейс плагінів Claude Code для Java-команди"
+    "description": "Team marketplace of Claude Code plugins for a Java team"
   },
   "plugins": [
     {
       "name": "java-team",
       "source": "./plugins/java-team",
-      "description": "Налаштування Maven-проєкту для Claude Code, захист секретів, хуки перевірок і єдиний процес задачі"
+      "description": "Maven project setup for Claude Code, secret protection, check hooks and a single task workflow"
     }
   ]
 }

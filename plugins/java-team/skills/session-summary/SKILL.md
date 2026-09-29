@@ -6,7 +6,7 @@ description: Save a dry technical session note and a rich mermaid summary of the
 Save this session to Obsidian as two linked notes, then set up rename/restore.
 Re-running this command in the same session **updates the existing notes in place** — it never creates duplicates.
 
-Vault: `$JAVA_TEAM_VAULT` (за замовчуванням `~/Claude Vault`; перевизначається змінною `VAULT`)
+Vault: `$JAVA_TEAM_VAULT` (defaults to `~/Claude Vault`; overridable with the `VAULT` variable)
 - `Sessions/YYYY/MM/DD/<Slug>.md` — dry technical extract
 - `Summary/<Project>/<ISO-Week>/<Slug>.md` — rich narrative + mermaid diagram, grouped by project then week (e.g. `Summary/my-project/2026-W33/Orders-Db-Migration.md`)
 - `Logs/YYYY-MM-DD.md` — one file per day, one row per session (a re-run refreshes the row)

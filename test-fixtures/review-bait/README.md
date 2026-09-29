@@ -1,3 +1,3 @@
-# Приманка для java-reviewer
+# Bait for java-reviewer
 
-Скопіюй `OrderReport.java.txt` як `orders-service/src/main/java/com/example/orders/OrderReport.java` у тестовому проєкті, закоміть на гілці й запусти `/java-team:review`. Рев'ю має знайти N+1 (виклик репозиторію в циклі) і логування PII (email клієнта).
+Copy `OrderReport.java.txt` to `orders-service/src/main/java/com/example/orders/OrderReport.java` in the sample project, commit it on a branch and run `/java-team:review`. The review must find the N+1 (repository call in a loop) and PII logging (customer email).

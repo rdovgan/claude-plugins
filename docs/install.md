@@ -1,47 +1,47 @@
-# Встановлення плагіна `java-team`
+# Installing the `java-team` plugin
 
-## 1. Підключити маркетплейс і плагін
+## 1. Connect the marketplace and the plugin
 
-Автоматично: `project-init` додає `extraKnownMarketplaces` і `enabledPlugins` у `.claude/settings.json` проєкту; Claude Code запропонує встановити плагін при відкритті проєкту.
+Automatic: `project-init` adds `extraKnownMarketplaces` and `enabledPlugins` to the project's `.claude/settings.json`; Claude Code offers to install the plugin when the project is opened.
 
-Вручну:
+Manual:
 
 ```
-/plugin marketplace add <git-адреса репозиторію claude-plugins>
+/plugin marketplace add <git URL of the claude-plugins repository>
 /plugin install java-team@team-plugins
 ```
 
-Оновлення: `/plugin marketplace update team-plugins`.
+Update: `/plugin marketplace update team-plugins`.
 
-## 2. Залежності
+## 2. Dependencies
 
-`jq`, `git`, `mvn` (або `./mvnw` у проєкті). Без `jq` хуки лише попереджають і не ламають сесію.
+`jq`, `git`, `mvn` (or `./mvnw` in the project). Without `jq` the hooks only warn and do not break the session.
 
 ## 3. Jira (MCP)
 
-1. Запусти `claude`, виконай `/mcp`, обери `jira` і пройди OAuth у браузері власним акаунтом Atlassian.
-2. Читання задач працює одразу; створення й зміна задач вимагають підтвердження.
+1. Start `claude`, run `/mcp`, pick `jira` and complete OAuth in the browser with your own Atlassian account.
+2. Reading tickets works right away; creating and changing tickets requires confirmation.
 
-## 4. БД (MCP, лише читання)
+## 4. Database (MCP, read-only)
 
-Задай змінні середовища (у `~/.zshrc` або менеджері секретів; у репозиторій їх не коміть):
+Set environment variables (in `~/.zshrc` or a secrets manager; never commit them):
 
 ```
-export JAVA_TEAM_DB_URL="mysql://host:3306/dbname"   # без логіна й пароля
+export JAVA_TEAM_DB_URL="mysql://host:3306/dbname"   # no login or password
 export JAVA_TEAM_DB_USER="readonly_user"
 export JAVA_TEAM_DB_PASSWORD="..."
 ```
 
-Користувач БД має мати права лише на читання і лише в не-прод оточенні. Без змінних сервер БД не стартує, решта плагіна працює.
+The DB user must have read-only grants and only on a non-prod environment. Without the variables the DB server does not start; the rest of the plugin keeps working.
 
 ## 5. Session summary
 
-Задай теку Obsidian-сховища: `export JAVA_TEAM_VAULT="$HOME/Claude Vault"` (за замовчуванням саме вона).
+Set the Obsidian vault directory: `export JAVA_TEAM_VAULT="$HOME/Claude Vault"` (this is the default).
 
-## 6. Перший запуск у проєкті
+## 6. First run in a project
 
-Скажи агенту: «ініціалізуй проєкт». Перевір підсумок змін і підтверди запис.
+Tell the agent: "initialize the project". Review the summary of changes and confirm the write.
 
-## Керування хуками
+## Hook controls
 
-- `JAVA_TEAM_SKIP_VERIFY=1` — вимкнути перевірку тестів при завершенні (для досліджень без змін коду).
+- `JAVA_TEAM_SKIP_VERIFY=1` - disable the test check on stop (for research without code changes).

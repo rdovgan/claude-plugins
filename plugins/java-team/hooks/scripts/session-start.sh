@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SessionStart: stdout потрапляє в контекст агента.
+# SessionStart: stdout goes into the agent's context.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 jt_require_jq
@@ -9,22 +9,22 @@ root="$(jt_project_dir)"
 data="$(jt_data_dir)"
 cd "$root" 2>/dev/null || exit 0
 
-: > "$data/start.$sid"   # початок сесії для verify.sh
+: > "$data/start.$sid"   # session start marker for verify.sh
 
 command -v git >/dev/null 2>&1 || exit 0
 branch="$(jt_branch)"
 key="$(jt_jira_key "$branch")"
-echo "java-team: гілка ${branch:-detached}"
-[ -n "$key" ] && echo "java-team: ключ Jira з назви гілки: $key"
+echo "java-team: branch ${branch:-detached}"
+[ -n "$key" ] && echo "java-team: Jira key from the branch name: $key"
 if [ -n "$key" ] && [ -f ".claude/specs/$key.md" ]; then
-  echo "java-team: специфікація задачі: .claude/specs/$key.md — прочитай її і продовжуй за нею."
+  echo "java-team: task spec: .claude/specs/$key.md - read it and continue from it."
 elif [ -n "$key" ]; then
-  echo "java-team: специфікації для $key ще немає — починай із task-research."
+  echo "java-team: no spec for $key yet - start with task-research."
 fi
 
 id="$(printf '%s' "$root" | cksum | cut -d' ' -f1)"
 if [ -f "$data/snapshot.$id.txt" ]; then
-  echo "java-team: останній знімок стану:"
+  echo "java-team: latest state snapshot:"
   sed 's/^/  /' "$data/snapshot.$id.txt"
 fi
 exit 0

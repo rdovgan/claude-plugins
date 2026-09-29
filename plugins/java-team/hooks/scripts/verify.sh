@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Stop: тести змінених модулів + одноразове нагадування про session-summary.
+# Stop: tests of changed modules + one-time session-summary reminder.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 jt_require_jq
@@ -14,7 +14,7 @@ root="$(jt_project_dir)"
 data="$(jt_data_dir)"
 cd "$root" || exit 0
 
-# Змінені .java: робоче дерево відносно бази + нові файли, лише новіші за початок сесії.
+# Changed .java: working tree vs base + new files, only those newer than the session start.
 base=""
 for b in origin/main origin/master main master; do
   git rev-parse --verify -q "$b" >/dev/null 2>&1 && { base="$(git merge-base HEAD "$b" 2>/dev/null)"; break; }
@@ -34,7 +34,7 @@ done < "$data/changed.$sid"
 rm -f "$data/changed.$sid"
 [ "${#files[@]}" -gt 0 ] || exit 0
 
-# Модулі змінених файлів.
+# Modules of the changed files.
 mods=()
 for f in "${files[@]}"; do
   m="$(jt_module_dir "$root/$f")" || continue
@@ -50,20 +50,20 @@ fi
 
 if ! out="$(jt_mvn "${args[@]}" test 2>&1)"; then
   if [ "$active" = "true" ]; then
-    # Уже блокували в цьому циклі: не зациклюємось, лише попереджаємо.
-    echo "java-team: тести все ще падають, повторне блокування пропущено (stop_hook_active)." >&2
+    # Already blocked in this cycle: avoid looping, only warn.
+    echo "java-team: tests still fail, repeated blocking skipped (stop_hook_active)." >&2
     exit 0
   fi
   tail_out="$(printf '%s\n' "$out" | tail -n 50)"
-  jq -n --arg r "Тести змінених модулів (${mods[*]}) падають. Виправ і заверши знову. Останні 50 рядків виводу mvn:
+  jq -n --arg r "Tests of the changed modules (${mods[*]}) fail. Fix them and finish again. Last 50 lines of mvn output:
 $tail_out" '{decision: "block", reason: $r}'
   exit 0
 fi
 
-# Тести пройшли: один раз на сесію нагадуємо про session-summary.
+# Tests passed: remind about session-summary once per session.
 flag="$data/summary-reminded.$sid"
 if [ ! -f "$flag" ]; then
   : > "$flag"
-  jq -n '{decision: "block", reason: "Тести пройшли. Запусти скіл session-summary, щоб зберегти підсумок сесії, і після цього завершуй."}'
+  jq -n '{decision: "block", reason: "Tests passed. Run the session-summary skill to save the session summary, then finish."}'
 fi
 exit 0

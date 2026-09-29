@@ -5,30 +5,30 @@ description: Set up a Maven/Java project for Claude Code or update an existing s
 
 # project-init
 
-Налаштовує Maven-проєкт для роботи з агентом. Усі тексти для команди — українською.
+Sets up a Maven project to work with the agent. All user-facing text is in English.
 
-## Режим
+## Mode
 
-- Немає `CLAUDE.md` у корені — **створення**.
-- Є — **оновлення**: не перезаписуй файл цілком. Покажи різницю між наявним і згенерованим, збережи ручні розділи, змінюй лише блоки між `<!-- java-team:generated:start <розділ> -->` і `<!-- java-team:generated:end -->`. Розділ «Ручні нотатки» не чіпай ніколи.
+- No `CLAUDE.md` in the root: **create** mode.
+- `CLAUDE.md` exists: **update** mode. Never overwrite the file wholesale. Show the diff between the existing and generated content, keep manual sections, and change only blocks between `<!-- java-team:generated:start <section> -->` and `<!-- java-team:generated:end -->`. Never touch the "Manual notes" section.
 
-## Кроки
+## Steps
 
-1. Визнач режим.
-2. Просканувати проєкт лише за іменами й структурою, без читання чутливих файлів (перелік визначає `permissions-setup`): кореневий `pom.xml` і модулі; версія Java (`maven.compiler.release`, `source`/`target`); Spring Boot і версія; ключові залежності; плагіни збірки (checkstyle, spotless, surefire, failsafe, jacoco, flyway, liquibase); наявність `./mvnw`; структура пакетів; тестові фреймворки.
-3. Згенеруй кореневий `CLAUDE.md` за `${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.md`. Файл — до 150 рядків. Команди збірки — точні: `./mvnw`, якщо wrapper є, інакше `mvn`; для всього проєкту і для модуля (`-pl <модуль> -am`).
-4. Для модуля зі своєю специфікою (окрема БД, інтеграція, нетипова структура) створи вкладений `CLAUDE.md` до 40 рядків. Решта модулів файлу не отримують.
-5. Виклич скіл `permissions-setup`.
-6. Запиши `.claude/settings.json` проєкту: додай (не видаляючи наявного) `extraKnownMarketplaces` з git-адресою репозиторію `claude-plugins` і `enabledPlugins` з `java-team@team-plugins`. Git-адресу запитай у користувача, якщо її не відомо.
-7. Додай у `.gitignore` (без дублікатів): `.claude/settings.local.json`, `.claude/specs/`, `CLAUDE.local.md`.
-8. **До запису** покажи підсумок змін (файли, різниця) і чекай підтвердження.
+1. Determine the mode.
+2. Scan the project by names and structure only, without reading sensitive files (the list is defined by `permissions-setup`): root `pom.xml` and modules; Java version (`maven.compiler.release`, `source`/`target`); Spring Boot and its version; key dependencies; build plugins (checkstyle, spotless, surefire, failsafe, jacoco, flyway, liquibase); presence of `./mvnw`; package structure; test frameworks.
+3. Generate the root `CLAUDE.md` from `${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.md`, at most 150 lines. Build commands must be exact: `./mvnw` if the wrapper exists, otherwise `mvn`; for the whole project and per module (`-pl <module> -am`).
+4. For a module with its own specifics (separate DB, integration, unusual structure) create a nested `CLAUDE.md` of at most 40 lines. Other modules get no file.
+5. Invoke the `permissions-setup` skill.
+6. Write the project's `.claude/settings.json`: add (without removing existing entries) `extraKnownMarketplaces` with the git URL of the `claude-plugins` repository and `enabledPlugins` with `java-team@team-plugins`. Ask the user for the git URL if unknown.
+7. Add to `.gitignore` (no duplicates): `.claude/settings.local.json`, `.claude/specs/`, `CLAUDE.local.md`.
+8. **Before writing**, show a summary of changes (files, diff) and wait for confirmation.
 
-## Ідемпотентність
+## Idempotence
 
-Повторний запуск без змін у проєкті не має змінювати жодного файлу: порівнюй згенероване з наявним і пропускай однакове.
+Re-running without project changes must not modify any file: compare generated content with existing and skip identical parts.
 
-## Заборони
+## Prohibitions
 
-- Не читай і не виводь вміст файлів, які `permissions-setup` визначає як чутливі.
-- Не створюй `AGENTS.md`.
-- Не змінюй `~/.claude/settings.json`.
+- Do not read or print the contents of files that `permissions-setup` classifies as sensitive.
+- Do not create `AGENTS.md`.
+- Do not modify `~/.claude/settings.json`.

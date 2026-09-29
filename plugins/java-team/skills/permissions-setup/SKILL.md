@@ -5,22 +5,22 @@ description: Find sensitive files by name in a Maven project and configure permi
 
 # permissions-setup
 
-Знаходить чутливі файли й налаштовує дозволи та пісочницю. **Вміст чутливих файлів не читати і не виводити ніколи.**
+Finds sensitive files and configures permissions and sandbox. **Never read or print the contents of sensitive files.**
 
-## Кроки
+## Steps
 
-1. Знайди за іменами (`find`/Glob, без читання вмісту): `.env*`; `application-*.yml`, `application-*.yaml` і `application-*.properties`, крім `application-test*` і `application-local*`; `*.pem`, `*.key`, `*.p12`, `*.jks`, `*.keystore`; `secrets/`; `credentials*`; дампи `*.sql.gz`, `*.dump`.
-2. Для `application.yml` і `application.properties` перевір `grep -c -i -E 'password|secret|token|api-key'` (лише кількість збігів, без виводу рядків і значень). Якщо є збіги — запропонуй `deny` для файлу.
-3. Об'єднай знайдене з базовим набором `${CLAUDE_PLUGIN_ROOT}/templates/settings.json`. Заміни плейсхолдери мережі `<NEXUS_HOST>`, `<GIT_HOST>`, `<JIRA_HOST>` реальними хостами (запитай у користувача, що невідомо; невідомі рядки прибери, не залишай плейсхолдерів).
-4. Покажи користувачу список правил із поясненням кожного й чекай підтвердження.
-5. Запиши в `.claude/settings.json`, не видаляючи наявних правил (злиття масивів без дублікатів).
+1. Find by name only (`find`/Glob, no content reads): `.env*`; `application-*.yml`, `application-*.yaml` and `application-*.properties` except `application-test*` and `application-local*`; `*.pem`, `*.key`, `*.p12`, `*.jks`, `*.keystore`; `secrets/`; `credentials*`; dumps `*.sql.gz`, `*.dump`.
+2. For `application.yml` and `application.properties` run `grep -c -i -E 'password|secret|token|api-key'` (match count only, never matching lines or values). If there are matches, propose a `deny` rule for the file.
+3. Merge the findings with the base set in `${CLAUDE_PLUGIN_ROOT}/templates/settings.json`. Replace the network placeholders `<NEXUS_HOST>`, `<GIT_HOST>`, `<JIRA_HOST>` with real hosts (ask the user for unknown ones; remove entries you cannot fill, never leave placeholders).
+4. Show the user the list of rules with an explanation of each and wait for confirmation.
+5. Write to `.claude/settings.json` without removing existing rules (merge arrays without duplicates).
 
-## Рівні файлів
+## File levels
 
-- `.claude/settings.json` — генерується, комітиться.
-- `.claude/settings.local.json` — особисті винятки, у `.gitignore`.
-- `~/.claude/settings.json` не змінюй.
+- `.claude/settings.json` - generated, committed.
+- `.claude/settings.local.json` - personal exceptions, in `.gitignore`.
+- Do not modify `~/.claude/settings.json`.
 
-## Вивід
+## Output
 
-Показуй лише шляхи й імена файлів та правила. Ніколи не показуй значення з файлів.
+Show only paths, file names and rules. Never show values from files.

@@ -1,18 +1,18 @@
-# Рішення і розбіжності з вимогами
+# Decisions and deviations from the requirements
 
-Записи для техліда. Пріоритет має актуальна документація Claude Code.
+Notes for the tech lead. Current Claude Code documentation takes priority over the requirements.
 
-| ID | Тема | Рішення / причина | Статус |
+| ID | Topic | Decision / reason | Status |
 | --- | --- | --- | --- |
-| D-01 | Назви | Маркетплейс `team-plugins`, плагін `java-team`, репозиторій `claude-plugins` — пропоновані в вимогах; змінити, якщо власник дасть інші | Відкрито |
-| D-02 | Синтаксис правил | `templates/settings.json` використовує `Bash(mvn test *)` (пробіл перед `*`) і блок `sandbox.filesystem.denyRead` / `sandbox.network.allowedDomains`. Перед релізом звірити з актуальною документацією налаштувань; `claude plugin validate` шаблон не перевіряє | Звірити |
-| D-03 | `session-summary` | Скіл перенесено з `~/.claude/commands/session-summary.md` разом зі скриптом `scripts/save_session.sh`. Логіку не змінено; прибрано лише прив'язку до машини: жорстко заданий шлях до локального сховища замінено на `$JAVA_TEAM_VAULT` (за замовчуванням `~/Claude Vault`, `VAULT` як і раніше перевизначає), шлях до скрипта — на `${CLAUDE_PLUGIN_ROOT}`. Скіл надалі пише в Obsidian-сховище розробника, тож кожен має задати `JAVA_TEAM_VAULT` | Перенесено, узгодити з власником |
-| D-04 | Jira MCP | Використано віддалений сервер `https://mcp.atlassian.com/v1/mcp` (`type: http`, OAuth). Звірити адресу й транспорт з документацією Atlassian | Звірити |
-| D-05 | БД MCP | СУБД — MySQL. `scripts/db-mcp.sh` запускає `@benborla29/mcp-server-mysql@2.0.9` (версію закріплено) (записи вимкнено прапорцями `ALLOW_*_OPERATION=false`; справжнє обмеження — права користувача БД). Змінні `JAVA_TEAM_DB_URL` (`mysql://host:port/db`, без облікових даних), `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD`. Без змінних сервер не стартує. Вибір пакета й назви змінних звірити з його документацією | Звірити |
-| D-06 | Мережа пісочниці | Хости Nexus/Artifactory, git-хостингу й Jira задаються при ініціалізації проєкту: `permissions-setup` підставляє їх замість плейсхолдерів `<NEXUS_HOST>`, `<GIT_HOST>`, `<JIRA_HOST>` | Прийнято |
-| D-07 | Git-адреса маркетплейсу | `project-init` питає її в користувача, бо репозиторій ще не має remote | Відкрито |
-| D-08 | `verify.sh` і `stop_hook_active` | Вимога: не блокувати вдруге. Реалізовано: за `stop_hook_active=true` тести запускаються знову, але падіння вже не блокує (лише попередження), тож цикл неможливий, а виправлення перевіряється. Нагадування про `session-summary` — один раз на сесію за прапорцем | Реалізовано |
-| D-09 | «Змінено в сесії» | `verify.sh` бере `.java` із `git diff` відносно бази (`main`/`master`) плюс нові файли, відфільтровані за mtime новішим за маркер, який створює `session-start.sh` | Реалізовано |
-| D-10 | Обмеження `test-writer` | Запис лише в `src/test/**` не виражається в `tools`; забезпечується `guard-files.sh` за полем `agent_type` вхідного JSON хука. Звірити, що Claude Code передає це поле для сабагентів | Звірити |
-| D-11 | `tools` з патернами | `java-reviewer` використовує `Bash(git diff:*)` тощо в `tools`. Звірити, що сабагенти плагіна приймають такі патерни; інакше замінити на `Bash` з обмеженням у промпті | Звірити |
-| D-12 | Мова текстів | Описи скілів/агентів — англійською; тіла скілів, промпти агентів, повідомлення хуків — українською | Прийнято |
+| D-01 | Names | Marketplace `team-plugins`, plugin `java-team`, repository `claude-plugins` are the names proposed in the requirements; change them if the owner provides others | Open |
+| D-02 | Rule syntax | `templates/settings.json` uses `Bash(mvn test *)` (space before `*`) and the `sandbox.filesystem.denyRead` / `sandbox.network.allowedDomains` blocks. Verify against current settings docs before release; `claude plugin validate` does not check the template | To verify |
+| D-03 | `session-summary` | Ported from `~/.claude/commands/session-summary.md` together with `scripts/save_session.sh`. Logic unchanged; only machine-specific paths were removed: the hardcoded local vault path became `$JAVA_TEAM_VAULT` (default `~/Claude Vault`; `VAULT` still overrides), and the script path became `${CLAUDE_PLUGIN_ROOT}`. The skill writes to each developer's Obsidian vault, so everyone must set `JAVA_TEAM_VAULT` | Ported, agree with owner |
+| D-04 | Jira MCP | Uses the remote server `https://mcp.atlassian.com/v1/mcp` (`type: http`, OAuth). Verify the URL and transport against Atlassian docs | To verify |
+| D-05 | DB MCP | DBMS is MySQL. `scripts/db-mcp.sh` runs `@benborla29/mcp-server-mysql@2.0.9` (version pinned; writes disabled via `ALLOW_*_OPERATION=false`; the real read-only guarantee is the DB user's grants). Variables: `JAVA_TEAM_DB_URL` (`mysql://host:port/db`, no credentials), `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD`. The server does not start without them. Verify the package choice and variable names against its docs | To verify |
+| D-06 | Sandbox network | Nexus/Artifactory, git host and Jira hosts are set during project initialization: `permissions-setup` replaces the placeholders `<NEXUS_HOST>`, `<GIT_HOST>`, `<JIRA_HOST>` | Accepted |
+| D-07 | Marketplace git URL | `project-init` asks the user for it because the repository has no remote yet | Open |
+| D-08 | `verify.sh` and `stop_hook_active` | Requirement: do not block twice. Implemented: with `stop_hook_active=true` tests run again but a failure only warns instead of blocking, so no loop is possible and the fix is still verified. The `session-summary` reminder is sent once per session via a flag | Implemented |
+| D-09 | "Changed in session" | `verify.sh` takes `.java` files from `git diff` against the base (`main`/`master`) plus new files, filtered by mtime newer than the marker created by `session-start.sh` | Implemented |
+| D-10 | `test-writer` restriction | Writing only to `src/test/**` cannot be expressed in `tools`; it is enforced by `guard-files.sh` via the `agent_type` field of the hook input JSON. Verify that Claude Code passes this field for subagents | To verify |
+| D-11 | `tools` with patterns | `java-reviewer` uses `Bash(git diff:*)` etc. in `tools`. Verify that plugin subagents accept such patterns; otherwise use plain `Bash` restricted in the prompt | To verify |
+| D-12 | Language | All plugin content (docs, skills, agents, hook messages, templates) is in English | Accepted |

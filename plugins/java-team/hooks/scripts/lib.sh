@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Спільні функції хуків java-team. Підключається через `source`.
-# Залежності: bash, jq, git, mvn. Вміст файлів із секретами тут не читається.
+# Shared helpers for java-team hooks. Sourced via `source`.
+# Dependencies: bash, jq, git, mvn. Contents of secret files are never read here.
 
-# Без jq хук лише попереджає і завершується з кодом 0.
+# Without jq a hook only warns and exits with code 0.
 jt_require_jq() {
   command -v jq >/dev/null 2>&1 || {
-    echo "java-team: jq не знайдено, хук пропущено" >&2
+    echo "java-team: jq not found, hook skipped" >&2
     exit 0
   }
 }
@@ -18,12 +18,12 @@ jt_data_dir() {
   printf '%s' "$d"
 }
 
-# Ключ Jira з рядка (перший збіг), формат ABC-123.
+# Jira key from a string (first match), format ABC-123.
 jt_jira_key() { printf '%s' "$1" | grep -oE '[A-Z][A-Z0-9]+-[0-9]+' | head -n1; }
 
 jt_branch() { git -C "$(jt_project_dir)" symbolic-ref --short -q HEAD 2>/dev/null; }
 
-# Чутливий шлях за іменем (вміст не читається). Код 0 = чутливий.
+# Sensitive path by name (contents are not read). Exit 0 = sensitive.
 jt_is_sensitive() {
   local p="${1%/}" b
   b="${p##*/}"
@@ -39,7 +39,7 @@ jt_is_sensitive() {
   return 1
 }
 
-# Найближча тека з pom.xml, піднімаючись від файлу не вище кореня проєкту.
+# Nearest directory with pom.xml, walking up from the file, not above the project root.
 jt_module_dir() {
   local root d
   root="$(jt_project_dir)"
@@ -51,7 +51,7 @@ jt_module_dir() {
   return 1
 }
 
-# ./mvnw, якщо є в проєкті, інакше mvn.
+# ./mvnw if the project has it, otherwise mvn.
 jt_mvn() {
   local root
   root="$(jt_project_dir)"

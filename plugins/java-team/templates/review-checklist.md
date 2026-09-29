@@ -1,13 +1,13 @@
-# Чеклист рев'ю Java-змін
+# Java change review checklist
 
-Команда доповнює цей список. Кожен пункт перевіряй лише щодо змінених рядків і їхніх наслідків.
+The team extends this list. Check each item against the changed lines and their consequences.
 
-- **Транзакції:** межі, `readOnly`, виклики зовнішніх систем усередині транзакції.
-- **JPA:** N+1, `fetch`, розмір вибірки, пагінація.
-- **Помилки й повтори:** обробка помилок і повторні спроби для зовнішніх інтеграцій.
-- **Ідемпотентність:** обробники подій і вебхуків.
-- **Безпека:** валідація вхідних даних, SQL injection, секрети в коді.
-- **Логування:** немає PII і секретів, достатньо контексту для розслідування.
-- **Конкурентність:** потокобезпечність спільного стану.
-- **Сумісність:** зворотна сумісність API і схеми БД.
-- **Тести:** покриття нової логіки і граничних випадків.
+- **Transactions:** boundaries, `readOnly`, calls to external systems inside a transaction.
+- **JPA:** N+1, `fetch`, result set size, pagination.
+- **Errors and retries:** error handling and retries for external integrations.
+- **Idempotency:** event and webhook handlers.
+- **Security:** input validation, SQL injection, secrets in code.
+- **Logging:** no PII or secrets, enough context to investigate.
+- **Concurrency:** thread safety of shared state.
+- **Compatibility:** backward compatibility of the API and DB schema.
+- **Tests:** coverage of new logic and edge cases.

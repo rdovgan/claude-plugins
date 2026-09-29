@@ -1,5 +1,5 @@
 ---
-description: Рев'ю змін поточної гілки відносно main/master (java-reviewer)
+description: Review the current branch's changes against main/master (java-reviewer)
 ---
 
-Запусти сабагента `java-reviewer` на змінах поточної гілки відносно базової (`main` або `master`) і виведи його звіт без змін. Код не змінюй.
+Run the `java-reviewer` subagent on the current branch's changes against the base branch (`main` or `master`) and output its report unchanged. Do not modify code.

@@ -1,5 +1,5 @@
 ---
-description: Оновити CLAUDE.md і налаштування проєкту (project-init, режим оновлення)
+description: Update CLAUDE.md and project settings (project-init, update mode)
 ---
 
-Використай скіл `project-init` у режимі оновлення для поточного проєкту: покажи різницю, збережи ручні розділи, змінюй лише згенеровані.
+Use the `project-init` skill in update mode for the current project: show the diff, keep manual sections, change only generated ones.
