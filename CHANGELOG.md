@@ -6,10 +6,10 @@
 
 ### Added
 - Каркас маркетплейсу `team-plugins` і плагіна `java-team`.
-- Скіли: `project-init`, `permissions-setup`, `task-research`, `task-interview`, `task-spec`, `session-summary` (заглушка, чекає на файли власника).
+- Скіли: `project-init`, `permissions-setup`, `task-research`, `task-interview`, `task-spec`, `session-summary` (перенесено з команди власника разом зі `scripts/save_session.sh`).
 - Сабагенти: `java-reviewer`, `code-explorer`, `test-writer`.
 - Команди: `/java-team:review`, `/java-team:update-claude-md`.
 - Хуки: `session-start`, `prompt-submit`, `guard-bash`, `guard-files`, `format`, `verify`, `snapshot`.
-- MCP: Jira (віддалений сервер Atlassian) і БД (лише читання).
+- MCP: Jira (віддалений сервер Atlassian) і БД (MySQL, лише читання).
 - Шаблони: `CLAUDE.md`, `spec.md`, `review-checklist.md`, `settings.json`.
 - Тестовий проєкт `test-fixtures/sample-maven-project`.
