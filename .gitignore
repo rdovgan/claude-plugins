@@ -4,3 +4,4 @@ target/
 *.iml
 .claude/settings.local.json
 CLAUDE.local.md
+Вимоги до командного плагіна*.md

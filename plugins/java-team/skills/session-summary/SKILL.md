@@ -8,14 +8,14 @@ Re-running this command in the same session **updates the existing notes in plac
 
 Vault: `$JAVA_TEAM_VAULT` (за замовчуванням `~/Claude Vault`; перевизначається змінною `VAULT`)
 - `Sessions/YYYY/MM/DD/<Slug>.md` — dry technical extract
-- `Summary/<Project>/<ISO-Week>/<Slug>.md` — rich narrative + mermaid diagram, grouped by project then week (e.g. `Summary/mybookingpal/2026-W33/Cakb-Oracle-Migration.md`)
+- `Summary/<Project>/<ISO-Week>/<Slug>.md` — rich narrative + mermaid diagram, grouped by project then week (e.g. `Summary/my-project/2026-W33/Orders-Db-Migration.md`)
 - `Logs/YYYY-MM-DD.md` — one file per day, one row per session (a re-run refreshes the row)
 - `Keywords.md` — auto-regenerated vault-wide index: every topical tag and key phrase → the notes that carry it
 Script: `${CLAUDE_PLUGIN_ROOT}/scripts/save_session.sh`
 
 ## 1. Build the slug and find the session id
 
-**Slug**: Title-Case-With-Hyphens, 3-6 words, from the topic. Prefer the user's hint if given ($ARGUMENTS). Example: `Cakb-Oracle-Migration`.
+**Slug**: Title-Case-With-Hyphens, 3-6 words, from the topic. Prefer the user's hint if given ($ARGUMENTS). Example: `Orders-Db-Migration`.
 
 **Session id**: take the UUID segment from your scratchpad directory path (the directory right above `/scratchpad`). This is what makes re-runs update instead of duplicate — always pass it. If you genuinely can't determine it, omit `--session`; the script then falls back to updating a same-day note with the same slug.
 

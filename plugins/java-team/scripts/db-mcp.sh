@@ -23,4 +23,4 @@ port="3306"; [[ "$hostport" == *:* ]] && port="${hostport##*:}"
 export MYSQL_HOST="$host" MYSQL_PORT="$port" MYSQL_DB="$db"
 export MYSQL_USER="$JAVA_TEAM_DB_USER" MYSQL_PASS="$JAVA_TEAM_DB_PASSWORD"
 export ALLOW_INSERT_OPERATION=false ALLOW_UPDATE_OPERATION=false ALLOW_DELETE_OPERATION=false
-exec npx -y @benborla29/mcp-server-mysql
+exec npx -y @benborla29/mcp-server-mysql@2.0.9
