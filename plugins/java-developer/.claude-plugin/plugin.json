@@ -1,0 +1,8 @@
+{
+  "name": "java-developer",
+  "version": "0.8.0",
+  "description": "Maven project setup for Claude Code, secret protection, automatic checks and a single task workflow for Java teams",
+  "author": {
+    "name": "Java Team Tech Lead"
+  }
+}

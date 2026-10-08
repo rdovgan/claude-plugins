@@ -8,9 +8,14 @@
   },
   "plugins": [
     {
-      "name": "java-team",
-      "source": "./plugins/java-team",
+      "name": "java-developer",
+      "source": "./plugins/java-developer",
       "description": "Maven project setup for Claude Code, secret protection, check hooks and a single task workflow"
+    },
+    {
+      "name": "java-analyst",
+      "source": "./plugins/java-analyst",
+      "description": "Analysis-only task workflow: research, interview, flow charts, findings and proposed solutions as local documents; never changes code"
     }
   ]
 }
