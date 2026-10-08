@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# PreToolUse Read|Edit|Write: second layer of protection for sensitive files.
+# shellcheck source=lib.sh
+. "$(dirname "$0")/lib.sh"
+jt_require_jq
+
+input="$(cat)"
+tool="$(jq -r '.tool_name // empty' <<<"$input")"
+file="$(jq -r '.tool_input.file_path // .tool_input.path // empty' <<<"$input")"
+[ -n "$file" ] || exit 0
+
+if jt_is_sensitive "$file"; then
+  echo "java-developer: access to '$file' is blocked (secrets, prod configs, personal data). Use application-local*/application-test* or ask the developer to provide the needed values." >&2
+  exit 2
+fi
+
+# test-writer changes only src/test/**
+agent="$(jq -r '.agent_type // empty' <<<"$input")"
+if [ "$agent" = "test-writer" ] && [ "$tool" != "Read" ]; then
+  case "$file" in
+    */src/test/*|src/test/*) ;;
+    *)
+      echo "java-developer: test-writer may change only src/test/**. If a test reveals a bug, report it; do not fix production code." >&2
+      exit 2
+      ;;
+  esac
+fi
+exit 0

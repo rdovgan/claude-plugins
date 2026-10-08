@@ -1,0 +1,39 @@
+{
+  "extraKnownMarketplaces": {
+    "team-plugins": {
+      "source": {
+        "source": "git",
+        "url": "git@github.com:rdovgan/claude-plugins.git"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "java-analyst@team-plugins": true
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write(.claude/analysis/**)",
+      "Edit(.claude/analysis/**)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git blame *)",
+      "Bash(git branch *)"
+    ],
+    "deny": [
+      "Read(**/.env*)",
+      "Read(**/application-prod*.*)",
+      "Read(**/application-stage*.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.jks)",
+      "Read(**/*.p12)",
+      "Read(**/secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.m2/settings.xml)"
+    ]
+  }
+}
