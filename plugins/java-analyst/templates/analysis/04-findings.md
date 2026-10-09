@@ -24,6 +24,12 @@
 
 - {{non-obvious thing that goes wrong, and where}}
 
+## Requirements coverage
+
+| Requirement | Handled in code today | So what for the task |
+| --- | --- | --- |
+| {{R1}} | {{repo/path/File.java: method, or "not handled"}} | {{what must change, or nothing}} |
+
 ## Assumptions (not verified in code)
 
 - {{assumption and how to verify it}}

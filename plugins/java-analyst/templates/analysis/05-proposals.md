@@ -5,6 +5,7 @@ Code in this document is illustration only. Nothing has been applied.
 ## Option A: {{name}}
 
 - Idea: {{one paragraph}}
+- Covers: {{R-ids; name any requirement it leaves out}}
 - Changes: {{repo/path/File.java - what changes}}
 - Example (illustration, not applied) for `{{target file}}`:
 
@@ -25,6 +26,7 @@ Code in this document is illustration only. Nothing has been applied.
 
 | Criterion | A | B |
 | --- | --- | --- |
+| Requirements covered | {{}} | {{}} |
 | Complexity | {{}} | {{}} |
 | Risk to existing behavior | {{}} | {{}} |
 | Backward compatibility | {{}} | {{}} |

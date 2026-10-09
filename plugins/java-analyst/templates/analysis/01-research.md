@@ -7,11 +7,19 @@
 - Acceptance criteria from the ticket: {{list or "none given"}}
 - Comments and linked tickets that matter: {{list or "none"}}
 
-## Requirements and constraints from Confluence
+## Understanding
 
-| Page (title, link) | Reached via | Key requirements, decisions, constraints | Conflicts with the ticket or other pages |
-| --- | --- | --- | --- |
-| {{title, URL}} | {{attached to KEY / link in description / CQL search}} | {{list}} | {{none or description}} |
+{{the problem in your own words: what is wrong or missing today, for whom, what the result must be}}
+
+## Requirements
+
+<!-- Every requirement, rule, limit, example and decision from the ticket and the Confluence pages, verbatim or nearly so. Later documents refer to these ids. -->
+
+- **R1** {{requirement, quoted or nearly verbatim}} - source: {{page title + link, or ticket key}}; in code: {{repo/path/File.java: method, or "new"}}
+
+### Conflicts between sources
+
+- {{R-id: what the ticket says vs what the page says, which one is more recent; or "none"}}
 
 ## Sources
 
@@ -44,4 +52,6 @@ Entry points and call path, top to bottom:
 
 ## Open questions (for the interview)
 
-- {{question}}
+Only what the code, the DB, Jira and Confluence do not answer.
+
+- {{question}} - looked in: {{pages, tickets, files checked}}

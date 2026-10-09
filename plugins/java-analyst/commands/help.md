@@ -24,4 +24,4 @@ Output exactly this cheat sheet, then stop:
 
 **Rules that will stop the agent:** no writes to source code, tests, build files (`pom.xml`, `package.json`) or application configs; writes only inside the project; only read-only shell commands (`ls`, `grep`, `sed -n`, `git log/diff/show`, `npm ls`, ...); no reading `.env`/prod configs; Jira and the DB are read-only.
 
-**Tips:** answer the interview questions honestly, since the proposals depend on them; documents are written in the language you use. To continue an analysis, run the command again with the same key. `JAVA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.
+**Tips:** the interview starts by showing how the task was understood: correct it there, it is the cheapest moment; it does not ask what the ticket or Confluence already answer, so a short interview is normal; requirements get ids (`R1`, `R2`, ...) that every document refers to; documents are written in the language you use. To continue an analysis, run the command again with the same key. `JAVA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.

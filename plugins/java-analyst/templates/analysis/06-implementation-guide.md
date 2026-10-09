@@ -14,6 +14,7 @@ For the recommended option: {{name}}. You implement this yourself; tick the boxe
 
 ### Step 1. {{name}}
 
+- Implements: {{R-ids}}
 - Files: {{repo/path/File.java}}
 - What to do: {{description}}
 - Acceptance criteria:
@@ -28,6 +29,6 @@ For the recommended option: {{name}}. You implement this yourself; tick the boxe
 
 - [ ] The tests of every touched module pass
 - [ ] Behavior used by other repositories is unchanged, or they are updated in the agreed order
-- [ ] Every requirement from the Confluence pages listed in 01-research.md is covered
+- [ ] Every requirement `R*` from 01-research.md is implemented or agreed out of scope
 - [ ] No secrets, prod configs or debug output are committed
 - [ ] {{task-specific check}}

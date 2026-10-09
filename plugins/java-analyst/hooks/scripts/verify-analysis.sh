@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Stop: an analysis started in this session must be complete (all documents, no placeholders, a flow chart).
+# Stop: an analysis started in this session must be complete (all documents, no placeholders, a flow chart,
+# numbered requirements referenced by the findings and the guide, a confirmed understanding).
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
@@ -32,11 +33,19 @@ while IFS= read -r d; do
 - $d/01-research.md has no Sources section: list the Jira tickets and Confluence pages that were read, and what was not"
   [ -f "$dir/03-flows.md" ] && ! grep -q '^```mermaid' "$dir/03-flows.md" && problems="$problems
 - $d/03-flows.md has no mermaid diagram"
+  [ -f "$dir/01-research.md" ] && ! grep -qE '^- \*\*R[0-9]+\*\*' "$dir/01-research.md" && problems="$problems
+- $d/01-research.md has no numbered requirements (R1, R2, ...) taken from the ticket and Confluence"
+  [ -f "$dir/02-interview.md" ] && ! grep -q '^## Understanding confirmed' "$dir/02-interview.md" && problems="$problems
+- $d/02-interview.md does not record that the developer confirmed your understanding of the task"
+  for doc in 04-findings.md 06-implementation-guide.md; do
+    [ -f "$dir/$doc" ] && ! grep -qE '\bR[0-9]+\b' "$dir/$doc" && problems="$problems
+- $d/$doc does not refer to any requirement R*: show which requirements it covers"
+  done
 done < "$(ja_data_dir)/touched.$sid"
 
 [ -n "$problems" ] || exit 0
 msg="The analysis is not finished:$problems
-Finish the documents (or tell the user what is left and why), then stop."
+Do not fill gaps just to pass this check. If something needs more research, do it; if it cannot be done now, tell the developer what is missing and why, then stop."
 if [ "$active" = true ]; then
   echo "java-analyst: $msg" >&2
   exit 0
