@@ -30,6 +30,15 @@ Update: `/plugin marketplace update team-plugins`.
 
 1. Jira is your Atlassian site (`https://<your-site>.atlassian.net`). Start `claude`, run `/mcp`, pick `jira` and complete OAuth in the browser with your own Atlassian account.
 2. Reading tickets works right away; creating and changing tickets requires confirmation.
+3. Attachments (screenshots, logs): the Atlassian MCP server returns only their names and links, not the content. To let the agent open them, create a personal API token at https://id.atlassian.com/manage-profile/security/api-tokens and set (never commit them):
+
+   ```
+   export JAVA_TEAM_JIRA_URL="https://<your-site>.atlassian.net"
+   export JAVA_TEAM_JIRA_EMAIL="you@company.com"
+   export JAVA_TEAM_JIRA_TOKEN="..."
+   ```
+
+   The agent runs `scripts/jira-attachments.sh <KEY>`, which downloads the files with GET into `.claude/attachments/<KEY>/` (added to `.gitignore`). Without the variables it asks you to paste the logs or screenshots. The project sandbox must allow your Jira host and `api.media.atlassian.com`.
 
 ## 4. Database (MCP, read-only)
 

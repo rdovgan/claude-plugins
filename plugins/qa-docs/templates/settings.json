@@ -1,0 +1,81 @@
+{
+  "extraKnownMarketplaces": {
+    "team-plugins": {
+      "source": {
+        "source": "git",
+        "url": "git@github.com:rdovgan/claude-plugins.git"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "qa-docs@team-plugins": true
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Write(qa-docs/**)",
+      "Edit(qa-docs/**)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git diff *)",
+      "Bash(git blame *)",
+      "Bash(git -C *)",
+      "mcp__plugin_qa-docs_jira__getJiraIssue",
+      "mcp__plugin_qa-docs_jira__searchJiraIssuesUsingJql",
+      "mcp__plugin_qa-docs_jira__getJiraIssueRemoteIssueLinks",
+      "mcp__plugin_qa-docs_jira__getConfluencePage",
+      "mcp__plugin_qa-docs_jira__getConfluencePageDescendants",
+      "mcp__plugin_qa-docs_jira__getConfluencePageFooterComments",
+      "mcp__plugin_qa-docs_jira__getConfluencePageInlineComments",
+      "mcp__plugin_qa-docs_jira__searchConfluenceUsingCql",
+      "mcp__plugin_qa-docs_jira__getAccessibleAtlassianResources"
+    ],
+    "ask": [
+      "mcp__plugin_qa-docs_jira__createConfluencePage",
+      "mcp__plugin_qa-docs_jira__updateConfluencePage"
+    ],
+    "deny": [
+      "Read(**/.env*)",
+      "Read(**/application-prod*.*)",
+      "Read(**/application-stage*.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.jks)",
+      "Read(**/*.p12)",
+      "Read(**/secrets/**)",
+      "Read(**/gitleaks-report*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Edit(.claude/**)",
+      "Write(.claude/**)",
+      "Edit(.qa-docs/**)",
+      "Write(.qa-docs/**)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": [
+        "**/.env*",
+        "**/application-prod*.*",
+        "**/application-stage*.*",
+        "**/*.pem",
+        "**/*.key",
+        "**/*.jks",
+        "**/*.p12",
+        "**/secrets/**",
+        "**/gitleaks-report*",
+        "~/.ssh",
+        "~/.aws"
+      ]
+    },
+    "network": {
+      "allowedDomains": [
+        "<JIRA_HOST>",
+        "mcp.atlassian.com"
+      ]
+    }
+  }
+}

@@ -16,6 +16,11 @@
       "name": "java-analyst",
       "source": "./plugins/java-analyst",
       "description": "Analysis-only task workflow: research, interview, flow charts, findings and proposed solutions as local documents; never changes code"
+    },
+    {
+      "name": "qa-docs",
+      "source": "./plugins/qa-docs",
+      "description": "Domain documentation for QA: researches code across repositories, Jira and Confluence, writes a verified business-flow document per domain and exports it to Confluence; never changes code"
     }
   ]
 }

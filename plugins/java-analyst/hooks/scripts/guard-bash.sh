@@ -55,6 +55,12 @@ while IFS= read -r seg; do
   c="${t[0]#(}"
   s=" ${t[*]} "
 
+  # The plugin's own scripts/: environment check, onboarding flag, module scan, Jira attachment
+  # download (GET only, into .claude/attachments/). db-mcp.sh is the MCP server, not a command.
+  if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
+    case "$c" in *..*|*/db-mcp.sh) ;; "${CLAUDE_PLUGIN_ROOT%/}/scripts/"*.sh) continue ;; esac
+  fi
+
   # Options that make an otherwise read-only command write files or run programs.
   case "$c" in
     sort) [[ "$s" =~ [[:space:]](-o|--output)([[:space:]=]|$) ]] && block "sort -o writes a file." ;;
