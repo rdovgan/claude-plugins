@@ -1,0 +1,19 @@
+{
+  "domain": "{{slug}}",
+  "title": "{{human title}}",
+  "status": "draft",
+  "language": "{{language}}",
+  "modules": {
+    "{{repo}}": "{{commit, 12 chars}}"
+  },
+  "updatedAt": "{{YYYY-MM-DD}}",
+  "updatedBy": "{{user}}",
+  "verifiedAt": "",
+  "verifiedBy": "",
+  "confluence": {
+    "pageId": "",
+    "url": "",
+    "exportedAt": "",
+    "exportedModules": {}
+  }
+}

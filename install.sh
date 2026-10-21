@@ -8,7 +8,7 @@ set -u
 MARKETPLACE_URL="${MARKETPLACE_URL:-git@github.com:rdovgan/claude-plugins.git}"   # override for a fork or a private mirror
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MARKETPLACE_NAME="team-plugins"
-PLUGIN="${PLUGIN:-java-developer}"   # PLUGIN=java-analyst ./install.sh for the analysis-only plugin
+PLUGIN="${PLUGIN:-java-developer}"   # PLUGIN=java-analyst | PLUGIN=qa-docs ./install.sh for the other plugins
 YES=0; [ "${1:-}" = "--yes" ] && YES=1
 
 ok()   { printf '  [ok]   %s\n' "$1"; }
@@ -55,7 +55,7 @@ if run claude plugin install "$PLUGIN@$MARKETPLACE_NAME"; then ok "plugin $PLUGI
 echo
 echo "3. Environment variables (values are never printed)"
 rc="$HOME/.zshrc"; [ -n "${BASH_VERSION:-}" ] && [ "${SHELL##*/}" = bash ] && rc="$HOME/.bashrc"
-if [ "$PLUGIN" != "java-analyst" ]; then   # the vault is used by session-summary only
+if [ "$PLUGIN" = "java-developer" ]; then   # the vault is used by session-summary only
   if [ -n "${JAVA_TEAM_VAULT:-}" ]; then ok "JAVA_TEAM_VAULT is set"; else
     warn "JAVA_TEAM_VAULT not set (Obsidian vault for session-summary; default ~/Claude Vault)"
     if ask "Add 'export JAVA_TEAM_VAULT=\"\$HOME/Claude Vault\"' to $rc?"; then
@@ -64,14 +64,21 @@ if [ "$PLUGIN" != "java-analyst" ]; then   # the vault is used by session-summar
   fi
 fi
 db_missing=""
-for v in JAVA_TEAM_DB_URL JAVA_TEAM_DB_USER JAVA_TEAM_DB_PASSWORD; do [ -n "${!v:-}" ] || db_missing="$db_missing $v"; done
-if [ -z "$db_missing" ]; then ok "DB variables are set"; else
+[ "$PLUGIN" = "qa-docs" ] || for v in JAVA_TEAM_DB_URL JAVA_TEAM_DB_USER JAVA_TEAM_DB_PASSWORD; do [ -n "${!v:-}" ] || db_missing="$db_missing $v"; done
+if [ "$PLUGIN" = "qa-docs" ]; then ok "no variables needed (the server admin configures .qa-docs/config.env)"
+elif [ -z "$db_missing" ]; then ok "DB variables are set"; else
   warn "DB access is optional; not set:$db_missing"
   echo "       Set them yourself (read-only DEMO user; never commit them), see docs/install.md"
 fi
 
 echo
 echo "Done. Next steps:"
+if [ "$PLUGIN" = "qa-docs" ]; then
+  echo "  1. cd into the workspace (the folder with all repositories) and run: claude"
+  echo "  2. in Claude Code run /mcp and complete OAuth for jira with your own Atlassian account"
+  echo "  3. type: /qa-docs:onboarding, then /qa-docs:document <domain>"
+  exit 0
+fi
 echo "  1. cd into a project and run: claude"
 if [ "$PLUGIN" = "java-analyst" ]; then
   echo "  2. type: /java-analyst:help, then /java-analyst:analyze <task>"

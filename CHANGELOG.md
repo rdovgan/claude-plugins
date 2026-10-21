@@ -2,6 +2,41 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## [0.9.0] and java-analyst [0.6.0] - 2026-10-21
+
+### Added
+- `task-triage` (java-developer): sizes a new task as **trivial**, **standard** or **complex** right after the ticket is read. Trivial tasks (1-2 files, behavior fully stated, no API, schema or multi-repo change) skip the Confluence sweep, `code-explorer`, the interview, the spec file and `java-reviewer`: a plan of up to 3 lines in chat, the change, the module's tests, a 3-line self-check. Standard runs a light research and a short spec. "quick" and "full" override the level; the agent escalates when a task turns out bigger. Feedback was that one-line fixes ran the full cycle for half an hour.
+- `scripts/jira-attachments.sh <KEY>` (java-developer, java-analyst): downloads ticket attachments into `.claude/attachments/<KEY>/` (added to `.gitignore`) through the Jira REST API with a personal API token (`JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN`, optional `JAVA_TEAM_JIRA_URL`). The Atlassian MCP server returns attachment metadata only, so screenshots and logs could not be opened. `task-research` and `analysis-research` call it when a ticket has attachments that matter and ask the user to paste them when the token is not set. `check-env.sh` and onboarding mention the variables; `templates/settings.json` allows `api.media.atlassian.com`, where Jira redirects attachment downloads.
+
+### Changed
+- `task-research` runs `task-triage` after reading the ticket and follows its level; the `prompt-submit` reminder no longer demands a spec for every Jira key. The `CLAUDE.md` template (Workflow, Definition of done), `/java-developer:help`, onboarding and the cheat sheet describe the trivial path. Existing projects pick up the new `CLAUDE.md` text with `/java-developer:update-claude-md`.
+
+### Fixed
+- java-analyst: the Bash guard refused the plugin's own `scripts/check-env.sh` and `mark-onboarded.sh`, so `/java-analyst:setup` and onboarding could not run them. Scripts in the plugin's `scripts/` are allowed now, except `db-mcp.sh`.
+
+## qa-docs [0.2.0] - 2026-10-20
+
+### Changed
+- Usage limits: one run on a workspace of 30 repositories used two full 5-hour limits. `flow-tracer`, `source-reader` and `fact-checker` run on `model: sonnet` instead of the session model. `domain-research` has a budget (`QA_DOCS_MAX_SUBFLOWS`, default 6 sub-flows, one wave, only the repositories in scope), spot-checks the agents' facts instead of re-reading all the code, and stops after research to ask whether to write the document, trace the rest, or stop. `domain-verify` runs at most 3 `fact-checker` agents on rules, values, states and flow steps only. `domain-scope`, `module-map` and `/qa-docs:refresh` follow the same limits.
+- `flow-tracer` and `fact-checker` search inside a repository (`path`), read large files in parts, and report an oversized sub-flow as an open end instead of tracing it all.
+- `guard-files.sh` blocks `Grep` with `output_mode: content` over the whole workspace; listing matching files there is still allowed.
+
+### Added
+- `/qa-docs:ask <question>`: an answer from the code (existing documents first) with `repo/path:line`, at most 2 agents, no files written.
+- `templates/server/ignore` for `<workspace>/.ignore` (build output, dependencies, minified files are not searched); `/qa-docs:check` reports when it is missing. `QA_DOCS_MAX_SUBFLOWS` in `config.env`; session start prints the budget.
+
+### Fixed
+- Writing the first file of a new domain was refused when the workspace path contains a symlink (`/var` -> `/private/var` on macOS, a symlinked `/srv`): `qd_realpath` resolved only an existing parent folder. It now resolves the nearest existing ancestor.
+
+## qa-docs [0.1.0] - 2026-10-12
+
+### Added
+- New plugin `qa-docs`: domain documentation for QA on a shared server. `/qa-docs:document` runs `domain-scope`, `domain-sources`, `domain-research`, `domain-write`, `domain-verify` and writes `qa-docs/domains/<slug>/`: `00-scope`, `01-sources` (Jira/Confluence claims `D*`), `02-code` (facts `F*` with `repo/path:line` and a verdict per claim), `domain.md` (the document), `03-verification`, `history.md`, `meta.json` (status, commits, Confluence page). Also `/qa-docs:export`, `/qa-docs:refresh`, `/qa-docs:verify`, `/qa-docs:map`, `/qa-docs:check`, `/qa-docs:help`, `/qa-docs:onboarding`.
+- Agents: `flow-tracer` (one sub-flow across repositories, facts with references), `source-reader` (Jira/Confluence claims verbatim), `fact-checker` (tries to refute each statement).
+- Hooks: sensitive files by name plus `.qa-docs/sensitive.txt`; reads only inside the workspace; writes only documents in `qa-docs/`; per-domain and map locks, released at session end or after `QA_DOCS_LOCK_MINUTES`; read-only Bash with the plugin's own `scripts/` allowed; MCP read-only except Confluence create/update limited to the configured space, parent and pages qa-docs exported; Stop check (meta, placeholders, mermaid, sources, `check-refs.sh`, a history entry, sources moved mid-session). Session start reports stale or failed sources, domains whose code changed, locks, and the export target.
+- `server/update-sources.sh` (cron: mirrors `main`/`master`, writes `.qa-docs/sources.tsv`), `server/README.md` (accounts, permissions, cron, settings), `templates/settings.json`, `templates/server/*`. `install.sh` accepts `PLUGIN=qa-docs`.
+- `test-fixtures/qa-docs/test-guards.sh`: 46 acceptance cases for the hooks and scripts.
+
 ## Unreleased - ported from the `mbp-claude-plugins` fork
 
 ### Changed

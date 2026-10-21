@@ -5,7 +5,7 @@ echo "== Tools"
 chk git "required"
 chk jq "required, the read-only guards do not work without it: brew install jq"
 echo "== Optional: database (read-only MCP 'db'; without it the db server shows 'failed' in /mcp, that is normal)"
-for v in JAVA_TEAM_DB_URL JAVA_TEAM_DB_USER JAVA_TEAM_DB_PASSWORD; do
+for v in JAVA_TEAM_DB_URL JAVA_TEAM_DB_USER JAVA_TEAM_DB_PASSWORD JAVA_TEAM_JIRA_URL JAVA_TEAM_JIRA_EMAIL JAVA_TEAM_JIRA_TOKEN; do
   if [ -n "${!v:-}" ]; then echo "ok    $v is set"; else echo "MISS  $v - add 'export $v=...' to ~/.zshrc (see docs/install.md), then restart claude"; fi
 done
 echo "== Project: $PWD"

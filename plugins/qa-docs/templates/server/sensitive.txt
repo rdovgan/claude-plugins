@@ -1,0 +1,7 @@
+# Extra sensitive files for qa-docs, one glob per line, matched against the file name and the path.
+# Copy to <workspace>/.qa-docs/sensitive.txt. Built-in: .env*, application-prod*/stage*, keys, secrets/,
+# credentials*, *secret* (non-code files), gitleaks-report*, auth.json, wp-config.php, parameters.yml, settings.xml.
+# Add what this team keeps secrets in, for example:
+# application.properties
+# */config/database.php
+# */src/main/resources/*.properties

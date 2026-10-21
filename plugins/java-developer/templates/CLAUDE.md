@@ -42,18 +42,18 @@
 ## Workflow
 
 <!-- java-team:generated:start workflow -->
-Every new task (Jira key, link, or a description of a feature or bug) goes through these phases:
+Every new task (Jira key, link, or a description of a feature or bug) starts with `task-research`, which sizes it with `task-triage`: **trivial** (one or two files, behavior fully stated, no API/schema/multi-repo change) skips the interview, the spec and the reviewer; **standard** and **complex** go through these phases:
 
 Branch: `<fix|feature|epic>/<TICKET>/<Short-description>` from the up-to-date base branch. Commit: `<TICKET> <imperative summary>`. PR title: `<TICKET> <summary>`.
 
-1. `task-research` - understand the task and find the code. Start here. Do not change code.
+1. `task-research` - read the ticket (attachments: `scripts/jira-attachments.sh`), triage, understand the task and find the code. Start here. Do not change code.
 2. `task-interview` - close gaps by asking the user questions.
 3. `task-spec` - a specification in `.claude/specs/`, confirmed by the user.
 4. Implementation step by step in plan mode; tests after each step (`test-writer` if needed). After each step tick its verified criteria (`[x]`) in the spec and fill its `Result:` line; the spec is the progress checklist.
 5. Self-check against the specification's criteria.
 6. Review: `/java-developer:review`.
 
-Questions about code with no intent to change it skip these phases.
+Trivial path: a plan of up to 3 lines in chat -> the change -> the module's tests -> a 3-line self-check. The user can say "quick" or "full" to override the level. Questions about code with no intent to change it skip these phases.
 <!-- java-team:generated:end -->
 
 ## Definition of done
@@ -61,8 +61,8 @@ Questions about code with no intent to change it skip these phases.
 <!-- java-team:generated:start done -->
 - The code compiles.
 - `mvn -o test` passes for the whole changed module (`Failures: 0, Errors: 0`); tests made obsolete by the change are updated or removed in the same change.
-- Self-check against the specification's criteria is done and its result described.
-- `/java-developer:review` returns no blockers.
+- Self-check against the specification's criteria is done and its result described (trivial: against the plan in chat).
+- `/java-developer:review` returns no blockers (not run for trivial tasks).
 <!-- java-team:generated:end -->
 
 ## External data

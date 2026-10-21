@@ -1,0 +1,8 @@
+{
+  "name": "qa-docs",
+  "version": "0.2.0",
+  "description": "Domain documentation for QA: researches the code of many repositories, Jira and Confluence, and writes a verified business-flow document per domain with flow charts, then exports it to Confluence. Never changes code.",
+  "author": {
+    "name": "Java Team Tech Lead"
+  }
+}

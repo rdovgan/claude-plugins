@@ -1,0 +1,22 @@
+# Copy to <workspace>/.ignore (for example /srv/projects/.ignore).
+# ripgrep, which Claude Code's Grep uses, skips these paths in every repository below the workspace,
+# even when they are committed. Build output, dependencies and minified files are never business logic,
+# and searching them floods the session and spends the user's usage limit.
+# Remove a line if a repository keeps real sources under such a folder.
+target/
+build/
+out/
+dist/
+.gradle/
+node_modules/
+bower_components/
+vendor/
+coverage/
+.idea/
+*.min.js
+*.min.css
+*.map
+*.jar
+*.war
+*.lock
+package-lock.json

@@ -6,7 +6,7 @@ chk jq "hooks only warn without it: brew install jq"
 chk mvn "or use the project's ./mvnw"
 if command -v java >/dev/null 2>&1; then echo "ok    java ($(java -version 2>&1 | head -n1))"; else echo "MISS  java"; fi
 [ -x ./mvnw ] && echo "ok    ./mvnw in this project" || echo "info  no ./mvnw in this directory"
-for v in JAVA_TEAM_VAULT JAVA_TEAM_DB_URL JAVA_TEAM_DB_USER JAVA_TEAM_DB_PASSWORD; do
+for v in JAVA_TEAM_VAULT JAVA_TEAM_DB_URL JAVA_TEAM_DB_USER JAVA_TEAM_DB_PASSWORD JAVA_TEAM_JIRA_URL JAVA_TEAM_JIRA_EMAIL JAVA_TEAM_JIRA_TOKEN; do
   if [ -n "${!v:-}" ]; then echo "ok    $v is set"; else echo "MISS  $v is not set"; fi
 done
 [ -f CLAUDE.md ] && echo "ok    CLAUDE.md in this directory" || echo "info  no CLAUDE.md here (project-init not run)"

@@ -76,7 +76,8 @@
         "<NEXUS_HOST>",
         "<GIT_HOST>",
         "<JIRA_HOST>",
-        "mcp.atlassian.com"
+        "mcp.atlassian.com",
+        "api.media.atlassian.com"
       ]
     }
   }
