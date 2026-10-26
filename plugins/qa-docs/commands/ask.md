@@ -7,7 +7,7 @@ Answer this question from the code: $ARGUMENTS
 
 This is the light mode: no scope, no phases, no files written. Sources are read-only. The code is the source of truth.
 
-1. **Existing documents first.** Check `qa-docs/domains.md` and the domain folders. If a document covers the question, answer from `domain.md`, open the cited lines that decide the answer, and say which document and commits it is based on (and whether the session context says its code changed since).
+1. **Existing documents first.** Check `qa-docs/domains.md` and the domain folders. If a document covers the question, answer from its pages in `doc/` (start at `doc/README.md`, then the process or reference page; old domains have a single `domain.md`), open the cited lines that decide the answer, and say which document and commits it is based on (and whether the session context says its code changed since).
 2. **Jira or Confluence**, only if the question names a ticket or page: read that one (read-only), not a search across the project.
 3. **Find the code.** Pick the repositories from `qa-docs/modules.md` and the question's terms. Search with `Grep` in those repositories (`path`); to find which repository has something, search the workspace root with the default `files_with_matches` output, then search the hits. Read files in parts around the hits (`offset`/`limit`).
 4. **Agents only when needed.** Narrow question: read the code yourself. A question that spans several repositories or flows: at most 2 `flow-tracer` agents in parallel, each with an entry point, a boundary and its repositories. No second round without asking the user.

@@ -32,7 +32,8 @@ The workspace holds many repositories; everything you read costs the user's limi
 Only this, no search narrative:
 
 - **Entry point**: reference, who triggers it.
-- **Steps**: numbered, in business language, each with a reference.
+- **Participants**: the components the flow passes through, in order (UI page, service or repository, database table, queue, partner or external system), for a sequence diagram.
+- **Steps**: numbered, in business language, each with a reference and the participants it goes between.
 - **Facts**: one line each: `fact | kind (rule, validation, state, calculation, config, integration, error, permission) | repo/path/File.ext:line | seen or inferred`. "Seen" means you read the line that does it; "inferred" means you concluded it from surrounding code, and say from what.
 - **Claims checked** (if you were given claims from Jira/Confluence): each claim id with confirmed / differs (what the code does instead) / not found, and the reference.
 - **Open ends**: what you could not resolve (runtime config, reflection, external system) and where to look.

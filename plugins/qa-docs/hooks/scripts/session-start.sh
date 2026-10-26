@@ -16,6 +16,7 @@ lang="$(qd_conf QA_DOCS_LANGUAGE)"
 echo "qa-docs: DOCUMENTATION mode for user $(qd_user). Workspace $root: every git folder in it is a read-only source repository (master/main, updated by cron). Never change sources; write documents only in $out/. Start with /qa-docs:document <domain, Jira key or description>; cheat sheet: /qa-docs:help."
 echo "qa-docs: the code is the source of truth. Jira and Confluence say what was intended; when they disagree with the code, the document says what the code does and lists the disagreement."
 [ -n "$lang" ] && echo "qa-docs: write documents in $lang (team setting)."
+command -v "$(qd_conf QA_DOCS_MMDC mmdc)" >/dev/null 2>&1 || echo "qa-docs: mermaid-cli is not installed: diagrams stay as mermaid code without PNG; say so once when a document is written."
 echo "qa-docs: research budget QA_DOCS_MAX_SUBFLOWS=$(qd_conf QA_DOCS_MAX_SUBFLOWS 6) sub-flows per run; agents search inside the repositories in scope, never the whole workspace. A plain question goes to /qa-docs:ask, not a full document."
 
 # Sources: freshness and failures reported by server/update-sources.sh.
@@ -52,8 +53,9 @@ for f in "$(qd_domains)"/*/meta.json; do
       c="$(awk -F'\t' -v r="$r" '$1 == r { print $2 }' "$cur")"
       [ -n "$c" ] && [ "${c:0:7}" != "${s:0:7}" ] && printf '%s ' "$r"
     done)"
-  info="$(jq -r '"\(.status // "draft"), by \(.updatedBy // "?") \(.updatedAt // "")"' "$f" 2>/dev/null)"
-  lines="$lines  $slug: $info${changed:+; code changed since: $changed- /qa-docs:refresh $slug}
+  info="$(jq -r '"\(.status // "draft"), by \(.updatedBy // "?") \(.updatedAt // "")\(if .layout == "mirror" then ", update of Confluence page \(.source.pageId // "?")" else "" end)"' "$f" 2>/dev/null)"
+  old=""; [ -f "$(dirname "$f")/domain.md" ] && [ ! -d "$(dirname "$f")/doc" ] && old="; old single-file format - /qa-docs:rewrite $slug"
+  lines="$lines  $slug: $info${changed:+; code changed since: $changed- /qa-docs:refresh $slug}$old
 "
 done
 if [ -n "$lines" ]; then

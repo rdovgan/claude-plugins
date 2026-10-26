@@ -6,4 +6,4 @@ Updated: {{YYYY-MM-DD}} by {{user}}
 
 | Domain | Slug | What it covers | Repositories | Entry points | Document |
 | --- | --- | --- | --- | --- | --- |
-| {{name}} | `{{slug}}` | {{one line}} | {{repos}} | {{main classes, endpoints, jobs}} | {{domains/slug/domain.md, or "not documented"}} |
+| {{name}} | `{{slug}}` | {{one line}} | {{repos}} | {{main classes, endpoints, jobs}} | {{domains/slug/doc/README.md (doc/page.md for an updated Confluence page), or "not documented"}} |
