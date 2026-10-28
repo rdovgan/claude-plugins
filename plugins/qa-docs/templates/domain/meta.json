@@ -1,6 +1,7 @@
 {
   "domain": "{{slug}}",
   "title": "{{human title}}",
+  "layout": "{{domain | mirror}}",
   "status": "draft",
   "language": "{{language}}",
   "modules": {
@@ -10,10 +11,21 @@
   "updatedBy": "{{user}}",
   "verifiedAt": "",
   "verifiedBy": "",
+  "source": {
+    "pageId": "",
+    "url": "",
+    "title": "",
+    "version": "",
+    "readAt": ""
+  },
   "confluence": {
     "pageId": "",
     "url": "",
     "exportedAt": "",
-    "exportedModules": {}
+    "exportedModules": {},
+    "pages": {
+      "{{doc-relative path, for example flows/create.md}}": { "pageId": "", "url": "" }
+    },
+    "sourceCommentId": ""
   }
 }

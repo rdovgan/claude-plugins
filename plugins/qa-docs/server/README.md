@@ -28,6 +28,16 @@ sudo setfacl -R -m g:qa:rwX /srv/projects/qa-docs
 
 Install `git`, `jq` and Claude Code. Without `jq` the plugin blocks every tool call (fails closed).
 
+Diagrams are rendered to PNG on the server with mermaid-cli (Confluence here has no mermaid app, and the Atlassian MCP server cannot upload attachments, so the pictures stay in `qa-docs/domains/<slug>/doc/diagrams/` next to their mermaid source):
+
+```bash
+sudo apt-get install -y nodejs npm chromium fonts-noto fonts-noto-cjk   # or the distribution's chromium-browser
+sudo PUPPETEER_SKIP_DOWNLOAD=1 npm install -g @mermaid-js/mermaid-cli
+# .qa-docs/config.env: QA_DOCS_CHROME=/usr/bin/chromium (path of the installed browser)
+```
+
+A shared system browser is used because puppeteer's own download lands in the installing user's home, which QA accounts cannot read. Install fonts that cover the document language (for example Cyrillic) so labels render. Check as a QA user: `/qa-docs:check` shows `ok mmdc`; the first `/qa-docs:document` reports a diagram that does not render. If Chromium fails to start inside the Claude Code sandbox, add the plugin's `scripts/render-diagrams.sh` to `sandbox.excludedCommands` in `.claude/settings.json`. Without mermaid-cli everything works, the documents just have no PNGs.
+
 ## 2. Sources
 
 As `admin`, with a **read-only** access key (deploy key or access key of your git host) in `admin`'s `~/.ssh` (mode 700, not readable by `qa`):

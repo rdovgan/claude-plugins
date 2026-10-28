@@ -18,7 +18,8 @@ The document will be the team's source of truth, so a missed branch or a wrong l
 ## Plan the research
 
 1. Re-read `00-scope.md` (entry points, repositories) and `01-sources.md` (claims `D*`).
-2. Split the domain into **sub-flows** that can be traced independently: one per entry point or per stage (for example: create, modify, cancel, scheduled clean-up, partner notification). Each sub-flow gets: the entry point, the boundary where it stops, the repositories it crosses, and the claims `D*` that concern it. Merge small ones so the count fits the budget.
+2. Split the domain into **sub-flows** that can be traced independently: one per entry point or per stage (for example: create, modify, cancel, scheduled clean-up, partner notification). Name them as business processes: each one becomes a page of the document (`doc/flows/<flow>.md`) with its own diagram, so note the components it crosses (UI, repositories, database, queue, partner) for the sequence diagram. Each sub-flow gets: the entry point, the boundary where it stops, the repositories it crosses, and the claims `D*` that concern it. Merge small ones so the count fits the budget.
+   If `00-scope.md` names a documented domain that covers part of this one (usual for `/qa-docs:update-page`), take its facts from that domain's `02-code.md` for the sub-flows it traced, check their commits against the current ones, and trace only the rest.
 3. Write the plan to `work/plan.md` (sub-flows, which agent traces what, what is left for later). This also lets a later session continue.
 
 ## Trace

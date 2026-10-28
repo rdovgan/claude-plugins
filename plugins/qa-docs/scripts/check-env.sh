@@ -10,6 +10,7 @@ chk() { if command -v "$1" >/dev/null 2>&1; then echo "ok    $1"; else echo "MIS
 echo "== Tools"
 chk git "required; ask the admin"
 chk jq "required: without it every tool call is blocked; ask the admin"
+chk "$(qd_conf QA_DOCS_MMDC mmdc)" "mermaid-cli: renders diagrams to PNG; without it documents keep the mermaid code only; ask the admin (server/README.md)"
 
 echo "== Workspace: $root (user $(qd_user))"
 n="$(qd_repos | wc -l | tr -d ' ')"

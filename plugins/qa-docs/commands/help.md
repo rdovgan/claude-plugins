@@ -10,9 +10,11 @@ Output this cheat sheet in the user's language, then stop:
 | --- | --- |
 | `/qa-docs:ask <question>` | Quick answer from the code with references; writes nothing, cheap |
 | `/qa-docs:document <domain, flow, Jira key, page>` | Full run: scope -> sources -> code research (stops for your go-ahead) -> document -> verification. Expensive: use it for a domain, not for a question |
+| `/qa-docs:update-page <Confluence link>` | Make an up-to-date version of an old Confluence page in the same structure, with a list of what changed; the old page gets only a link comment |
 | `/qa-docs:refresh <slug>` | Update a document after the code changed |
+| `/qa-docs:rewrite <slug>` | Move a document of the old single-file format into the page set; no new research |
 | `/qa-docs:verify <slug>` | Verify again: references, fact-check, your approval |
-| `/qa-docs:export <slug>` | Publish to Confluence (asks for your approval) |
+| `/qa-docs:export <slug>` | Publish to Confluence as a page tree (asks for your approval) |
 | `/qa-docs:map` | Build or update `modules.md` and `domains.md` |
 | `/qa-docs:check` | Check the workspace and the server setup |
 | `/qa-docs:onboarding` | 3-minute tour |
@@ -21,11 +23,16 @@ Output this cheat sheet in the user's language, then stop:
 
 | File | Content |
 | --- | --- |
-| `domain.md` | **the document**: flows, rules, states, data, settings, integrations, edge cases, notes for testing, differences from Jira/Confluence |
+| `doc/README.md` | **start here**: summary, overview diagram, list of processes, links to everything else |
+| `doc/flows/*.md` | one page per process: diagram, steps, rules, error paths, edge cases, what to test |
+| `doc/reference/*.md` | business rules, states, data, settings, integrations |
+| `doc/differences.md`, `doc/open-questions.md` | where Jira/Confluence differ from the code; what is still unknown |
+| `doc/diagrams/` | every diagram as `.png` and its mermaid source `.mmd` |
+| `doc/page.md`, `doc/changes.md` | instead of the above, for an updated old Confluence page: the page in its old structure, and what changed |
 | `00-scope.md` | what is in and out, actors, entry points |
 | `01-sources.md` | what Jira and Confluence say (claims D1, D2, ...) |
 | `02-code.md` | facts from the code (F1, F2, ...) with `repo/path:line`, and a verdict for every claim |
 | `03-verification.md` | reference check, fact-check, who approved |
-| `history.md`, `meta.json` | who changed what, on which commits; status and Confluence page |
+| `history.md`, `meta.json` | who changed what, on which commits; status and Confluence pages |
 
 **Good to know**: the code wins over Jira and Confluence, and every difference is listed; every statement has a code reference you can open; one person edits a domain at a time; when the code changes, the session start names the domains to refresh; nothing is published without your approval.

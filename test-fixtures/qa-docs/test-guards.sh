@@ -102,5 +102,61 @@ echo '{"session_id":"s3"}' | "$P/hooks/scripts/session-start.sh" >/dev/null
 sleep 1; touch "$W/qa-docs/domains/refunds/domain.md"
 check "stop hook blocks inconsistent domain" "echo '{\"session_id\":\"s3\"}' | '$P/hooks/scripts/verify-docs.sh' | grep -q '\"block\"'"
 
+# mirror pages, page trees, link comment
+echo '{"layout":"mirror","source":{"pageId":"500"},"confluence":{"pageId":"78","pages":{"changes.md":{"pageId":"79"}}}}' > "$W/qa-docs/domains/refunds/meta.json"
+t "update child page of a tree" 0 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__updateConfluencePage '{"pageId":"79","body":"x"}')"
+t "create child under exported child" 0 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__createConfluencePage '{"spaceId":"QA","parentId":"79","body":"x"}')"
+t "update the old source page" 2 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__updateConfluencePage '{"pageId":"500","body":"x"}')"
+t "link comment on source page" 0 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__createConfluenceFooterComment '{"pageId":"500","body":"x"}')"
+t "comment on another page" 2 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__createConfluenceFooterComment '{"pageId":"501","body":"x"}')"
+t "reply to a comment on source page" 2 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__createConfluenceFooterComment '{"pageId":"500","parentCommentId":"9","body":"x"}')"
+t "inline comment on source page" 2 guard-mcp.sh "$(m mcp__plugin_qa-docs_jira__createConfluenceInlineComment '{"pageId":"500","body":"x"}')"
+
+# diagrams: a stub mermaid-cli that fails on "BROKEN"
+mkdir -p "$T/bin"
+cat > "$T/bin/mmdc" <<'STUB'
+#!/usr/bin/env bash
+while [ $# -gt 0 ]; do case "$1" in -i) i="$2"; shift ;; -o) o="$2"; shift ;; esac; shift; done
+grep -q BROKEN "$i" && { echo "Error: Parse error on line 2:" >&2; echo "    at foo (x.js:1)" >&2; exit 1; }
+printf 'PNG' > "$o"
+STUB
+chmod +x "$T/bin/mmdc"
+D="$W/qa-docs/domains/bookings"
+mkdir -p "$D/doc/flows"
+printf '{"domain":"bookings","modules":{"core-module":"abc"}}\n' > "$D/meta.json"
+printf '# Bookings\n\n![Overview](diagrams/overview.png)\n\n```mermaid\nflowchart LR\n  A --> B\n```\n\n- [Create](flows/create.md)\n- ref `core-module/src/A.java:2`\n\n## Sources\n\n- core-module@abc\n' > "$D/doc/README.md"
+printf '# Create\n\n> Part of [Bookings](../README.md).\n\n![Create](../diagrams/create.png)\n\n```mermaid\nsequenceDiagram\n  A->>B: go\n```\n' > "$D/doc/flows/create.md"
+check "render without mmdc reports it, keeps going" "QA_DOCS_MMDC=/nonexistent '$P/scripts/render-diagrams.sh' '$D' 2>/dev/null | grep -q 'mermaid-cli (/nonexistent) is not installed'"
+check "check without mmdc does not demand PNGs" "QA_DOCS_MMDC=/nonexistent '$P/scripts/render-diagrams.sh' '$D' --check >/dev/null"
+export QA_DOCS_MMDC="$T/bin/mmdc"
+check "check before render reports missing PNGs" "! '$P/scripts/render-diagrams.sh' '$D' --check >/dev/null"
+check "render writes .mmd and .png" "'$P/scripts/render-diagrams.sh' '$D' 2>/dev/null | grep -q 'diagrams: 2 found, 2 rendered, 0 problems' && [ -f '$D/doc/diagrams/create.png' ] && grep -q sequenceDiagram '$D/doc/diagrams/create.mmd'"
+check "check after render is clean" "'$P/scripts/render-diagrams.sh' '$D' --check >/dev/null"
+check "second render renders nothing" "'$P/scripts/render-diagrams.sh' '$D' 2>/dev/null | grep -q '2 found, 0 rendered'"
+sed -i.bak 's/A->>B: go/A->>B: go on/' "$D/doc/flows/create.md" && rm -f "$D/doc/flows/create.md.bak"
+check "check notices a changed diagram" "'$P/scripts/render-diagrams.sh' '$D' --check 2>/dev/null | grep -q \"diagram 'create' changed\""
+printf '# Cancel\n\n```mermaid\nflowchart TD\n  X --> Y\n```\n' > "$D/doc/flows/cancel.md"
+check "block without picture link is reported" "'$P/scripts/render-diagrams.sh' '$D' 2>/dev/null | grep -q 'flows/cancel.md:3: mermaid block without a picture link'"
+printf '# Cancel\n\n![Cancel](diagrams/cancel.png)\n\n```mermaid\nflowchart TD\n  X --> Y\n```\n' > "$D/doc/flows/cancel.md"
+check "picture path relative to the page is checked" "'$P/scripts/render-diagrams.sh' '$D' 2>/dev/null | grep -q 'must point to doc/diagrams/cancel.png'"
+printf '# Cancel\n\n![Cancel](../diagrams/create.png)\n\n```mermaid\nflowchart TD\n  BROKEN\n```\n' > "$D/doc/flows/cancel.md"
+check "duplicate diagram name is reported" "'$P/scripts/render-diagrams.sh' '$D' 2>/dev/null | grep -q \"name 'create' is used twice\""
+printf '# Cancel\n\n![Cancel](../diagrams/cancel.png)\n\n```mermaid\nflowchart TD\n  BROKEN\n```\n' > "$D/doc/flows/cancel.md"
+out="$("$P/scripts/render-diagrams.sh" "$D")"
+check "syntax error is reported without stack lines" "printf '%s' \"\$out\" | grep -q \"'cancel' does not render: Error: Parse error on line 2:\" && ! printf '%s' \"\$out\" | grep -q 'at foo'"
+check "render refuses a folder outside domains" "! '$P/scripts/render-diagrams.sh' '$W/core-module' 2>/dev/null"
+rm -f "$D/doc/flows/cancel.md"
+"$P/scripts/render-diagrams.sh" "$D" >/dev/null
+
+# stop hook on the page layout
+echo '{"session_id":"s4"}' | "$P/hooks/scripts/session-start.sh" >/dev/null
+sleep 1
+printf '# History\n\n## %s - t - created\n' "$(date +%Y-%m-%d)" > "$D/history.md"
+touch "$D/doc/README.md"
+check "stop hook passes a consistent page set" "[ -z \"\$(echo '{\"session_id\":\"s4\"}' | '$P/hooks/scripts/verify-docs.sh')\" ]"
+printf '\n- [Rules](reference/rules.md)\n' >> "$D/doc/README.md"
+check "stop hook reports a broken page link" "echo '{\"session_id\":\"s4\"}' | '$P/hooks/scripts/verify-docs.sh' | grep -q \"link to 'reference/rules.md'\""
+check "session start flags old single-file domains" "echo '{\"session_id\":\"s5\"}' | '$P/hooks/scripts/session-start.sh' | grep -q 'refunds: .*update of Confluence page 500.*rewrite refunds'"
+
 echo; [ "$fails" = 0 ] && echo "all passed ($T)" || echo "$fails failed ($T)"
 [ "$fails" = 0 ]

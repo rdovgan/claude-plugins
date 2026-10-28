@@ -12,7 +12,7 @@ root="$(qd_root)"
 docs=()
 for a in "$@"; do
   if [ -d "$a" ]; then
-    while IFS= read -r f; do docs+=("$f"); done < <(find "$a" -name '*.md' -not -path '*/work/*' | sort)
+    while IFS= read -r f; do docs+=("$f"); done < <(find "$a" -name '*.md' -not -path '*/work/*' -not -path '*/export/*' -not -path '*/source/*' | sort)
   elif [ -f "$a" ]; then docs+=("$a"); fi
 done
 
