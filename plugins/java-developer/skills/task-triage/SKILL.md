@@ -39,6 +39,7 @@ The user's word wins: "quick" forces trivial (unless the change touches a schema
 | `code-explorer` | no; `Grep`/`Read` directly | one call | as needed, several repositories |
 | `task-interview` | no (ask one plain question only if blocked) | only the open questions | full checklist |
 | `task-spec` | no file; a plan of up to 3 lines in chat | short spec: 1-3 steps | full spec |
+| `spec-reviewer` | no | only if the spec changes a public contract, a DB table or more than one repository | yes |
 | Implementation | directly, no plan mode | step by step | step by step in plan mode |
 | Tests | run the module's existing tests; add or update a test when the change is in logic covered by a test class | per step | per step |
 | Self-check | 3 lines: what changed, which tests ran, the result | against the spec | against the spec |
