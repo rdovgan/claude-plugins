@@ -20,7 +20,7 @@
     {
       "name": "qa-docs",
       "source": "./plugins/qa-docs",
-      "description": "Domain documentation for QA: researches code across repositories, Jira and Confluence, writes a verified business-flow document per domain and exports it to Confluence; never changes code"
+      "description": "Domain documentation for QA: researches code across repositories, Jira and Confluence, writes a verified domain document as linked pages with diagrams (PNG) per domain, exports it to Confluence and brings old Confluence pages up to date; never changes code"
     }
   ]
 }

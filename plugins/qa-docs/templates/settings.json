@@ -34,7 +34,8 @@
     ],
     "ask": [
       "mcp__plugin_qa-docs_jira__createConfluencePage",
-      "mcp__plugin_qa-docs_jira__updateConfluencePage"
+      "mcp__plugin_qa-docs_jira__updateConfluencePage",
+      "mcp__plugin_qa-docs_jira__createConfluenceFooterComment"
     ],
     "deny": [
       "Read(**/.env*)",

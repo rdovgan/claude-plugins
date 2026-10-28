@@ -7,6 +7,23 @@ Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver.
 ### Added
 - `spec-reviewer` subagent (java-developer, `model: opus`, read-only): reviews the spec before implementation for ticket requirements no step covers, consumers of changed public methods, endpoints, DTOs and events in mbp and other repositories, DB changes without a changelog or deploy order, access checks the plan drops, and invariants of the touched code (transactions, idempotency, cache). Report is grouped as blocker / must fix / consider, each item backed by `repo/path:line` or a ticket quote. `task-spec` calls it once for complex tasks and for standard ones that touch a contract, a table or several repositories, updates the spec, and tells the user what changed. Until now the stronger model saw only the finished diff, where a gap in the plan is the most expensive to fix.
 
+## qa-docs [0.3.0] - 2026-10-22
+
+QA feedback after the first real run: the document was one long page that was hard to read, it lacked diagrams of the complex processes (in Confluence the diagrams showed only as mermaid code), and there was no way to bring an existing Confluence page up to date.
+
+### Changed
+- The document is a set of short linked pages in `domains/<slug>/doc/` instead of one `domain.md`: `README.md` (summary, overview diagram, list of processes, links), `flows/<flow>.md` (one page per process: diagram, steps, rules it applies, error paths, edge cases, what to test), `reference/rules.md`, `states.md`, `data.md`, `config.md`, `integrations.md`, `differences.md`, `open-questions.md`. Rules are stated once in `rules.md` and linked from the process pages. `domain-research` names its sub-flows as the processes that become pages, and `flow-tracer` returns the participants of each flow for its sequence diagram.
+- Required diagrams: an overview `flowchart` of actors, systems and data stores; a `sequenceDiagram` per process that crosses more than one component (a `flowchart` otherwise, plus one for decision-heavy logic); a `stateDiagram-v2` per entity with statuses.
+- `/qa-docs:export` publishes a page tree: the overview page under the configured parent and the other pages as its children, with links between pages turned into Confluence links. Manual edits are compared per page (`export/last-export/<path>`). Pages of a removed process are emptied with a note; qa-docs does not delete pages.
+- `domain-verify` checks the required pages and diagrams, and splits the fact check by page groups. The Stop hook checks the page set, links between pages and that diagrams are rendered. `check-refs.sh` skips `export/` and `source/`.
+- `guard-mcp.sh`: page ids in `confluence.pages` count as exported pages (update, create children).
+
+### Added
+- `scripts/render-diagrams.sh <domain> [--check]`: every mermaid block in `doc/` is preceded by its picture line `![Title](diagrams/<name>.png)`; the script saves the block as `doc/diagrams/<name>.mmd` and renders `<name>.png` with mermaid-cli when it changed, and reports syntax errors. The PNGs stay on the server: the Atlassian MCP server cannot upload attachments, so Confluence pages keep the mermaid code and name the PNG path. `QA_DOCS_MMDC` and `QA_DOCS_CHROME` in `config.env`; `server/README.md` has the install steps; `/qa-docs:check` and session start report a missing mermaid-cli. Without it everything works without PNGs.
+- `/qa-docs:update-page <Confluence link>`: an up-to-date version of an old page in the same structure (same headings, order, tables and terms; content corrected from the code; new behaviour placed in the section where it belongs), plus `doc/changes.md` (was / now / reference for every change, what was confirmed, what could not be checked). Layout `mirror` in `meta.json` with `source` (page id, version). The old page is never edited: the export puts the new page and its "what changed" child under the qa-docs parent and adds one footer comment with the link on the old page (`createConfluenceFooterComment`, allowed by the guard only on a mirror's `source.pageId`, and on the `ask` list). It reuses the facts of a documented domain that covers the same area.
+- `/qa-docs:rewrite <slug>`: moves a document of the 0.2 format into the page set from the existing research, without tracing again; session start names such domains.
+- 25 more cases in `test-fixtures/qa-docs/test-guards.sh` (renderer with a stub mermaid-cli, page trees, the link comment, the Stop hook on the page set).
+
 ## [0.9.0] and java-analyst [0.6.0] - 2026-10-21
 
 ### Added

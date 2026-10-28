@@ -149,15 +149,26 @@ Only there does the session load the workspace settings (secret rules, Confluenc
 | Command | Action |
 | --- | --- |
 | `/qa-docs:ask <question>` | One answer from the code with `repo/path:line`, writes nothing. Cheapest option |
-| `/qa-docs:document <domain \| flow \| key \| page>` | Full document: scope (you confirm) → Jira/Confluence → code research → `domain.md` → verification |
+| `/qa-docs:document <domain \| flow \| key \| page>` | Full document: scope (you confirm) → Jira/Confluence → code research → pages in `doc/` → verification |
 | `/qa-docs:verify <slug>` | Check a document again: references, facts against the code, approval by a person |
 | `/qa-docs:refresh <slug>` | Update a document after the code changed |
-| `/qa-docs:export <slug>` | Publish to Confluence, keeping manual edits on the page |
+| `/qa-docs:export <slug>` | Publish to Confluence as a page tree, keeping manual edits on each page |
+| `/qa-docs:update-page <link>` | New version of an old Confluence page in its own structure, with a list of what changed. The old page only gets a link comment |
+| `/qa-docs:rewrite <slug>` | Move a 0.2 single-file document into the page set, without new research |
 | `/qa-docs:map` | Build or update `qa-docs/modules.md` (repositories and their connections) and `qa-docs/domains.md` (domains and their status) |
 | `/qa-docs:check` | Tools, server setup, freshness of sources and maps |
 | `/qa-docs:help` | Cheat sheet |
 
-`domain.md` contains mermaid flows, business rules, states, data, settings, integrations, edge cases, notes for testing and the differences from Jira/Confluence.
+A document is a set of short linked pages in `domains/<slug>/doc/`:
+
+| Page | Content |
+| --- | --- |
+| `README.md` | Summary, overview diagram of actors, systems and data stores, list of processes |
+| `flows/<flow>.md` | One process: sequence or flow diagram, steps, rules it applies, error paths, edge cases, what to test |
+| `reference/` | `rules.md` (each rule stated once, linked from the process pages), `states.md`, `data.md`, `config.md`, `integrations.md` |
+| `differences.md`, `open-questions.md` | Where the code disagrees with Jira/Confluence; what is still unknown |
+
+Diagrams are rendered to PNG on the server with mermaid-cli (`doc/diagrams/`). Confluence gets the mermaid code and the PNG path, because the MCP server cannot upload attachments.
 
 ### Usage limits
 
