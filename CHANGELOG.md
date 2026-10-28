@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## [0.10.0] - 2026-10-28
+
+### Added
+- `spec-reviewer` subagent (java-developer, `model: opus`, read-only): reviews the spec before implementation for ticket requirements no step covers, consumers of changed public methods, endpoints, DTOs and events in mbp and other repositories, DB changes without a changelog or deploy order, access checks the plan drops, and invariants of the touched code (transactions, idempotency, cache). Report is grouped as blocker / must fix / consider, each item backed by `repo/path:line` or a ticket quote. `task-spec` calls it once for complex tasks and for standard ones that touch a contract, a table or several repositories, updates the spec, and tells the user what changed. Until now the stronger model saw only the finished diff, where a gap in the plan is the most expensive to fix.
+
 ## [0.9.0] and java-analyst [0.6.0] - 2026-10-21
 
 ### Added

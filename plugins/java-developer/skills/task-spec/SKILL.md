@@ -11,8 +11,11 @@ Records the agreements as a specification.
 
 1. Fill in the template `${CLAUDE_PLUGIN_ROOT}/templates/spec.md`.
 2. Save to `.claude/specs/<task-key>.md` or `.claude/specs/<YYYY-MM-DD>-<short-name>.md`. Make sure `.claude/specs/` is in the project's `.gitignore`; add it if not.
-3. Show the specification to the user and wait for confirmation.
-4. After confirmation, suggest switching to plan mode to implement the first step.
+3. Review the plan with the `spec-reviewer` subagent when the triage level is **complex**, or when a **standard** spec changes a public method, endpoint, DTO, event, a DB table, or more than one repository. Skip it otherwise. In the prompt give the spec path, the ticket requirements quoted verbatim and the module map path from the session context. One pass, no re-review.
+   - Blocker and Must fix: change the spec, or move the item to "Open questions" if only the user can decide.
+   - Consider: add to "Risks" or "Open questions" when it applies; drop it when the code you already read shows it does not.
+4. Show the specification to the user and wait for confirmation. If the reviewer ran, list in a few lines what it found and what changed in the spec, so the user sees which items were rejected.
+5. After confirmation, suggest switching to plan mode to implement the first step.
 
 Also record in the spec: the target Java version if several are maintained, the branch name `<fix|feature|epic>/<TICKET>/<Short-description>`, any DB change (it must deploy before the dependent code) and the merge order for multi-repo changes (low-level repos first, see the module map and `${CLAUDE_PLUGIN_ROOT}/reference/team-workflow.md`).
 

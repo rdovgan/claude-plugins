@@ -39,7 +39,7 @@ Just give a task: a Jira key (`ABC-123`), a link, or a description. The agent ru
 | --- | --- |
 | Research (`task-research`) | Reads the ticket from Jira, searches code via `code-explorer`, does not change code |
 | Interview (`task-interview`) | Asks concrete questions in groups of up to 5 |
-| Specification (`task-spec`) | Writes `.claude/specs/<key>.md` (not committed) and waits for your confirmation |
+| Specification (`task-spec`) | Writes `.claude/specs/<key>.md` (not committed), has `spec-reviewer` check it for complex or contract-changing tasks, and waits for your confirmation |
 | Implementation | Step by step in plan mode; `test-writer` writes tests |
 | Self-check and review | `/java-developer:review` runs `java-reviewer` on the branch changes |
 

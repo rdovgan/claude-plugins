@@ -28,7 +28,7 @@ Skills activate automatically. Users don't call them by hand. Three mechanisms m
 | `task-research` | Phase 1. Pulls the Jira task via MCP (attachments via `scripts/jira-attachments.sh`), sizes it with `task-triage`, uses `code-explorer` to find related code, and writes a short report: affected classes, similar implementations, risks, open questions. No code changes. |
 | `task-triage` | Sizes the task: **trivial** (1-2 files, stated behavior, no API/schema/multi-repo change) skips interview, spec and reviewer; **standard** runs a light version; **complex** the full cycle. "quick"/"full" override. |
 | `task-interview` | Closes gaps before coding. Asks in groups of up to 5 questions, each with a default answer, from a checklist: edge cases, errors, transactions, API compatibility, migrations, performance, PII, config, integrations. Doesn't invent answers. |
-| `task-spec` | Records the agreements as a spec (steps, acceptance criteria, tests) in `.claude/specs/`. Waits for user confirmation, then offers plan mode. The spec is the live checklist: verified criteria are ticked `[x]` and each step gets a `Result:` line as it is done. |
+| `task-spec` | Records the agreements as a spec (steps, acceptance criteria, tests) in `.claude/specs/`. For complex tasks, and standard ones that touch a contract, a table or several repos, `spec-reviewer` checks the spec first. Waits for user confirmation, then offers plan mode. The spec is the live checklist: verified criteria are ticked `[x]` and each step gets a `Result:` line as it is done. |
 | `session-summary` | Existing skill, moved into the plugin as is. Hooks only trigger it. |
 
 ## Subagents
@@ -36,6 +36,7 @@ Skills activate automatically. Users don't call them by hand. Three mechanisms m
 | Agent | Role | Access |
 | --- | --- | --- |
 | `java-reviewer` | Reviews the branch diff against main using the team checklist. Report is grouped as blocker / must fix / consider. Doesn't change code. | Read-only + `git diff`. Stronger model. |
+| `spec-reviewer` | Reviews the spec before implementation: uncovered requirements, consumers of changed contracts in mbp and other repos, schema changes, access checks, invariants. Called by `task-spec` for complex tasks and for standard ones that touch a contract, a table or several repos. | Read/search. Stronger model. |
 | `code-explorer` | Finds related classes, similar implementations, integration points. Respects `deny` rules. | Read/search. Faster model. |
 | `test-writer` | Writes tests in the module's existing style and runs only that module's tests. Reports bugs, doesn't fix them. | Read, write to `src/test/**`, `mvn test`. |
 
