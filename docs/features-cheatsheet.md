@@ -36,7 +36,7 @@ Skills activate automatically. Users don't call them by hand. Three mechanisms m
 | Agent | Role | Access |
 | --- | --- | --- |
 | `java-reviewer` | Reviews the branch diff against main using the team checklist. Report is grouped as blocker / must fix / consider. Doesn't change code. | Read-only + `git diff`. Stronger model. |
-| `spec-reviewer` | Reviews the spec before implementation: uncovered requirements, consumers of changed contracts in mbp and other repos, schema changes, access checks, invariants. Called by `task-spec` for complex tasks and for standard ones that touch a contract, a table or several repos. | Read/search. Stronger model. |
+| `spec-reviewer` | Reviews the spec before implementation: uncovered requirements, consumers of changed contracts in other repos, schema changes, access checks, invariants. Called by `task-spec` for complex tasks and for standard ones that touch a contract, a table or several repos. | Read/search. Stronger model. |
 | `code-explorer` | Finds related classes, similar implementations, integration points. Respects `deny` rules. | Read/search. Faster model. |
 | `test-writer` | Writes tests in the module's existing style and runs only that module's tests. Reports bugs, doesn't fix them. | Read, write to `src/test/**`, `mvn test`. |
 

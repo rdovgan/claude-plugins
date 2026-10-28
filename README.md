@@ -88,7 +88,7 @@ Say **"quick"** or **"full"** to override the size. The spec is a checklist: eac
 | Agent | Model | Role |
 | --- | --- | --- |
 | `code-explorer` | Haiku | Finds related classes, similar implementations, tests, integration points. Read-only |
-| `spec-reviewer` | Opus | Checks the spec before implementation: uncovered requirements, consumers in mbp, schema, access checks. Read-only |
+| `spec-reviewer` | Opus | Checks the spec before implementation: uncovered requirements, consumers in other repositories, schema, access checks. Read-only |
 | `java-reviewer` | Opus | Reviews the diff with the team checklist: blocker / must fix / consider. Read-only |
 | `test-writer` | Sonnet | Writes tests in the module's style, runs only that module's tests. Never touches production code |
 
