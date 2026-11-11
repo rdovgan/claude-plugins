@@ -35,6 +35,13 @@ for k in QA_DOCS_CONFLUENCE_CLOUD QA_DOCS_CONFLUENCE_SPACE QA_DOCS_CONFLUENCE_PA
   [ -n "$(qd_conf "$k")" ] && echo "ok    $k is set" || echo "MISS  $k - the admin sets it in .qa-docs/config.env; until then documents stay local"
 done
 
+if [ -n "${QA_DOCS_CONFLUENCE_EMAIL:-}" ] && [ -n "${QA_DOCS_CONFLUENCE_TOKEN:-}" ]; then
+  echo "ok    your Atlassian API token is set (diagrams are uploaded as pictures)"
+else
+  echo "MISS  QA_DOCS_CONFLUENCE_EMAIL / QA_DOCS_CONFLUENCE_TOKEN - without them exported pages show diagram paths instead of pictures; create a token at https://id.atlassian.com/manage-profile/security/api-tokens and export both in ~/.profile (server/README.md, section 5)"
+fi
+chk curl "uploads the diagrams to Confluence; ask the admin"
+
 echo "== Jira and Confluence"
 echo "info  cannot be checked from a script: run /mcp, pick 'jira' (plugin qa-docs), finish OAuth with your own Atlassian account"
 exit 0

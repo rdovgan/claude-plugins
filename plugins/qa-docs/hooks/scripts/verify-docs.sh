@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Stop: every domain written in this session must be consistent: meta.json, no {{placeholders}},
-# the required pages with their diagrams rendered, working links and code references, and a history
-# entry for this session.
+# the required pages with their diagrams rendered, working links and code references, valid Confluence
+# pages (confluence/), and a history entry for this session.
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
@@ -59,6 +59,12 @@ for d in $touched; do
 $(printf '%s\n' "$pics" | sed 's/^/    /')"
   elif [ -f "$dir/domain.md" ] && ! grep -q '^```mermaid' "$dir/domain.md" && [ "$(wc -l < "$dir/domain.md")" -gt 3 ]; then
     add "$d/domain.md has no mermaid flow diagram"
+  fi
+  # Confluence pages: their structure must hold; pages older than doc/ are rebuilt by the export, not here.
+  if [ -d "$dir/confluence" ]; then
+    cpages="$("$(dirname "$0")/../../scripts/confluence-pages.sh" "$dir" --check 2>/dev/null | grep -v '^confluence:' | grep -v 'is older than' | head -n 10)"
+    [ -n "$cpages" ] && add "Confluence pages in $d/confluence/ (fix them, then run scripts/confluence-pages.sh):
+$(printf '%s\n' "$cpages" | sed 's/^/    /')"
   fi
   if [ -d "$doc" ] || [ -f "$dir/domain.md" ]; then
     refs="$("$(dirname "$0")/../../scripts/check-refs.sh" "$dir" 2>/dev/null | grep -v '^refs:' | head -n 15)"

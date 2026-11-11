@@ -1,0 +1,19 @@
+<p>{{Which statuses the entities of the domain have and what moves them.}}</p>
+<h2>{{entity}}</h2>
+<img data-diagram="states-{{entity}}" src="../doc/diagrams/states-{{entity}}.png" alt="{{entity}}: {{states}}">
+<table>
+<thead><tr><th><p>{{From}}</p></th><th><p>{{To}}</p></th><th><p>{{What moves it}}</p></th><th><p>{{Process}}</p></th></tr></thead>
+<tbody>
+<tr><td><p><span data-type="status" data-color="neutral">{{STATE}}</span></p></td><td><p><span data-type="status" data-color="blue">{{STATE}}</span></p></td><td><p>{{event or action}}</p></td><td><p><a href="{{process}}.html">{{process}}</a></p></td></tr>
+</tbody>
+</table>
+<p>{{Where it is stored}}: <code>{{column / enum and its values}}</code></p>
+<details>
+<summary>{{Code references}}</summary>
+<table>
+<thead><tr><th><p>{{Transition}}</p></th><th><p>{{Reference}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{STATE}} → {{STATE}}</p></td><td><p><code>{{repo/path/File.java:120}}</code></p></td></tr>
+</tbody>
+</table>
+</details>

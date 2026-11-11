@@ -1,0 +1,38 @@
+/* Local preview of qa-docs Confluence pages: close to how Confluence Cloud renders the same body. */
+body { margin: 0; display: flex; font: 14px/1.6 -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif; color: #172b4d; background: #fff; }
+nav { width: 260px; flex: none; min-height: 100vh; padding: 16px; background: #f4f5f7; border-right: 1px solid #dfe1e6; box-sizing: border-box; }
+nav p { margin: 0 0 12px; font-size: 12px; color: #6b778c; }
+nav ul { list-style: none; margin: 0; padding: 0; }
+nav li { margin: 2px 0 2px 14px; }
+nav li.root { margin-left: 0; font-weight: 600; }
+nav a { color: #0052cc; text-decoration: none; }
+main { flex: 1; max-width: 760px; padding: 24px 40px 80px; }
+h1 { font-size: 29px; font-weight: 500; margin: 0 0 24px; }
+h2 { font-size: 20px; font-weight: 500; margin: 32px 0 8px; }
+h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; }
+p { margin: 8px 0; }
+a { color: #0052cc; }
+code { font: 12px/1.4 "SFMono-Regular", Menlo, monospace; background: #f4f5f7; padding: 1px 4px; border-radius: 3px; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+th, td { border: 1px solid #dfe1e6; padding: 7px 10px; vertical-align: top; text-align: left; }
+th { background: #f4f5f7; font-weight: 600; }
+th p, td p { margin: 0; }
+img[data-diagram] { display: block; max-width: 80%; margin: 16px auto; }
+div[data-type^="panel-"] { margin: 12px 0; padding: 8px 16px 8px 40px; border-radius: 3px; position: relative; }
+div[data-type^="panel-"]::before { position: absolute; left: 14px; top: 10px; font-weight: 700; }
+div[data-type="panel-info"] { background: #deebff; } div[data-type="panel-info"]::before { content: "i"; color: #0052cc; }
+div[data-type="panel-note"] { background: #eae6ff; } div[data-type="panel-note"]::before { content: "✎"; color: #5243aa; }
+div[data-type="panel-warning"] { background: #fffae6; } div[data-type="panel-warning"]::before { content: "!"; color: #ff8b00; }
+div[data-type="panel-success"] { background: #e3fcef; } div[data-type="panel-success"]::before { content: "✓"; color: #006644; }
+div[data-type="panel-error"] { background: #ffebe6; } div[data-type="panel-error"]::before { content: "×"; color: #bf2600; }
+details { margin: 12px 0; padding: 4px 8px; border: 1px solid #dfe1e6; border-radius: 3px; }
+summary { cursor: pointer; color: #42526e; }
+span[data-type="status"] { display: inline-block; padding: 0 4px; border-radius: 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: #dfe1e6; color: #42526e; }
+span[data-type="status"][data-color="green"] { background: #e3fcef; color: #006644; }
+span[data-type="status"][data-color="blue"] { background: #deebff; color: #0747a6; }
+span[data-type="status"][data-color="red"] { background: #ffebe6; color: #bf2600; }
+span[data-type="status"][data-color="yellow"] { background: #fff0b3; color: #172b4d; }
+span[data-type="status"][data-color="purple"] { background: #eae6ff; color: #403294; }
+a[data-card-appearance]:empty::after { content: attr(href); }
+a[data-card-appearance] { padding: 1px 4px; border: 1px solid #dfe1e6; border-radius: 3px; text-decoration: none; }
+div[data-extension-key="toc"]::before { content: "[Table of contents]"; color: #6b778c; }

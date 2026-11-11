@@ -1,0 +1,55 @@
+<div data-type="panel-info">
+<p><strong>{{In short}}:</strong> {{3-5 lines: when it happens, who starts it, the outcome, the rule that matters most}}</p>
+</div>
+<img data-diagram="{{flow}}" src="../doc/diagrams/{{flow}}.png" alt="{{process name}}">
+<h2>{{How it works}}</h2>
+<ol start="1">
+<li><p>{{step in business words: what the user does or what the system does, with exact values; the rule it applies, for example (BR3)}}</p></li>
+</ol>
+<details>
+<summary>{{Code references}}</summary>
+<table>
+<thead><tr><th><p>{{Step}}</p></th><th><p>{{Reference}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{1}}</p></td><td><p><code>{{repo/path/File.java:120}}</code></p></td></tr>
+</tbody>
+</table>
+</details>
+<h2>{{Example}}</h2>
+<p>{{one concrete walk-through with real-looking data and the numbers it produces: input, what the system decides at each rule, the result. Only values the facts support; a calculation shows its formula}}</p>
+<h2>{{Rules}}</h2>
+<table>
+<thead><tr><th><p>{{Rule}}</p></th><th><p>{{In short}}</p></th></tr></thead>
+<tbody>
+<tr><td><p><a href="rules.html">BR{{n}}</a></p></td><td><p>{{one line with the exact value}}</p></td></tr>
+</tbody>
+</table>
+<h2>{{When something goes differently}}</h2>
+<table>
+<thead><tr><th><p>{{Situation}}</p></th><th><p>{{What the user sees}}</p></th><th><p>{{What the system stores or sends}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{alternative or error path}}</p></td><td><p>{{message, screen, status; exact text when known}}</p></td><td><p>{{status, record, event, nothing}}</p></td></tr>
+</tbody>
+</table>
+<div data-type="panel-note">
+<p><strong>{{Easy to miss}}</strong></p>
+<ul>
+<li><p>{{edge case: rounding, time zones, retries, partial failures, legacy branches}}</p></li>
+</ul>
+</div>
+<h2>{{How to check}}</h2>
+<table>
+<thead><tr><th><p>{{Case}}</p></th><th><p>{{Test data}}</p></th><th><p>{{Expected result}}</p></th><th><p>{{Where to see it}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{case}}</p></td><td><p>{{data that triggers it}}</p></td><td><p>{{result}}</p></td><td><p>{{screen / table / log / event / email}}</p></td></tr>
+</tbody>
+</table>
+<details>
+<summary>{{Code references}}: {{paths, error cases and edge cases}}</summary>
+<table>
+<thead><tr><th><p>{{Statement}}</p></th><th><p>{{Reference}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{situation or edge case}}</p></td><td><p><code>{{repo/path/File.java:120}}</code></p></td></tr>
+</tbody>
+</table>
+</details>

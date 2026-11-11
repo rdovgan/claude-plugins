@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Checks the code references of documents: every `repo/path/File.ext` or `repo/path/File.ext:LINE[-LINE]`
-# in backticks must name an existing repository, an existing file and a line inside it.
+# in backticks (or in <code> in the Confluence pages, confluence/*.html) must name an existing repository,
+# an existing file and a line inside it.
 # Usage: check-refs.sh <file.md | folder> ...   Prints one problem per line; exit 1 if any, 0 if clean.
 # Prints "refs: N checked" on stdout at the end. Reads only the documents and the file sizes.
 # shellcheck source=../hooks/scripts/lib.sh
@@ -12,7 +13,7 @@ root="$(qd_root)"
 docs=()
 for a in "$@"; do
   if [ -d "$a" ]; then
-    while IFS= read -r f; do docs+=("$f"); done < <(find "$a" -name '*.md' -not -path '*/work/*' -not -path '*/export/*' -not -path '*/source/*' | sort)
+    while IFS= read -r f; do docs+=("$f"); done < <(find "$a" \( -name '*.md' -o -path '*/confluence/*.html' \) -not -path '*/work/*' -not -path '*/export/*' -not -path '*/source/*' -not -path '*/preview/*' | sort)
   elif [ -f "$a" ]; then docs+=("$a"); fi
 done
 
@@ -41,7 +42,7 @@ for doc in "${docs[@]}"; do
         echo "$doc: \`$ref\`: line $last is past the end of the file ($total lines)"; bad=$((bad + 1))
       fi
     fi
-  done < <(grep -oE '`[A-Za-z0-9_.-]+/[^` :]+(:[0-9]+(-[0-9]+)?)?`' "$doc" 2>/dev/null | tr -d '`' | sort -u)
+  done < <(grep -oE '(`|<code>)[A-Za-z0-9_.-]+/[^`< :]+(:[0-9]+(-[0-9]+)?)?(`|</code>)' "$doc" 2>/dev/null | sed -E 's#</?code>##g' | tr -d '`' | sort -u)
 done
 echo "refs: $n checked, $bad broken"
 [ "$bad" -eq 0 ]

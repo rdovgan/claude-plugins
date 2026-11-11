@@ -1,0 +1,60 @@
+<p>{{what the domain is and who uses it, 2-3 sentences in business words; no class names}}</p>
+<div data-type="panel-info">
+<p><span data-type="status" data-color="green">{{VERIFIED / DRAFT}}</span> {{verified by NAME on DATE}}. Built by qa-docs from the code at {{repo@commit, ...}} ({{YYYY-MM-DD}}): the code wins over requirements, and every statement has a code reference in "Code references" at the end of its section.</p>
+<p>New here? Read in this order:</p>
+<ol start="1">
+<li><p>{{this page, "The whole picture"}}</p></li>
+<li><p><a href="{{main-process}}.html">{{main process}}</a></p></li>
+<li><p><a href="rules.html">{{Business rules}}</a></p></li>
+<li><p><a href="differences.html">{{Differences from requirements}}</a></p></li>
+</ol>
+</div>
+<h2>{{The whole picture}}</h2>
+<img data-diagram="overview" src="../doc/diagrams/overview.png" alt="{{title}}: overview">
+<ol start="1">
+<li><p>{{who starts what, which systems take part, where data ends up; one step per item, matching the diagram}}</p></li>
+</ol>
+<h2>{{Where to look}}</h2>
+<table>
+<thead><tr><th><p>{{I need to...}}</p></th><th><p>{{Page}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{a task of a reader: understand how X works, test Y, check a requirement against Z}}</p></td><td><p><a href="{{page}}.html">{{page title}}</a></p></td></tr>
+</tbody>
+</table>
+<h2>{{Processes}}</h2>
+<table>
+<thead><tr><th><p>{{Process}}</p></th><th><p>{{When it happens}}</p></th><th><p>{{Who starts it}}</p></th><th><p>{{Result}}</p></th></tr></thead>
+<tbody>
+<tr><td><p><a href="{{process}}.html">{{process name}}</a></p></td><td><p>{{trigger}}</p></td><td><p>{{actor}}</p></td><td><p>{{outcome the user sees}}</p></td></tr>
+</tbody>
+</table>
+<h2>{{Facts people forget}}</h2>
+<table>
+<thead><tr><th><p>{{Topic}}</p></th><th><p>{{Fact}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{topic}}</p></td><td><p>{{exact value, limit, time zone, rounding, default; with the rule id, for example BR3}}</p></td></tr>
+</tbody>
+</table>
+<div data-type="panel-warning">
+<p><strong>{{The code differs from the requirements}}</strong></p>
+<ul>
+<li><p>{{up to 5 most important differences, one line each, with the D id}}</p></li>
+</ul>
+<p>{{All N differences}}: <a href="differences.html">{{Differences from requirements}}</a>.</p>
+</div>
+<h2>{{Terms}}</h2>
+<table>
+<thead><tr><th><p>{{Term}}</p></th><th><p>{{Meaning}}</p></th><th><p>{{Name in the system}}</p></th></tr></thead>
+<tbody>
+<tr><td><p>{{business term}}</p></td><td><p>{{meaning}}</p></td><td><p><code>{{enum value, field or screen name}}</code></p></td></tr>
+</tbody>
+</table>
+<h2>{{Sources}}</h2>
+<ul>
+<li><p>{{Requirements}}: <a href="https://{{site}}/browse/{{KEY}}" data-card-appearance="inline"></a></p></li>
+<li><p>{{Confluence}}: <a href="{{page url}}" data-card-appearance="inline"></a></p></li>
+</ul>
+<details>
+<summary>{{How this page was made}}</summary>
+<p>{{Code}}: <code>{{repo@commit}}</code>, ... {{Open questions}}: <a href="open-questions.html">{{N}}</a>. {{Changes go through qa-docs (/qa-docs:refresh, /qa-docs:export); a manual edit stays only if it is brought into the document. Diagram sources: qa-docs/domains/SLUG/doc/diagrams/ on the qa-docs server.}}</p>
+</details>

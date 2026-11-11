@@ -14,7 +14,8 @@ Sources are read-only. Everything you write goes to `qa-docs/domains/<slug>/` an
    - `domain-research` -> `02-code.md` (+ `work/`)
    - `domain-write` -> `doc/` (overview, a page per process, reference pages, diagrams as PNG), `domains.md` row, `history.md`
    - `domain-verify` -> `03-verification.md`, status `verified`
-3. Finish with one short message: the folder and `doc/README.md`, the pages written, what the document covers, the main differences from Jira/Confluence, open questions, and `/qa-docs:export <slug>` if it was approved. Do not paste the document.
+   - on approval, `domain-confluence` -> `confluence/` (the pages as they will be in Confluence) and `confluence/preview/`
+3. Finish with one short message: the folder and `doc/README.md`, the preview `confluence/preview/index.html`, the pages written, what the document covers, the main differences from Jira/Confluence, open questions, and `/qa-docs:export <slug>` if it was approved. Do not paste the document.
 
 If `$ARGUMENTS` is a Confluence page and the user wants that page brought up to date in its own structure ("update", "оновити"), run `/qa-docs:update-page` instead; a page that is only a starting source stays here. A matching domain in the old single-file format (`domain.md`, no `doc/`): suggest `/qa-docs:rewrite <slug>` first.
 

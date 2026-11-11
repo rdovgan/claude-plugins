@@ -12,6 +12,7 @@ This is cheap: the facts are already in `02-code.md` and `domain.md`; nothing is
 3. Check that nothing was lost: every business rule, step, transition, setting, integration, edge case and difference of `domain.md` is somewhere in `doc/`. List what you could not place.
 4. Run `check-refs.sh` and `render-diagrams.sh` for the domain. No fact-checker: the statements were checked before. Ask the user with `AskUserQuestion` to look through `doc/README.md` and approve: "Approve" (keeps the previous status) / "Not yet". The new diagrams are new statements: name them in the question.
 5. Replace the content of `domain.md` with one line: "Moved to [doc/README.md](doc/README.md) on <date>." (in the document language). Update the row in `qa-docs/domains.md`, `meta.json` (`layout` `domain`, `updatedAt`, `updatedBy`) and append to `history.md`.
-6. If the domain was exported, say that `/qa-docs:export $ARGUMENTS` turns the existing Confluence page into the overview page and adds the child pages.
+6. Build the Confluence pages with `domain-confluence`.
+7. If the domain was exported, say that `/qa-docs:export $ARGUMENTS` turns the existing Confluence page into the overview page and adds the child pages.
 
 If `$ARGUMENTS` is empty, ask which domain with `AskUserQuestion`, offering the folders that have `domain.md` and no `doc/`.

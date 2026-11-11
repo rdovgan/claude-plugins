@@ -11,4 +11,5 @@ Refresh the domain `$ARGUMENTS`.
 4. Run `${CLAUDE_PLUGIN_ROOT}/scripts/check-refs.sh qa-docs/domains/$ARGUMENTS`: line numbers move even when behaviour does not; fix them all. If a diagram changed, run `${CLAUDE_PLUGIN_ROOT}/scripts/render-diagrams.sh qa-docs/domains/$ARGUMENTS`.
 5. Update `meta.json` (`modules`, `updatedAt`, `updatedBy`, `status` back to `draft` if behaviour changed), and append to `history.md` what changed in the code and in the document.
 6. If behaviour changed, run `domain-verify`. If only references moved, say so; the previous approval stands and the status stays.
-7. Finish with what changed, in one short list, and `/qa-docs:export $ARGUMENTS` if the page is out of date.
+7. If `confluence/` exists, rebuild it with `domain-confluence` after the document is final (it is never edited by hand).
+8. Finish with what changed, in one short list, and `/qa-docs:export $ARGUMENTS` if the page is out of date.

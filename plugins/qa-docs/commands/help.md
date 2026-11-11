@@ -14,7 +14,8 @@ Output this cheat sheet in the user's language, then stop:
 | `/qa-docs:refresh <slug>` | Update a document after the code changed |
 | `/qa-docs:rewrite <slug>` | Move a document of the old single-file format into the page set; no new research |
 | `/qa-docs:verify <slug>` | Verify again: references, fact-check, your approval |
-| `/qa-docs:export <slug>` | Publish to Confluence as a page tree (asks for your approval) |
+| `/qa-docs:confluence <slug>` | Build the Confluence pages from the document and a local preview; publishes nothing |
+| `/qa-docs:export <slug>` | Publish the Confluence pages as a page tree, with the diagrams as pictures (asks for your approval) |
 | `/qa-docs:map` | Build or update `modules.md` and `domains.md` |
 | `/qa-docs:check` | Check the workspace and the server setup |
 | `/qa-docs:onboarding` | 3-minute tour |
@@ -28,6 +29,8 @@ Output this cheat sheet in the user's language, then stop:
 | `doc/reference/*.md` | business rules, states, data, settings, integrations |
 | `doc/differences.md`, `doc/open-questions.md` | where Jira/Confluence differ from the code; what is still unknown |
 | `doc/diagrams/` | every diagram as `.png` and its mermaid source `.mmd` |
+| `confluence/*.html`, `confluence/pages.json` | the same document as Confluence pages, exactly as they will be published: panels, statuses, Jira cards, code references in expands |
+| `confluence/preview/index.html` | open in a browser to see the pages before publishing |
 | `doc/page.md`, `doc/changes.md` | instead of the above, for an updated old Confluence page: the page in its old structure, and what changed |
 | `00-scope.md` | what is in and out, actors, entry points |
 | `01-sources.md` | what Jira and Confluence say (claims D1, D2, ...) |
@@ -35,4 +38,4 @@ Output this cheat sheet in the user's language, then stop:
 | `03-verification.md` | reference check, fact-check, who approved |
 | `history.md`, `meta.json` | who changed what, on which commits; status and Confluence pages |
 
-**Good to know**: the code wins over Jira and Confluence, and every difference is listed; every statement has a code reference you can open; one person edits a domain at a time; when the code changes, the session start names the domains to refresh; nothing is published without your approval.
+**Good to know**: the code wins over Jira and Confluence, and every difference is listed; every statement has a code reference you can open; one person edits a domain at a time; when the code changes, the session start names the domains to refresh; nothing is published without your approval. For the diagrams to show as pictures in Confluence, set your Atlassian API token once (`QA_DOCS_CONFLUENCE_EMAIL`, `QA_DOCS_CONFLUENCE_TOKEN`; `/qa-docs:check` tells whether it is set).

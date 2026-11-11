@@ -1,0 +1,9 @@
+{
+  "layout": "{{domain | mirror}}",
+  "builtFrom": "{{YYYY-MM-DD HH:MM, when doc/ was turned into these pages}}",
+  "pages": [
+    { "file": "index.html", "title": "{{domain title}}", "doc": "README.md" },
+    { "file": "{{flow}}.html", "title": "{{domain title}}: {{process name}}", "doc": "flows/{{flow}}.md", "parent": "index.html" },
+    { "file": "rules.html", "title": "{{domain title}}: {{Business rules}}", "doc": "reference/rules.md", "parent": "index.html" }
+  ]
+}
