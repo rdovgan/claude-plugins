@@ -5,7 +5,7 @@ description: Phase 4 of qa-docs - write the domain document as a set of short pa
 
 # domain-write
 
-Phase 4. You write `qa-docs/domains/<slug>/doc/`, update `qa-docs/domains.md`, and append to `history.md`. The files `00`-`03`, `work/` and `history.md` are the research trail; `doc/` is what people read.
+Phase 4. You write `qa-docs/domains/<slug>/doc/`, update `qa-docs/domains.md`, and append to `history.md`. The files `00`-`03`, `work/` and `history.md` are the research trail; `doc/` is the checked document, and `confluence/` (built from it by `domain-confluence` after approval) is what people read in Confluence.
 
 ## Who reads it
 

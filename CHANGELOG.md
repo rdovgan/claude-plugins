@@ -2,6 +2,23 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## qa-docs [0.4.0] - 2026-10-28
+
+QA feedback: moving a domain to Confluence still took manual work. The pages were dry and written for testers only, and the diagrams were mermaid code with a path on the server.
+
+### Added
+- `confluence/` in every domain: the document as Confluence pages, written by the new `domain-confluence` skill from `doc/` after approval. The files are Confluence HTML bodies, exactly what the export sends (`contentFormat: "html"`): info, note and warning panels, status lozenges, Jira cards, a table of contents on long pages, and code references folded into "Code references" expands instead of inline. `pages.json` holds the tree (file, title, source `doc/` page, parent). Templates in `templates/confluence/` follow the team's own pages: the root has "new here? read in this order", the overview picture, a routing table "I need to... → page", processes, "facts people forget", the main differences in a warning panel, terms and sources. Each process page has a summary panel, the diagram, steps, a worked example with numbers, rules, a table "situation / what the user sees / what is stored", edge cases and how to check. Mirror documents get `page.html` and `changes.html` in the old page's structure. Adds no facts.
+- `scripts/confluence-pages.sh <domain> [--check]`: checks the pages (tree, unique titles, placeholders, leftover markdown, storage XML, diagrams with their PNG, links between pages) and writes `confluence/preview/` (the pages with Confluence-like styles, pictures and a page tree) to open in a browser. `--check` also reports pages older than `doc/`.
+- `scripts/confluence-attach.sh <domain> <page>`: uploads the page's diagrams as attachments through the Confluence REST API with the user's own token (`QA_DOCS_CONFLUENCE_EMAIL`, `QA_DOCS_CONFLUENCE_TOKEN`), only to pages in the domain's `meta.json`. Records them in `meta.json` `confluence.attachments` and skips unchanged PNGs.
+- `scripts/confluence-body.sh <domain> <page> [--no-images]`: the body to send, with attachment ids and page URLs filled in (or the PNG path when there is no token).
+- `/qa-docs:confluence <slug>`: build or rebuild the pages and the preview; publishes nothing.
+
+### Changed
+- `/qa-docs:export` publishes `confluence/` as it is (rebuilding it first if it is older than `doc/`), creates the pages, uploads the pictures, then sends the bodies. Manual edits are compared against the page as read back after the last export. Page ids stay keyed by the `doc/` path, so pages exported by 0.3 are updated in place.
+- `/qa-docs:document`, `update-page`, `rewrite` and `domain-verify` build `confluence/` after approval; `/qa-docs:refresh` rebuilds it.
+- `check-refs.sh` also checks `<code>` references in `confluence/*.html`. The Stop hook checks the pages. The file guard allows `.html` only in `domains/<slug>/confluence/`. The Bash guard refuses commands that mention the token variables. `/qa-docs:check` reports whether the token and `curl` are available. `server/README.md` covers the token setup.
+- 16 more cases in `test-fixtures/qa-docs/test-guards.sh`.
+
 ## [0.10.0] - 2026-10-28
 
 ### Added

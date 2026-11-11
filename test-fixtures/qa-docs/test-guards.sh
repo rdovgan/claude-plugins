@@ -158,5 +158,46 @@ printf '\n- [Rules](reference/rules.md)\n' >> "$D/doc/README.md"
 check "stop hook reports a broken page link" "echo '{\"session_id\":\"s4\"}' | '$P/hooks/scripts/verify-docs.sh' | grep -q \"link to 'reference/rules.md'\""
 check "session start flags old single-file domains" "echo '{\"session_id\":\"s5\"}' | '$P/hooks/scripts/session-start.sh' | grep -q 'refunds: .*update of Confluence page 500.*rewrite refunds'"
 
+# Confluence pages: check, preview, references, bodies, attachments
+C="$D/confluence"
+mkdir -p "$C"
+printf '<p>Bookings.</p>\n<img data-diagram="overview" src="../doc/diagrams/overview.png" alt="Overview">\n<p><a href="create.html">Create</a></p>\n<details><summary>Code</summary><p><code>core-module/src/A.java:2</code></p></details>\n' > "$C/index.html"
+printf '<div data-type="panel-info"><p>Create.</p></div>\n<img data-diagram="create" src="../doc/diagrams/create.png" alt="Create">\n<p><a href="index.html">Back</a></p>\n' > "$C/create.html"
+printf '{"layout":"domain","pages":[{"file":"index.html","title":"Bookings","doc":"README.md"},{"file":"create.html","title":"Bookings: Create","doc":"flows/create.md","parent":"index.html"}]}\n' > "$C/pages.json"
+check "confluence pages pass and build a preview" "'$P/scripts/confluence-pages.sh' '$D' | grep -q 'confluence: 2 pages, 2 diagrams, 0 problems' && grep -q 'src=\"../../doc/diagrams/overview.png\"' '$C/preview/index.html' && [ -f '$C/preview/style.css' ]"
+check "confluence check is clean" "'$P/scripts/confluence-pages.sh' '$D' --check >/dev/null"
+touch "$D/doc/flows/create.md"; sleep 1; touch "$D/doc/flows/create.md"
+check "confluence check reports pages older than doc" "'$P/scripts/confluence-pages.sh' '$D' --check | grep -q 'confluence/ is older than doc/flows/create.md'"
+touch "$C/pages.json"
+printf '## Cancel {{x}}\n<img src="../doc/diagrams/cancel.png">\n<p><a href="nope.html">x</a></p>\n' > "$C/cancel.html"
+out="$("$P/scripts/confluence-pages.sh" "$D" --check)"
+check "confluence: unlisted page, placeholder, markdown, bare img, bad link" "printf '%s' \"\$out\" | grep -q 'cancel.html: not listed in pages.json' && printf '%s' \"\$out\" | grep -q 'placeholder left' && printf '%s' \"\$out\" | grep -q 'markdown left' && printf '%s' \"\$out\" | grep -q 'without data-diagram' && printf '%s' \"\$out\" | grep -q \"link to 'nope.html'\""
+rm -f "$C/cancel.html"
+printf '<p><code>core-module/src/Nope.java:1</code></p>\n' >> "$C/create.html"
+check "check-refs reads <code> in confluence pages" "'$P/scripts/check-refs.sh' '$D' | grep -q 'create.html: .core-module/src/Nope.java:1.: file does not exist'"
+check "check-refs skips the preview" "! '$P/scripts/check-refs.sh' '$D' | grep -q 'preview/'"
+sed -i.bak '$d' "$C/create.html" && rm -f "$C/create.html.bak"
+t "write a confluence page" 0 guard-files.sh "$(f Write "$C/create.html" s6)"
+t "write html outside confluence/" 2 guard-files.sh "$(f Write "$D/doc/x.html" s6)"
+t "echo the confluence token" 2 guard-bash.sh "$(b 'echo $QA_DOCS_CONFLUENCE_TOKEN')"
+check "body needs page URLs first" "'$P/scripts/confluence-body.sh' '$D' index.html | grep -q 'link to create.html: that page has no Confluence URL'"
+printf '{"domain":"bookings","modules":{"core-module":"abc"},"confluence":{"pageId":"77","url":"https://x/wiki/77","pages":{"flows/create.md":{"pageId":"88","url":"https://x/wiki/88"}},"attachments":{"77/overview":{"fileId":"f-1","collection":"contentId-77","sha":"s"}}}}\n' > "$D/meta.json"
+check "body resolves picture and link" "o=\$('$P/scripts/confluence-body.sh' '$D' index.html) && grep -q 'data-id=\"f-1\" data-collection=\"contentId-77\" data-alt=\"Overview\"' \"\$o\" && grep -q 'href=\"https://x/wiki/88\"' \"\$o\" && ! grep -q '<img' \"\$o\""
+check "body reports a diagram not attached" "'$P/scripts/confluence-body.sh' '$D' create.html | grep -q 'diagram \"create\" is not attached to page 88'"
+check "body without images names the PNG path" "o=\$('$P/scripts/confluence-body.sh' '$D' create.html --no-images) && grep -q 'qa-docs/domains/bookings/doc/diagrams/create.png' \"\$o\""
+check "attach without token stops with exit 3" "env -u QA_DOCS_CONFLUENCE_EMAIL -u QA_DOCS_CONFLUENCE_TOKEN '$P/scripts/confluence-attach.sh' '$D' index.html 2>/dev/null; [ \$? = 3 ]"
+cat > "$T/bin/curl" <<'STUB'
+#!/usr/bin/env bash
+cat >/dev/null
+printf '{"results":[{"extensions":{"fileId":"f-new","collectionName":"contentId-88"}}]}'
+STUB
+chmod +x "$T/bin/curl"
+check "attach uploads, records, then skips unchanged" "PATH='$T/bin':\$PATH QA_DOCS_CONFLUENCE_EMAIL=a QA_DOCS_CONFLUENCE_TOKEN=b '$P/scripts/confluence-attach.sh' '$D' create.html | grep -q 'uploaded create' && jq -e '.confluence.attachments[\"88/create\"].fileId == \"f-new\"' '$D/meta.json' >/dev/null && PATH='$T/bin':\$PATH QA_DOCS_CONFLUENCE_EMAIL=a QA_DOCS_CONFLUENCE_TOKEN=b '$P/scripts/confluence-attach.sh' '$D' create.html | grep -q 'same     create'"
+echo '{"session_id":"s7"}' | "$P/hooks/scripts/session-start.sh" >/dev/null
+sleep 1
+printf '<p>{{x}}</p>\n' >> "$C/create.html"
+printf '## %s - t - confluence\n' "$(date +%Y-%m-%d)" >> "$D/history.md"
+check "stop hook reports a broken confluence page" "echo '{\"session_id\":\"s7\"}' | '$P/hooks/scripts/verify-docs.sh' | grep -q 'Confluence pages in bookings/confluence/'"
+
 echo; [ "$fails" = 0 ] && echo "all passed ($T)" || echo "$fails failed ($T)"
 [ "$fails" = 0 ]

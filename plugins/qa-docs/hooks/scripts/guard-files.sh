@@ -56,7 +56,9 @@ case "$rel" in
 esac
 case "$lower" in
   *.md|*.mmd|*.json|*.txt|*.csv|*.svg|*.png) ;;
-  *) echo "qa-docs: writing '$file' is blocked: only documents (.md .mmd .json .txt .csv .svg .png) are kept in qa-docs/." >&2; exit 2 ;;
+  # Confluence pages of a domain: HTML body fragments that /qa-docs:export sends as they are.
+  domains/*/confluence/*.html) ;;
+  *) echo "qa-docs: writing '$file' is blocked: only documents (.md .mmd .json .txt .csv .svg .png, and .html pages in domains/<slug>/confluence/) are kept in qa-docs/." >&2; exit 2 ;;
 esac
 
 case "$rel" in

@@ -152,7 +152,8 @@ Only there does the session load the workspace settings (secret rules, Confluenc
 | `/qa-docs:document <domain \| flow \| key \| page>` | Full document: scope (you confirm) → Jira/Confluence → code research → pages in `doc/` → verification |
 | `/qa-docs:verify <slug>` | Check a document again: references, facts against the code, approval by a person |
 | `/qa-docs:refresh <slug>` | Update a document after the code changed |
-| `/qa-docs:export <slug>` | Publish to Confluence as a page tree, keeping manual edits on each page |
+| `/qa-docs:confluence <slug>` | Build the Confluence pages from the document, with a local preview; publishes nothing |
+| `/qa-docs:export <slug>` | Publish the Confluence pages as a page tree with the diagrams as pictures, keeping manual edits on each page |
 | `/qa-docs:update-page <link>` | New version of an old Confluence page in its own structure, with a list of what changed. The old page only gets a link comment |
 | `/qa-docs:rewrite <slug>` | Move a 0.2 single-file document into the page set, without new research |
 | `/qa-docs:map` | Build or update `qa-docs/modules.md` (repositories and their connections) and `qa-docs/domains.md` (domains and their status) |
@@ -168,7 +169,9 @@ A document is a set of short linked pages in `domains/<slug>/doc/`:
 | `reference/` | `rules.md` (each rule stated once, linked from the process pages), `states.md`, `data.md`, `config.md`, `integrations.md` |
 | `differences.md`, `open-questions.md` | Where the code disagrees with Jira/Confluence; what is still unknown |
 
-Diagrams are rendered to PNG on the server with mermaid-cli (`doc/diagrams/`). Confluence gets the mermaid code and the PNG path, because the MCP server cannot upload attachments.
+`doc/` is the checked record, with a code reference in every statement. After approval the same facts are written as Confluence pages in `domains/<slug>/confluence/`: Confluence HTML exactly as the export sends it (info and warning panels, status lozenges, Jira cards, "I need to... → page" routing, worked examples, code references folded into expands), `pages.json` for the tree, and `confluence/preview/index.html` to see them in a browser before publishing. `/qa-docs:confluence <slug>` rebuilds them; nobody edits them by hand.
+
+Diagrams are rendered to PNG on the server with mermaid-cli (`doc/diagrams/`). The export uploads them as attachments of their pages with each QA's own Atlassian API token (`QA_DOCS_CONFLUENCE_EMAIL`, `QA_DOCS_CONFLUENCE_TOKEN` in `~/.profile`), because the MCP server cannot upload attachments. Without the token the pages show the PNG path.
 
 ### Usage limits
 
@@ -183,7 +186,8 @@ Hooks block:
 - writes anywhere except documents in `qa-docs/`;
 - two sessions working on one domain at once;
 - non-read-only Bash and Jira calls;
-- Confluence writes outside the configured parent page or to pages qa-docs did not create.
+- Confluence writes outside the configured parent page or to pages qa-docs did not create (diagram uploads too);
+- commands that mention the Atlassian token.
 
 On stop, the documents must be consistent and every `repo/path:line` reference must resolve. The guards have no off switch.
 

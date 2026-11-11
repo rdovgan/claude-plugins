@@ -13,6 +13,11 @@ block() {
   exit 2
 }
 
+# The personal Atlassian token is read by confluence-attach.sh itself; it never appears in a command.
+case "$cmd" in
+  *QA_DOCS_CONFLUENCE_TOKEN*|*QA_DOCS_CONFLUENCE_EMAIL*) block "commands that mention the Atlassian credentials are not allowed; scripts/confluence-attach.sh reads them itself." ;;
+esac
+
 # Command substitution runs code even inside double quotes.
 case "$cmd" in
   *'$('*|*'`'*|*'<('*|*'>('*) block "command substitution is not allowed." ;;

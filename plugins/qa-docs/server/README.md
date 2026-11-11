@@ -26,9 +26,9 @@ sudo setfacl -R -d -m g:qa:rwX /srv/projects/qa-docs # new files are group-writa
 sudo setfacl -R -m g:qa:rwX /srv/projects/qa-docs
 ```
 
-Install `git`, `jq` and Claude Code. Without `jq` the plugin blocks every tool call (fails closed).
+Install `git`, `jq`, `curl` and Claude Code. Without `jq` the plugin blocks every tool call (fails closed).
 
-Diagrams are rendered to PNG on the server with mermaid-cli (Confluence here has no mermaid app, and the Atlassian MCP server cannot upload attachments, so the pictures stay in `qa-docs/domains/<slug>/doc/diagrams/` next to their mermaid source):
+Diagrams are rendered to PNG on the server with mermaid-cli (Confluence here has no mermaid app); the PNGs are kept in `qa-docs/domains/<slug>/doc/diagrams/` next to their mermaid source, and the export uploads them as attachments with each QA's own API token (section 5):
 
 ```bash
 sudo apt-get install -y nodejs npm chromium fonts-noto fonts-noto-cjk   # or the distribution's chromium-browser
@@ -80,6 +80,15 @@ cd /srv/projects && claude
 ```
 
 In Claude Code: log in, then `/plugin marketplace add git@github.com:rdovgan/claude-plugins.git` (or the admin preinstalls it) and `/plugin install qa-docs@team-plugins`; `/mcp` -> `jira` -> log in with their own Atlassian account; `/qa-docs:onboarding`.
+
+For the diagrams to appear as pictures in Confluence, each QA engineer creates an Atlassian API token (https://id.atlassian.com/manage-profile/security/api-tokens) and adds it to their own `~/.profile` (mode 600, readable only by them):
+
+```bash
+export QA_DOCS_CONFLUENCE_EMAIL=name@company.com
+export QA_DOCS_CONFLUENCE_TOKEN=<token>
+```
+
+The Atlassian MCP server cannot upload attachments, so `scripts/confluence-attach.sh` uploads the PNGs of a page through the REST API with this token, only to pages that qa-docs exported for that domain; the token is passed to `curl` through stdin and the Bash guard refuses commands that mention the variables. Do not put the token in `~/.claude/settings.json`: Claude can read that folder. Without the token the export still works, with the picture paths on the pages. The server needs `curl`.
 
 Sessions start in `/srv/projects`. Starting inside one repository also works (the plugin finds the workspace as the parent), with the other repositories as `additionalDirectories`.
 

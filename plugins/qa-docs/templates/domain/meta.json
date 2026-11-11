@@ -26,6 +26,7 @@
     "pages": {
       "{{doc-relative path, for example flows/create.md}}": { "pageId": "", "url": "" }
     },
+    "attachments": {},
     "sourceCommentId": ""
   }
 }

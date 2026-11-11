@@ -21,4 +21,4 @@ Phase 5. A document becomes the source of truth only after this phase. You write
 5. Fill `${CLAUDE_PLUGIN_ROOT}/templates/domain/03-verification.md` with the results of all three layers.
 6. On approval: `meta.json` `status` = `verified`, `verifiedBy`, `verifiedAt`; update the status line at the top of `doc/README.md` (for `mirror`, the first line of `doc/page.md`). Append a `history.md` entry.
 
-Then, if export is configured and the user approved, offer `/qa-docs:export <slug>`. Do not export without that.
+On approval, build the Confluence pages with `domain-confluence` in the same turn (corrections made here would otherwise not reach them). Then, if export is configured, offer `/qa-docs:export <slug>`. Do not export without the approval.

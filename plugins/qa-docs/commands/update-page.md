@@ -16,6 +16,7 @@ The old page is read-only: its text, structure and history stay as they are. Eve
    - `domain-research`: as usual, within the budget; every claim gets its verdict.
    - `domain-write` (section "Mirror of an old page"): `doc/page.md` in the old structure, `doc/changes.md`, diagrams rendered to PNG.
    - `domain-verify`: as usual; it also checks that the structure matches the old page.
+   - on approval, `domain-confluence` (section "Mirror of an old page"): `confluence/page.html`, `confluence/changes.html` and the preview.
 5. Finish with one short message: the folder, how current the old page was (confirmed / changed / new / removed counts), the changes that matter most, open questions, and `/qa-docs:export <slug>` if it was approved: it publishes the new page under the qa-docs parent page and adds a comment with the link on the old page.
 
 If `$ARGUMENTS` is empty, ask for the page link.
