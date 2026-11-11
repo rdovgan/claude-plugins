@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## [0.11.0] - 2026-11-11
+
+### Added
+- Commit message on uncommitted changes (java-developer): `verify.sh` asks Claude, once per distinct change set across the workspace repos (submodules included), to end the reply with a ready commit message in the repository's `git log` style, without AI attribution, and not to commit. The `CLAUDE.md` template carries the same rule in the workflow section. The hook also fires when no Java file changed.
+
 ## [0.10.0] - 2026-10-28
 
 ### Added

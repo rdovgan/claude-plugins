@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Stop: tests of changed modules (in every repo of the workspace) + one-time session-summary reminder.
+# Stop: tests of changed modules (in every repo of the workspace), a commit message for uncommitted changes
+# (once per change set) and a one-time session-summary reminder.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 jt_require_jq
@@ -70,7 +71,33 @@ $(printf '%s\n' "$out" | tail -n 50)"
   fi
 done < <(jt_workspace_repos)
 
-[ -n "$tested" ] || exit 0
+# Uncommitted changes in any repo of the workspace (submodules included): ask for a ready commit message
+# once per distinct change set. Claude does not commit on its own, so the developer gets a message to commit with.
+commit_note=""
+commit_state=""
+if [ -n "$(while IFS= read -r repo; do [ -n "$repo" ] && git -C "$repo" status --porcelain 2>/dev/null; done < <(jt_workspace_repos))" ]; then
+  commit_state="$(while IFS= read -r repo; do
+    [ -n "$repo" ] || continue
+    git -C "$repo" diff HEAD 2>/dev/null
+    git -C "$repo" ls-files --others --exclude-standard 2>/dev/null
+    git -C "$repo" submodule foreach --quiet 'git diff HEAD; git ls-files --others --exclude-standard' 2>/dev/null
+  done < <(jt_workspace_repos) | cksum | cut -d' ' -f1)"
+  if [ "$(cat "$data/commit-state.$sid" 2>/dev/null)" != "$commit_state" ]; then
+    commit_note="There are uncommitted changes. Do not commit them. End your reply with a ready commit message in a fenced block: the style of git log in this repository (summary line, optional body), no AI attribution (no Co-Authored-By, no session links, no model names). Give one message per repository when several repositories or a submodule changed."
+  fi
+fi
+# Blocks Stop with the reason plus the commit note; the note counts as delivered once it is sent.
+block() {
+  local reason="${1:-}"
+  [ -n "$commit_note" ] && { reason="${reason:+$reason
+}$commit_note"; printf '%s' "$commit_state" > "$data/commit-state.$sid"; }
+  jq -n --arg r "$reason" '{decision: "block", reason: $r}'
+}
+
+if [ -z "$tested" ]; then
+  [ -n "$commit_note" ] && block ""
+  exit 0
+fi
 
 if [ -n "$failed" ]; then
   if [ "$active" = "true" ]; then
@@ -95,7 +122,7 @@ if [ -n "$spec" ] && [ ! -f "$data/spec-reminded.$sid" ]; then
   set -- $nums
   if [ "$(jt_spec_ticks "$spec")" -le "$base_ticks" ] && [ "${1:-0}" -lt "${2:-0}" ] 2>/dev/null; then
     : > "$data/spec-reminded.$sid"
-    jq -n --arg r "Code changed in this session, but no acceptance criterion in ${spec#"$(jt_project_dir)"/} is ticked ($1 of $2 steps done). Tick the criteria you have verified ([x]) and add a one-line Result under the step; if the work is outside the spec, say so and update the spec. Then finish." '{decision: "block", reason: $r}'
+    block "Code changed in this session, but no acceptance criterion in ${spec#"$(jt_project_dir)"/} is ticked ($1 of $2 steps done). Tick the criteria you have verified ([x]) and add a one-line Result under the step; if the work is outside the spec, say so and update the spec. Then finish."
     exit 0
   fi
 fi
@@ -109,6 +136,8 @@ if [ ! -f "$flag" ]; then
   else
     msg="Tests passed. Run the session-summary skill to save the session summary, then finish."
   fi
-  jq -n --arg r "$msg" '{decision: "block", reason: $r}'
+  block "$msg"
+elif [ -n "$commit_note" ]; then
+  block ""
 fi
 exit 0
