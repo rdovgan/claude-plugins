@@ -54,6 +54,8 @@ Branch: `<fix|feature|epic>/<TICKET>/<Short-description>` from the up-to-date ba
 6. Review: `/java-developer:review`.
 
 Trivial path: a plan of up to 3 lines in chat -> the change -> the module's tests -> a 3-line self-check. The user can say "quick" or "full" to override the level. Questions about code with no intent to change it skip these phases.
+
+Commits: do not commit unless the developer asks. When a reply leaves uncommitted changes, end it with a ready commit message in a fenced block - the style of `git log` in this repository, no AI attribution - one message per repository if a submodule changed too.
 <!-- java-team:generated:end -->
 
 ## Definition of done
