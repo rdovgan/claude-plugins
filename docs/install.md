@@ -1,5 +1,7 @@
 # Installing the `java-developer` plugin
 
+`qa-analyst` (QA task analysis) installs the same way: `PLUGIN=qa-analyst ./install.sh` or `/plugin install qa-analyst@team-plugins`, then `/qa-analyst:setup` in a project. It uses the same Jira login, Jira attachment token and DB variables as below. It needs `jq` (its guards block every tool call without it) but not `mvn` or `java`. `QA_ANALYST_OFF=1` switches its guards off.
+
 ## Quick start (new developer)
 
 ```
@@ -42,7 +44,7 @@ Update: `/plugin marketplace update team-plugins`.
 
 ## 4. Database (MCP, read-only)
 
-Both plugins (`java-developer` and `java-analyst`) read the same variables and start the same read-only DB server, so set them once. Set environment variables (in `~/.zshrc` or a secrets manager; never commit them):
+`java-developer`, `java-analyst` and `qa-analyst` read the same variables and start the same read-only DB server, so set them once. Set environment variables (in `~/.zshrc` or a secrets manager; never commit them):
 
 ```
 export JAVA_TEAM_DB_URL="mysql://host:3306/dbname"   # no login or password
@@ -50,7 +52,7 @@ export JAVA_TEAM_DB_USER="readonly_user"
 export JAVA_TEAM_DB_PASSWORD="..."
 ```
 
-The database is MySQL; use a non-prod environment. Schema changes are not made through this server. The DB user must have read-only grants and only on a non-prod environment. Without the variables the DB server does not start; the rest of the plugin keeps working. In `java-analyst` the server accepts only single `SELECT`/`SHOW`/`DESCRIBE`/`EXPLAIN` statements (`guard-mcp.sh`); `JAVA_TEAM_VAULT` is used by `java-developer` only (`session-summary`).
+The database is MySQL; use a non-prod environment. Schema changes are not made through this server. The DB user must have read-only grants and only on a non-prod environment. Without the variables the DB server does not start; the rest of the plugin keeps working. In `java-analyst` and `qa-analyst` the server accepts only single `SELECT`/`SHOW`/`DESCRIBE`/`EXPLAIN` statements (`guard-mcp.sh`); `JAVA_TEAM_VAULT` is used by `java-developer` only (`session-summary`).
 
 ## 5. Session summary
 

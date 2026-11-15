@@ -1,0 +1,8 @@
+{
+  "name": "qa-analyst",
+  "version": "0.1.0",
+  "description": "Analysis-only task workflow for QA: reads tickets, linked requirements, logs, the database and the code, and writes plain-language documents - the answer, flows, findings, test scenarios and ready-to-paste ticket notes. No code examples, never changes code.",
+  "author": {
+    "name": "Java Team Tech Lead"
+  }
+}

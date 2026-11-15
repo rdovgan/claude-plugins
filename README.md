@@ -1,11 +1,12 @@
 # team-plugins
 
-Claude Code plugins for the Java team. The marketplace is called `team-plugins` and holds three plugins: one for each role.
+Claude Code plugins for the Java team. The marketplace is called `team-plugins` and holds four plugins: one for each role.
 
 | Plugin | Who uses it | What it does | Changes code |
 | --- | --- | --- | --- |
 | [`java-developer`](#java-developer) | Developers | Takes a ticket from Jira to a reviewed branch: research, questions, spec, implementation, tests, review | Yes |
 | [`java-analyst`](#java-analyst) | Analysts, leads | Analyses a ticket and writes local documents: flows, findings, solution options, implementation guide | No |
+| [`qa-analyst`](#qa-analyst) | QA | Analyses a ticket, a log or a question ("is this a bug?") and writes plain-language documents: answer, flows, findings, test scenarios, ticket notes | No |
 | [`qa-docs`](#qa-docs) | QA | Documents one business domain from the code of all repositories, Jira and Confluence, verifies it, exports to Confluence | No |
 
 Enable only one of them in a project or session.
@@ -17,13 +18,14 @@ git clone git@github.com:rdovgan/claude-plugins.git
 cd claude-plugins
 ./install.sh                        # java-developer
 PLUGIN=java-analyst ./install.sh    # or java-analyst
+PLUGIN=qa-analyst ./install.sh      # or qa-analyst
 PLUGIN=qa-docs ./install.sh         # or qa-docs (usually done by the server admin)
 ```
 
 The script checks the tools (`jq`, `git`, `mvn`), connects the marketplace, installs the plugin and says which variables are missing. Then open a project, start `claude` and run:
 
 1. `/mcp` → `jira` → log in with your Atlassian account.
-2. `/java-developer:onboarding`, `/java-analyst:onboarding` or `/qa-docs:onboarding`: a 3-5 minute tour.
+2. `/java-developer:onboarding`, `/java-analyst:onboarding`, `/qa-analyst:onboarding` or `/qa-docs:onboarding`: a 3-5 minute tour.
 
 Manual installation, every variable and troubleshooting: [docs/install.md](docs/install.md).
 
@@ -31,8 +33,8 @@ Manual installation, every variable and troubleshooting: [docs/install.md](docs/
 
 | Variable | Plugin | Needed for |
 | --- | --- | --- |
-| `JAVA_TEAM_DB_URL`, `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD` | developer, analyst | Read-only MySQL access. Without them the DB server does not start, everything else works |
-| `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN` | developer, analyst | Downloading ticket attachments. The Jira MCP server returns only their names |
+| `JAVA_TEAM_DB_URL`, `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD` | developer, analyst, qa-analyst | Read-only MySQL access. Without them the DB server does not start, everything else works |
+| `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN` | developer, analyst, qa-analyst | Downloading ticket attachments. The Jira MCP server returns only their names |
 | `JAVA_TEAM_VAULT` | developer | Obsidian vault for `session-summary` (default `~/Claude Vault`) |
 
 Never commit these values. qa-docs needs none: the admin configures `.qa-docs/config.env` on the server.
@@ -127,6 +129,33 @@ Nothing is published to Jira or Confluence.
 
 ---
 
+## qa-analyst
+
+For a QA engineer who needs an answer, not a fix: is this a bug or expected, why did a case fail, what must be tested, did the fix change the right thing. The plugin reads the Jira ticket and its Confluence pages, the logs, the database (read-only) and the code, and explains the result in plain language. It gives no code examples and no implementation advice; code is evidence it reads.
+
+```
+/qa-analyst:setup                                    # once per project: shows missing settings, adds them on confirmation
+/qa-analyst:analyze <key | link | text | log path>
+```
+
+`analyze` runs research → interview → report. Requirements and expected behaviour from the ticket and Confluence are quoted verbatim (`R1`, `R2`, ...); logs are turned into a timeline (big ones by the `log-reader` agent, personal data masked); the data of the case is checked with `SELECT` queries that QA can re-run. The interview asks in product terms only what the sources do not answer. The result lands in `.claude/qa-analysis/<task>/` (excluded from git through `.git/info/exclude`):
+
+| File | Content |
+| --- | --- |
+| `00-README` | The answer (verdict), what to do next, reading order |
+| `01-research` | Requirements, sources, evidence from logs and the DB |
+| `02-interview` | Questions and answers |
+| `03-flows` | Business flow charts: now vs expected, timeline of the case |
+| `04-findings` | Cause, impact, what to retest, requirements coverage; technical references for developers |
+| `05-test-scenarios` | Scenarios `T*` with preconditions, test data, steps, expected results |
+| `06-ticket-notes` | Ready-to-paste bug report or ticket comment, questions to the team |
+
+Nothing is published to Jira or Confluence.
+
+**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands (`zgrep`/`zcat` included for compressed logs), MCP to read tools, the DB to one `SELECT` per call. The agent cannot stop with an unfinished analysis or with program code in the QA documents. `QA_ANALYST_OFF=1` turns the guards off.
+
+---
+
 ## qa-docs
 
 Builds a verified document per business domain from the real code of every repository (Java, PHP, JS), plus Jira and Confluence. QA uses it as the source of truth for requirements and test planning.
@@ -203,7 +232,7 @@ Before a release:
 
 ```bash
 claude plugin validate . --strict
-for p in java-developer java-analyst qa-docs; do claude plugin validate plugins/$p --strict; done
+for p in java-developer java-analyst qa-analyst qa-docs; do claude plugin validate plugins/$p --strict; done
 shellcheck plugins/*/hooks/scripts/*.sh plugins/qa-docs/scripts/*.sh plugins/qa-docs/server/*.sh
 test-fixtures/qa-docs/test-guards.sh
 ```
@@ -212,6 +241,7 @@ test-fixtures/qa-docs/test-guards.sh
 .claude-plugin/marketplace.json   marketplace definition
 plugins/java-developer/           skills, agents, commands, hooks, templates, .mcp.json
 plugins/java-analyst/             analysis skills, read-only guard hooks, document templates
+plugins/qa-analyst/               QA analysis skills, log reader, read-only guard hooks, document templates
 plugins/qa-docs/                  domain skills, agents, guard hooks, templates, server/ admin scripts
 test-fixtures/                    sample Maven project and review bait for acceptance tests
 docs/                             install guide, decisions, feature cheat sheet

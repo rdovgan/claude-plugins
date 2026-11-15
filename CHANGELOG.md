@@ -2,6 +2,18 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## qa-analyst [0.1.0] - 2026-11-15
+
+### Added
+- New plugin `qa-analyst` (D-42): task analysis for QA, built from `java-analyst` 0.6.0. `/qa-analyst:analyze <key | link | text | log path>` runs research, interview and report and writes `.claude/qa-analysis/<task>/`: `00-README` (the answer), `01-research`, `02-interview`, `03-flows` (business terms), `04-findings` (verdict, cause, impact, retest areas, technical references for developers), `05-test-scenarios` (`T*`), `06-ticket-notes` (bug report or ticket comment to paste). Plain language, no code examples, no fix proposals.
+- Logs as a source: a path, a pasted fragment or a Jira attachment; the `log-reader` agent builds a timeline from big logs and masks personal data. `zcat`, `gzcat`, `zgrep`, `zegrep` are on the read-only Bash allowlist. Research also searches Jira for earlier tickets about the same behaviour.
+- The Stop hook also requires an `## Answer` in `00-README.md`, numbered scenarios in `05-test-scenarios.md`, and rejects program code blocks (Java, JS, Python, diff, ...) in the QA documents; mermaid, SQL, log lines and request bodies are allowed.
+- The session start hook warns when `java-developer`, `java-analyst` or `qa-docs` is enabled in the same project.
+
+### Fixed (compared to `java-analyst` 0.6.0)
+- The main-project hint in `session-start.sh` never fired: the condition had escaped `\&\&`.
+- `guard-files.sh` refused a write into a folder that does not exist yet (a new `.claude/qa-analysis/<task>/`) when the project path goes through a symlink; it now resolves the nearest existing ancestor.
+
 ## qa-docs [0.4.0] - 2026-10-28
 
 QA feedback: moving a domain to Confluence still took manual work. The pages were dry and written for testers only, and the diagrams were mermaid code with a path on the server.

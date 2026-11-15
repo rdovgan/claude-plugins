@@ -8,7 +8,7 @@ set -u
 MARKETPLACE_URL="${MARKETPLACE_URL:-git@github.com:rdovgan/claude-plugins.git}"   # override for a fork or a private mirror
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MARKETPLACE_NAME="team-plugins"
-PLUGIN="${PLUGIN:-java-developer}"   # PLUGIN=java-analyst | PLUGIN=qa-docs ./install.sh for the other plugins
+PLUGIN="${PLUGIN:-java-developer}"   # PLUGIN=java-analyst | PLUGIN=qa-analyst | PLUGIN=qa-docs ./install.sh for the other plugins
 YES=0; [ "${1:-}" = "--yes" ] && YES=1
 
 ok()   { printf '  [ok]   %s\n' "$1"; }
@@ -25,16 +25,20 @@ echo
 echo "1. Tools"
 missing=0
 if command -v claude >/dev/null 2>&1; then ok "claude"; else fail "claude CLI not found: https://docs.claude.com/en/docs/claude-code"; missing=1; fi
-for t in git jq mvn; do
+tools="git jq mvn"; [ "$PLUGIN" = qa-analyst ] && tools="git jq"   # qa-analyst builds nothing
+for t in $tools; do
   if command -v "$t" >/dev/null 2>&1; then ok "$t"; else
-    if [ "$t" = jq ]; then warn "jq missing: hooks will only warn instead of protecting (brew install jq / apt install jq)"
+    if [ "$t" = jq ] && [ "$PLUGIN" = qa-analyst ]; then fail "jq missing: the qa-analyst guards fail closed and block every tool call without it (brew install jq / apt install jq)"; missing=1
+    elif [ "$t" = jq ]; then warn "jq missing: hooks will only warn instead of protecting (brew install jq / apt install jq)"
     else fail "$t missing (mvn: brew install maven, or use the project's ./mvnw)"; [ "$t" = git ] && missing=1; fi
   fi
 done
-if command -v java >/dev/null 2>&1; then
-  ok "java: $(java -version 2>&1 | head -n1)"
-  warn "each repository needs the JDK its pom.xml targets; switch with your JDK manager if needed"
-else warn "java not found on PATH"; fi
+if [ "$PLUGIN" != qa-analyst ]; then
+  if command -v java >/dev/null 2>&1; then
+    ok "java: $(java -version 2>&1 | head -n1)"
+    warn "each repository needs the JDK its pom.xml targets; switch with your JDK manager if needed"
+  else warn "java not found on PATH"; fi
+fi
 [ "$missing" = 1 ] && { echo; echo "Install the missing tools and run this script again."; exit 1; }
 
 echo
@@ -82,6 +86,9 @@ fi
 echo "  1. cd into a project and run: claude"
 if [ "$PLUGIN" = "java-analyst" ]; then
   echo "  2. type: /java-analyst:help, then /java-analyst:analyze <task>"
+  echo "  3. in Claude Code run /mcp and complete OAuth for jira (read-only)"
+elif [ "$PLUGIN" = "qa-analyst" ]; then
+  echo "  2. type: /qa-analyst:setup, then /qa-analyst:onboarding   (a guided tour, about 3 minutes)"
   echo "  3. in Claude Code run /mcp and complete OAuth for jira (read-only)"
 else
   echo "  2. type: /java-developer:onboarding   (a guided tour, about 5 minutes)"
