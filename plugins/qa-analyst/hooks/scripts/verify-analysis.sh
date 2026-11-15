@@ -16,6 +16,7 @@ marker="$(qa_data_dir)/start.$sid"
 [ -d "$out" ] && [ -f "$marker" ] || exit 0
 
 problems=""
+formats="$(qa_formats)"
 while IFS= read -r f; do
   d="${f#"$out"/}"; d="${d%%/*}"
   printf '%s\n' "$d"
@@ -48,12 +49,27 @@ while IFS= read -r d; do
   done
   # QA documents explain behaviour in words: no program code. Mermaid, SQL check queries, log lines,
   # request/response bodies and shell commands to reproduce are allowed.
-  for doc in 00-README.md 03-flows.md 04-findings.md 05-test-scenarios.md 06-ticket-notes.md; do
+  for doc in 00-README.md 03-flows.md 04-findings.md 05-test-scenarios.md 06-ticket-notes.md confluence-page.md; do
     [ -f "$dir/$doc" ] || continue
     langs="$(grep -oE '^[[:space:]]*```[A-Za-z+#-]+' "$dir/$doc" | sed -E 's/^[[:space:]]*```//' | tr '[:upper:]' '[:lower:]' \
       | grep -xE 'java|kotlin|kt|groovy|scala|javascript|js|jsx|typescript|ts|tsx|python|py|php|go|golang|ruby|rb|c|cpp|c\+\+|cs|csharp|c#|rust|rs|swift|diff|patch' | sort -u | tr '\n' ' ')"
     [ -n "$langs" ] && problems="$problems
 - $d/$doc contains program code (${langs% }): QA documents describe behaviour in words; name the place in the technical references instead of quoting code"
+  done
+  # Output formats switched on in the plugin options (or QA_ANALYST_FORMATS).
+  for fmt in $formats; do
+    case "$fmt" in
+      visual)
+        [ -f "$dir/visual.json" ] && [ -f "$dir/visual.html" ] || problems="$problems
+- $d: the visual format is on but visual.json/visual.html are missing: run the present-visual skill"
+        [ -f "$dir/00-README.md" ] && ! grep -qE '^- Visual:' "$dir/00-README.md" && problems="$problems
+- $d/00-README.md has no '- Visual:' line with the artifact link (or 'not published' and the reason)" ;;
+      confluence)
+        if [ ! -f "$dir/confluence-page.md" ]; then problems="$problems
+- $d: the Confluence format is on but confluence-page.md is missing: run the present-confluence skill"
+        elif grep -q '{{' "$dir/confluence-page.md"; then problems="$problems
+- $d/confluence-page.md still has {{placeholders}}"; fi ;;
+    esac
   done
 done < "$(qa_data_dir)/touched.$sid"
 

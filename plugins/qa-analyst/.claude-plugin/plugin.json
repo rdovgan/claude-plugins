@@ -1,8 +1,22 @@
 {
   "name": "qa-analyst",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Analysis-only task workflow for QA: reads tickets, linked requirements, logs, the database and the code, and writes plain-language documents - the answer, flows, findings, test scenarios and ready-to-paste ticket notes. No code examples, never changes code.",
   "author": {
     "name": "Java Team Tech Lead"
+  },
+  "userConfig": {
+    "visual_artifact": {
+      "type": "boolean",
+      "title": "Visual page (Artifact)",
+      "description": "After each analysis, build an interactive page (verdict, flows, timeline, requirements, checklist of test scenarios) and publish it as a private Artifact on claude.ai. Personal data is masked before publishing.",
+      "default": false
+    },
+    "confluence_page": {
+      "type": "boolean",
+      "title": "Confluence-style page",
+      "description": "After each analysis, also write confluence-page.md: a plain overview for BA, PM and the team, ready to paste into Confluence. Nothing is published.",
+      "default": false
+    }
   }
 }

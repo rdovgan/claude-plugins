@@ -36,6 +36,12 @@ if [ -d "$root/.git" ]; then
   grep -qxF '.claude/analysis/' "$ex" 2>/dev/null || printf '.claude/analysis/\n' >> "$ex" 2>/dev/null
 fi
 
+fmts="$(ja_formats | tr '\n' ' ')"; fmts="${fmts% }"
+if [ -n "$fmts" ]; then
+  echo "java-analyst: output formats on (plugin options): ${fmts// /, }. After the report of /java-analyst:analyze, also run$(for f in $fmts; do [ "$f" = dev ] && f=dev-guide; printf ' present-%s' "$f"; done) for the same task folder and name the results in your final message."
+else
+  echo "java-analyst: output formats: documents only. The developer can ask for more per run (/java-analyst:analyze <task> --dev --visual --confluence) or afterwards (/java-analyst:present dev|visual|confluence [task]); switch them on for good with /plugin configure java-analyst@team-plugins."
+fi
 command -v git >/dev/null 2>&1 && echo "java-analyst: branch $(git symbolic-ref --short -q HEAD 2>/dev/null || echo detached)"
 
 out="$(ja_out_root)"
@@ -47,7 +53,7 @@ fi
 ws="$(ja_workspace_dir)"
 echo "java-analyst: workspace $ws (all repositories are siblings of this project)."
 main="${JAVA_ANALYST_MAIN_PROJECT:-}"
-if [ -n "$main" ] \&\& [ "$(basename "$root")" != "$main" ] \&\& [ -d "$ws/$main" ]; then
+if [ -n "$main" ] && [ "$(basename "$root")" != "$main" ] && [ -d "$ws/$main" ]; then
   echo "java-analyst: $main (../$main) is the main project: the core business logic lives there. Check how $main uses anything this task touches and say so in the findings."
 fi
 curated="${JAVA_ANALYST_MODULES_FILE:-$ws/modules.md}"

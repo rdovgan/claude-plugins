@@ -35,6 +35,7 @@ Manual installation, every variable and troubleshooting: [docs/install.md](docs/
 | --- | --- | --- |
 | `JAVA_TEAM_DB_URL`, `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD` | developer, analyst, qa-analyst | Read-only MySQL access. Without them the DB server does not start, everything else works |
 | `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN` | developer, analyst, qa-analyst | Downloading ticket attachments. The Jira MCP server returns only their names |
+| `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS` | analyst, qa-analyst | Optional. Overrides the output formats of the plugin options for this shell, e.g. `visual,confluence`; `none` for documents only |
 | `JAVA_TEAM_VAULT` | developer | Obsidian vault for `session-summary` (default `~/Claude Vault`) |
 
 Never commit these values. qa-docs needs none: the admin configures `.qa-docs/config.env` on the server.
@@ -123,7 +124,15 @@ For a ticket that needs analysis before anyone writes code. The developer implem
 | `05-proposals` | Solution options with code examples |
 | `06-implementation-guide` | Steps with acceptance criteria |
 
-Nothing is published to Jira or Confluence.
+Nothing is written to Jira or Confluence.
+
+**Output formats.** On top of the documents, the result can be presented for different readers. Turn formats on or off with `/plugin configure java-analyst@team-plugins`, add one for a single run with a flag (`/java-analyst:analyze ABC-123 --visual`), or build one later from a finished analysis with `/java-analyst:present <format> [task]`.
+
+| Format | Default | Result |
+| --- | --- | --- |
+| `dev` | on | `07-dev-guide.md` for a developer who codes it alone: UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests. It explains; it does not write the solution |
+| `visual` | off | An interactive page (recommendation, diagrams, requirements chart, options with effort and risk, the plan; long text behind info buttons) built from a fixed template and published as a private Artifact on claude.ai |
+| `confluence` | off | `confluence-page.md`: a plain overview for BA, PM, QA and the team, ready to paste into Confluence |
 
 **Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands, MCP to read tools, the DB to `SELECT`. The agent cannot stop with an unfinished analysis. `JAVA_ANALYST_OFF=1` turns the guards off.
 
@@ -151,6 +160,13 @@ For a QA engineer who needs an answer, not a fix: is this a bug or expected, why
 | `06-ticket-notes` | Ready-to-paste bug report or ticket comment, questions to the team |
 
 Nothing is published to Jira or Confluence.
+
+**Output formats.** The documents are always written; for readers who need another view, turn formats on with `/plugin configure qa-analyst@team-plugins`, add one for a single run (`/qa-analyst:analyze ABC-123 --visual`), or build one later with `/qa-analyst:present <format> [task]`.
+
+| Format | Default | Result |
+| --- | --- | --- |
+| `visual` | off | An interactive page for those who read visually: verdict, next steps, "now vs expected" diagrams, the log timeline, a requirements chart, a checklist of test scenarios, the ticket text with a copy button; long text behind info buttons. Built from a fixed template and published as a private Artifact on claude.ai, personal data masked |
+| `confluence` | off | `confluence-page.md`: a plain overview for BA, PM and the team (main cases, impact, decisions, open questions), ready to paste into Confluence |
 
 **Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands (`zgrep`/`zcat` included for compressed logs), MCP to read tools, the DB to one `SELECT` per call. The agent cannot stop with an unfinished analysis or with program code in the QA documents. `QA_ANALYST_OFF=1` turns the guards off.
 
