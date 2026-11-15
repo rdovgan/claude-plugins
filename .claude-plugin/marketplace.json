@@ -18,6 +18,11 @@
       "description": "Analysis-only task workflow: research, interview, flow charts, findings and proposed solutions as local documents; never changes code"
     },
     {
+      "name": "qa-analyst",
+      "source": "./plugins/qa-analyst",
+      "description": "Task analysis for QA: reads the Jira ticket, Confluence requirements, logs, the database and the code, and writes plain-language documents (answer, flows, findings, test scenarios, ticket notes); no code examples, never changes code"
+    },
+    {
       "name": "qa-docs",
       "source": "./plugins/qa-docs",
       "description": "Domain documentation for QA: researches code across repositories, Jira and Confluence, writes a verified domain document as linked pages with diagrams (PNG) per domain, turns it into ready Confluence pages with a preview and exports them with the pictures and brings old Confluence pages up to date; never changes code"

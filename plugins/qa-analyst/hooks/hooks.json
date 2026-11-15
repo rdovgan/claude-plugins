@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh\"", "timeout": 10 } ] }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/prompt-submit.sh\"", "timeout": 5 } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/guard-bash.sh\"", "timeout": 5 } ] },
+      { "matcher": "Read|Edit|Write|NotebookEdit", "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/guard-files.sh\"", "timeout": 5 } ] },
+      { "matcher": "mcp__.*", "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/guard-mcp.sh\"", "timeout": 5 } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/verify-analysis.sh\"", "timeout": 10 } ] }
+    ]
+  }
+}
