@@ -1,6 +1,6 @@
 ---
 description: Analyse a task end to end - research, interview, flow charts, findings, proposed solutions - as local documents. Does not change code.
-argument-hint: <Jira key | ticket link | task description>
+argument-hint: <Jira key | ticket link | task description> [--dev] [--visual] [--confluence]
 ---
 
 Analyse this task: $ARGUMENTS
@@ -12,6 +12,7 @@ This is an analysis-only run. You never change code, tests, configs or the build
    - `analysis-research` -> writes `01-research.md`
    - `analysis-interview` -> writes `02-interview.md`
    - `analysis-report` -> writes `03-flows.md`, `04-findings.md`, `05-proposals.md`, `06-implementation-guide.md` and `00-README.md`
-3. Finish with one short message: the folder path, the recommended solution in one sentence, and the open questions that still need an answer. Do not paste the documents.
+3. **Output formats.** The documents above are always written. On top of them, present the result in every extra format that is on for this run: the formats the session context lists as on (the plugin options), plus `--dev`, `--visual` and `--confluence` if `$ARGUMENTS` contains them (strip these flags from the task text). Run the skill of each format after `00-README.md` is written: `present-dev-guide` (`07-dev-guide.md`), `present-visual` (interactive page, published as a private Artifact), `present-confluence` (`confluence-page.md`).
+4. Finish with one short message: the folder path, the recommended solution in one sentence, the open questions that still need an answer, and the extra formats produced (file names, the artifact link). Do not paste the documents.
 
 If `$ARGUMENTS` is empty, ask the developer for the task with `AskUserQuestion`.

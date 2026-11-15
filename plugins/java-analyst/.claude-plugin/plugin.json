@@ -1,8 +1,28 @@
 {
   "name": "java-analyst",
-  "version": "0.6.0",
-  "description": "Analysis-only task workflow for Java teams: research, interview, flow charts, findings and proposed solutions as local documents. Never changes code.",
+  "version": "0.7.0",
+  "description": "Analysis-only task workflow for Java teams: research, interview, flow charts, findings and proposed solutions as local documents, plus optional output formats (developer guide, visual page, Confluence page). Never changes code.",
   "author": {
     "name": "Java Team Tech Lead"
+  },
+  "userConfig": {
+    "dev_guide": {
+      "type": "boolean",
+      "title": "Developer guide",
+      "description": "After each analysis, also write 07-dev-guide.md: how to build the solution in this codebase - UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests. It explains; it does not write the solution.",
+      "default": true
+    },
+    "visual_artifact": {
+      "type": "boolean",
+      "title": "Visual page (Artifact)",
+      "description": "After each analysis, build an interactive page (recommendation, flows, requirements, options with effort and risk, the plan) and publish it as a private Artifact on claude.ai. Secrets and personal data are left out.",
+      "default": false
+    },
+    "confluence_page": {
+      "type": "boolean",
+      "title": "Confluence-style page",
+      "description": "After each analysis, also write confluence-page.md: a plain overview for BA, PM, QA and the team, ready to paste into Confluence. Nothing is published.",
+      "default": false
+    }
   }
 }

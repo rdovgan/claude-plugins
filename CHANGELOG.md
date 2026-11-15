@@ -2,6 +2,24 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## qa-analyst [0.2.0] - 2026-11-15
+
+### Added
+- Output formats (D-43), switched on in the plugin options (`/plugin configure qa-analyst@team-plugins`, `userConfig`), per run with `--visual` / `--confluence`, or later with the new `/qa-analyst:present <format> [task]`. `QA_ANALYST_FORMATS` overrides the options for one shell.
+- `visual` (`present-visual`): an interactive page built by `scripts/build-visual.sh` from `visual.json` and the fixed template `templates/visual/visual.html` (verdict, next steps, flow diagrams side by side, log timeline, requirements donut with filters, checklist of test scenarios with progress, ticket text with a copy button, info buttons for long text, light and dark theme), published as a private Artifact; the link goes into `00-README.md` as `- Visual:`. Personal data is masked and no raw dumps go to the page.
+- `confluence` (`present-confluence`): `confluence-page.md`, a middle-depth page for the whole team from `templates/confluence/page.md`.
+- The session start hook names the formats that are on; the Stop hook requires their files and rejects program code in `confluence-page.md`.
+
+## java-analyst [0.7.0] - 2026-11-15
+
+### Added
+- Output formats (D-43), the same mechanism as in `qa-analyst`: plugin options, `--dev` / `--visual` / `--confluence` per run, `/java-analyst:present <format> [task]`, `JAVA_ANALYST_FORMATS`.
+- `dev` (`present-dev-guide`, on by default): `07-dev-guide.md`, a teaching guide for a developer who codes the task alone: class and sequence diagrams of the design, the patterns this codebase uses with real reference code (`path:line`), templates with TODOs for the new pieces and their tests, traps, a requirements map. It explains; it does not write the solution. The Stop hook requires a class or sequence diagram, code blocks and `R*` references in it.
+- `visual` and `confluence` as in `qa-analyst`, with solution options (effort, risk, recommended) and the implementation plan on the page instead of test scenarios.
+
+### Fixed
+- The main-project hint at session start never fired (escaped `&&`).
+
 ## qa-analyst [0.1.0] - 2026-11-15
 
 ### Added

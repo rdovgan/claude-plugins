@@ -65,6 +65,21 @@ ja_docs() {
   printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 05-proposals.md 06-implementation-guide.md
 }
 
+# Extra output formats on top of the documents, one per line: dev, visual, confluence.
+# Source: JAVA_ANALYST_FORMATS (comma list, "none" for none) if set, otherwise the plugin options
+# (/plugin configure java-analyst@team-plugins), which hooks receive as CLAUDE_PLUGIN_OPTION_<KEY>.
+# dev_guide is on unless switched off.
+ja_formats() {
+  local list="${JAVA_ANALYST_FORMATS:-}"
+  if [ -z "$list" ]; then
+    ja_truthy "${CLAUDE_PLUGIN_OPTION_DEV_GUIDE:-true}" && list="$list,dev"
+    ja_truthy "${CLAUDE_PLUGIN_OPTION_VISUAL_ARTIFACT:-false}" && list="$list,visual"
+    ja_truthy "${CLAUDE_PLUGIN_OPTION_CONFLUENCE_PAGE:-false}" && list="$list,confluence"
+  fi
+  printf '%s' "$list" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]' | grep -xE 'dev|visual|confluence' | sort -u
+}
+ja_truthy() { case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in true|1|yes|on) return 0 ;; esac; return 1; }
+
 # Resolve a path without requiring it to exist: absolute, `.` and `..` collapsed.
 ja_abspath() {
   local p="$1" base="${2:-$PWD}" out="" seg

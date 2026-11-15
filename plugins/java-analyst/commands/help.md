@@ -22,6 +22,15 @@ Output exactly this cheat sheet, then stop:
 | `05-proposals.md` | solution options with trade-offs, a recommendation, code examples |
 | `06-implementation-guide.md` | step-by-step plan with acceptance criteria and tests, for you to implement |
 
+**Output formats** (switch on or off for good: `/plugin configure java-analyst@team-plugins`; for one run: add the flag; for a finished analysis: `/java-analyst:present <format> [task]`):
+
+| Format | Default | Flag | For whom | Result |
+| --- | --- | --- | --- | --- |
+| documents | always | | everyone | the files above |
+| dev | on | `--dev` | a developer who codes it alone and wants it explained | `07-dev-guide.md`: UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests; explains, does not write the solution |
+| visual | off | `--visual` | those who read visually | interactive page: recommendation, diagrams, requirements chart, options with effort and risk, the plan; details open on hover. Published as a private Artifact on claude.ai |
+| confluence | off | `--confluence` | BA, PM, QA, the whole team | `confluence-page.md`: a plain overview with the main cases, the proposed solution, decisions and open questions, ready to paste into Confluence |
+
 **Rules that will stop the agent:** no writes to source code, tests, build files (`pom.xml`, `package.json`) or application configs; writes only inside the project; only read-only shell commands (`ls`, `grep`, `sed -n`, `git log/diff/show`, `npm ls`, ...); no reading `.env`/prod configs; Jira and the DB are read-only.
 
 **Tips:** the interview starts by showing how the task was understood: correct it there, it is the cheapest moment; it does not ask what the ticket or Confluence already answer, so a short interview is normal; requirements get ids (`R1`, `R2`, ...) that every document refers to; documents are written in the language you use. To continue an analysis, run the command again with the same key. `JAVA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.

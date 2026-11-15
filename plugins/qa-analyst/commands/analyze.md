@@ -1,6 +1,6 @@
 ---
 description: QA analysis of a task end to end - research (ticket, requirements, logs, DB, code), interview, then plain-language documents with the answer, flows, findings, test scenarios and ticket notes. Does not change code.
-argument-hint: <Jira key | ticket link | description | path to a log file>
+argument-hint: <Jira key | ticket link | description | path to a log file> [--visual] [--confluence]
 ---
 
 Analyse this task for QA: $ARGUMENTS
@@ -14,6 +14,7 @@ The reader is a QA engineer, possibly not technical. The documents say what happ
    - `analysis-research` -> writes `01-research.md`
    - `analysis-interview` -> writes `02-interview.md`
    - `analysis-report` -> writes `03-flows.md`, `04-findings.md`, `05-test-scenarios.md`, `06-ticket-notes.md` and `00-README.md`
-3. Finish with one short message in plain language: the folder path, the answer in one or two sentences (the verdict), what QA should do next, and the open questions that still need an answer. Do not paste the documents.
+3. **Output formats.** The documents are always written. On top of them, present the result in every extra format that is on for this run: the formats the session context lists as on (the plugin options), plus `--visual` and `--confluence` if `$ARGUMENTS` contains them (strip these flags from the task text). Run the skill of each format after `00-README.md` is written: `present-visual` (interactive page, published as a private Artifact), `present-confluence` (`confluence-page.md`).
+4. Finish with one short message in plain language: the folder path, the answer in one or two sentences (the verdict), what QA should do next, the open questions that still need an answer, and the artifact link or the Confluence page file if those formats ran. Do not paste the documents.
 
 If `$ARGUMENTS` is empty, ask the user for the task with `AskUserQuestion`.

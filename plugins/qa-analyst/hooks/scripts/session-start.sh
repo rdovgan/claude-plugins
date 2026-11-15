@@ -38,6 +38,12 @@ if [ -d "$root/.git" ]; then
   grep -qxF '.claude/qa-analysis/' "$ex" 2>/dev/null || printf '.claude/qa-analysis/\n' >> "$ex" 2>/dev/null
 fi
 
+fmts="$(qa_formats | tr '\n' ' ')"; fmts="${fmts% }"
+if [ -n "$fmts" ]; then
+  echo "qa-analyst: output formats on (plugin options): ${fmts// /, }. After the report of /qa-analyst:analyze, also run$(for f in $fmts; do printf ' present-%s' "$f"; done) for the same task folder and name the result in your final message."
+else
+  echo "qa-analyst: output formats: documents only. The user can ask for more per run (/qa-analyst:analyze <task> --visual --confluence) or afterwards (/qa-analyst:present visual|confluence [task]); switch them on for good with /plugin configure qa-analyst@team-plugins."
+fi
 command -v git >/dev/null 2>&1 && echo "qa-analyst: branch $(git symbolic-ref --short -q HEAD 2>/dev/null || echo detached)"
 
 out="$(qa_out_root)"

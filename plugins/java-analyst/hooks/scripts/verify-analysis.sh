@@ -15,6 +15,7 @@ marker="$(ja_data_dir)/start.$sid"
 [ -d "$out" ] && [ -f "$marker" ] || exit 0
 
 problems=""
+formats="$(ja_formats)"
 while IFS= read -r f; do
   d="${f#"$out"/}"; d="${d%%/*}"
   printf '%s\n' "$d"
@@ -40,6 +41,35 @@ while IFS= read -r d; do
   for doc in 04-findings.md 06-implementation-guide.md; do
     [ -f "$dir/$doc" ] && ! grep -qE '\bR[0-9]+\b' "$dir/$doc" && problems="$problems
 - $d/$doc does not refer to any requirement R*: show which requirements it covers"
+  done
+  # Output formats switched on in the plugin options (or JAVA_ANALYST_FORMATS).
+  for fmt in $formats; do
+    case "$fmt" in
+      dev)
+        g="$dir/07-dev-guide.md"
+        if [ ! -f "$g" ]; then problems="$problems
+- $d: the dev format is on but 07-dev-guide.md is missing: run the present-dev-guide skill"
+        else
+          grep -q '{{' "$g" && problems="$problems
+- $d/07-dev-guide.md still has {{placeholders}}"
+          grep -qE '^[[:space:]]*(classDiagram|sequenceDiagram)' "$g" || problems="$problems
+- $d/07-dev-guide.md has no classDiagram or sequenceDiagram of the design"
+          grep -qE '^[[:space:]]*```(java|kotlin|groovy|xml|sql|yaml)' "$g" || problems="$problems
+- $d/07-dev-guide.md has no reference code or templates"
+          grep -qE '\bR[0-9]+\b' "$g" || problems="$problems
+- $d/07-dev-guide.md does not refer to any requirement R*"
+        fi ;;
+      visual)
+        [ -f "$dir/visual.json" ] && [ -f "$dir/visual.html" ] || problems="$problems
+- $d: the visual format is on but visual.json/visual.html are missing: run the present-visual skill"
+        [ -f "$dir/00-README.md" ] && ! grep -qE '^- Visual:' "$dir/00-README.md" && problems="$problems
+- $d/00-README.md has no '- Visual:' line with the artifact link (or 'not published' and the reason)" ;;
+      confluence)
+        if [ ! -f "$dir/confluence-page.md" ]; then problems="$problems
+- $d: the Confluence format is on but confluence-page.md is missing: run the present-confluence skill"
+        elif grep -q '{{' "$dir/confluence-page.md"; then problems="$problems
+- $d/confluence-page.md still has {{placeholders}}"; fi ;;
+    esac
   done
 done < "$(ja_data_dir)/touched.$sid"
 
