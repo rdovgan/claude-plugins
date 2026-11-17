@@ -2,6 +2,12 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## qa-analyst [0.3.0] - 2026-11-17
+
+### Changed
+- `05-test-scenarios.md` is now `05-test-cases.md`, required for every type of task: test cases `TC-1`, `TC-2`, ... with a field table (requirements, type positive / negative / edge / regression, priority, preconditions, test data) and a steps table with an expected result on every step, ready to move into a test management tool; a coverage table maps every `R*` to its cases. The Stop hook requires at least one `### TC-N` and a steps table for each case.
+- The visual page shows the test cases with their type and the expected result of each step.
+
 ## qa-analyst [0.2.0] - 2026-11-15
 
 ### Added

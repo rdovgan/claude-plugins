@@ -52,4 +52,4 @@
 
 ## Related
 
-- {{Jira tickets, Confluence pages, the local analysis folder .claude/qa-analysis/<task>/ for test scenarios and evidence}}
+- {{Jira tickets, Confluence pages, the local analysis folder .claude/qa-analysis/<task>/ for the test cases and evidence}}

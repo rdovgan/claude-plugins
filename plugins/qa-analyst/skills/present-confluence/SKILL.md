@@ -7,7 +7,7 @@ description: Output format "confluence" - turn a finished analysis into one Conf
 
 One page in the style of a team Confluence page. The reader is anyone on the team: a business analyst, a product manager, a QA engineer, a developer who wants the overview, someone updating the documentation. It is the middle cut: easy to read and informative, covers the main cases, and leaves edge cases, log lines, queries and code to the analysis documents.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `02-interview.md`, `03-flows.md`, `04-findings.md` and `05-test-scenarios.md`. The page says nothing the documents do not say.
+**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `02-interview.md`, `03-flows.md`, `04-findings.md` and `05-test-cases.md`. The page says nothing the documents do not say.
 
 ## Steps
 
@@ -18,7 +18,7 @@ One page in the style of a team Confluence page. The reader is anyone on the tea
 
 - **Summary first.** The first section answers the reader's question in three to five sentences: what this is about, what the situation is, what is decided or still open. Someone who reads only that section knows the outcome.
 - **Product words.** Screens, statuses, roles, partners, fields, business rules. No class, table or method names; no log lines, SQL or code. A system or service name is fine when the team uses it as a product word.
-- **Main cases, not every case.** The cases table lists the typical paths and the case from the ticket (about 3 to 7 rows). Edge cases, negative tests and regression lists stay in `05-test-scenarios.md`; link it.
+- **Main cases, not every case.** The cases table lists the typical paths and the case from the ticket (about 3 to 7 rows). Edge cases, negative tests and regression lists stay in `05-test-cases.md`; link it.
 - **Requirements in plain words** with their ids `R*` and where each comes from, so the page can be traced back to the sources.
 - **One diagram at most**, the main flow in business terms. Confluence does not render mermaid by itself: keep it in a `mermaid` code block (it works with a Mermaid macro), and describe the flow in a numbered list right under it, so the page reads well without the diagram.
 - **Facts and decisions apart from assumptions.** Mark what is confirmed and what is not; open questions go to their own table with who can answer.

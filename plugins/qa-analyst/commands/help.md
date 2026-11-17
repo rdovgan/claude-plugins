@@ -19,7 +19,7 @@ Output exactly this cheat sheet, then stop:
 | `02-interview.md` | questions asked and decisions made |
 | `03-flows.md` | business flow charts: how it works now and how it should work |
 | `04-findings.md` | conclusions with evidence: cause, impact, what to retest, requirements coverage; technical references for developers at the end |
-| `05-test-scenarios.md` | test scenarios `T*` with preconditions, test data, steps and expected results |
+| `05-test-cases.md` | test cases `TC-*`, always: requirements, type, priority, preconditions, test data, steps with an expected result on each step |
 | `06-ticket-notes.md` | ready-to-paste texts: bug report or ticket comment, questions to the developer or analyst |
 
 **Output formats** (switch on for good: `/plugin configure qa-analyst@team-plugins`; for one run: add the flag; for a finished analysis: `/qa-analyst:present <format> [task]`):
@@ -27,11 +27,11 @@ Output exactly this cheat sheet, then stop:
 | Format | Flag | For whom | Result |
 | --- | --- | --- | --- |
 | documents | always | QA, facts first | the seven files above |
-| visual | `--visual` | those who read visually | interactive page: verdict, diagrams, timeline, requirements chart, checklist of scenarios, ticket text with a copy button; details open on hover. Published as a private Artifact on claude.ai; personal data is masked |
+| visual | `--visual` | those who read visually | interactive page: verdict, diagrams, timeline, requirements chart, checklist of test cases, ticket text with a copy button; details open on hover. Published as a private Artifact on claude.ai; personal data is masked |
 | confluence | `--confluence` | BA, PM, the whole team | `confluence-page.md`: a plain overview with the main cases, impact, decisions and open questions, ready to paste into Confluence |
 
 **Logs:** give a path (`/qa-analyst:analyze ~/Downloads/app.log booking 4711`), paste a fragment, or attach it to the Jira ticket (downloaded with your Jira API token). Big logs are read by the `log-reader` agent; personal data is masked in the documents.
 
 **Rules that will stop the agent:** no writes to source code, tests, build files (`pom.xml`, `package.json`) or application configs; writes only inside the project; only read-only shell commands (`ls`, `grep`, `zgrep`, `sed -n`, `git log/diff/show`, ...); no reading `.env`/prod configs; Jira, Confluence and the DB are read-only (DB: one `SELECT` per call); the documents must not contain program code.
 
-**Tips:** the interview starts by showing how the task was understood: correct it there, it is the cheapest moment; it does not ask what the ticket or Confluence already answer, so a short interview is normal; requirements get ids (`R1`, `R2`, ...) and test scenarios (`T1`, `T2`, ...) that every document refers to; documents are written in the language you use. To continue an analysis, run the command again with the same key. `QA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.
+**Tips:** the interview starts by showing how the task was understood: correct it there, it is the cheapest moment; it does not ask what the ticket or Confluence already answer, so a short interview is normal; requirements get ids (`R1`, `R2`, ...) and test cases (`TC-1`, `TC-2`, ...) that every document refers to; documents are written in the language you use. To continue an analysis, run the command again with the same key. `QA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.
