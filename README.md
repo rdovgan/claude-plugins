@@ -6,7 +6,7 @@ Claude Code plugins for the Java team. The marketplace is called `team-plugins` 
 | --- | --- | --- | --- |
 | [`java-developer`](#java-developer) | Developers | Takes a ticket from Jira to a reviewed branch: research, questions, spec, implementation, tests, review | Yes |
 | [`java-analyst`](#java-analyst) | Analysts, leads | Analyses a ticket and writes local documents: flows, findings, solution options, implementation guide | No |
-| [`qa-analyst`](#qa-analyst) | QA | Analyses a ticket, a log or a question ("is this a bug?") and writes plain-language documents: answer, flows, findings, test scenarios, ticket notes | No |
+| [`qa-analyst`](#qa-analyst) | QA | Analyses a ticket, a log or a question ("is this a bug?") and writes plain-language documents: answer, flows, findings, test cases, ticket notes | No |
 | [`qa-docs`](#qa-docs) | QA | Documents one business domain from the code of all repositories, Jira and Confluence, verifies it, exports to Confluence | No |
 
 Enable only one of them in a project or session.
@@ -156,7 +156,7 @@ For a QA engineer who needs an answer, not a fix: is this a bug or expected, why
 | `02-interview` | Questions and answers |
 | `03-flows` | Business flow charts: now vs expected, timeline of the case |
 | `04-findings` | Cause, impact, what to retest, requirements coverage; technical references for developers |
-| `05-test-scenarios` | Scenarios `T*` with preconditions, test data, steps, expected results |
+| `05-test-cases` | Test cases `TC-*`, required for every task: requirements, type, priority, preconditions, test data, steps with an expected result on each |
 | `06-ticket-notes` | Ready-to-paste bug report or ticket comment, questions to the team |
 
 Nothing is published to Jira or Confluence.
@@ -165,7 +165,7 @@ Nothing is published to Jira or Confluence.
 
 | Format | Default | Result |
 | --- | --- | --- |
-| `visual` | off | An interactive page for those who read visually: verdict, next steps, "now vs expected" diagrams, the log timeline, a requirements chart, a checklist of test scenarios, the ticket text with a copy button; long text behind info buttons. Built from a fixed template and published as a private Artifact on claude.ai, personal data masked |
+| `visual` | off | An interactive page for those who read visually: verdict, next steps, "now vs expected" diagrams, the log timeline, a requirements chart, a checklist of test cases, the ticket text with a copy button; long text behind info buttons. Built from a fixed template and published as a private Artifact on claude.ai, personal data masked |
 | `confluence` | off | `confluence-page.md`: a plain overview for BA, PM and the team (main cases, impact, decisions, open questions), ready to paste into Confluence |
 
 **Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands (`zgrep`/`zcat` included for compressed logs), MCP to read tools, the DB to one `SELECT` per call. The agent cannot stop with an unfinished analysis or with program code in the QA documents. `QA_ANALYST_OFF=1` turns the guards off.

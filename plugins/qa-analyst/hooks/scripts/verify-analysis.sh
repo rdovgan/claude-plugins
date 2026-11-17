@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Stop: a QA analysis started in this session must be complete (all documents, no placeholders, a flow chart,
-# numbered requirements referenced by the findings and the test scenarios, a confirmed understanding, an answer,
+# numbered requirements referenced by the findings and the test cases, a confirmed understanding, an answer,
 # and no program code in the QA-facing documents).
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
@@ -41,15 +41,23 @@ while IFS= read -r d; do
 - $d/02-interview.md does not record that the user confirmed your understanding of the task"
   [ -f "$dir/00-README.md" ] && ! grep -q '^## Answer' "$dir/00-README.md" && problems="$problems
 - $d/00-README.md has no Answer section: state the verdict in plain language"
-  [ -f "$dir/05-test-scenarios.md" ] && ! grep -qE '^### T[0-9]+' "$dir/05-test-scenarios.md" && problems="$problems
-- $d/05-test-scenarios.md has no numbered test scenarios (### T1, ### T2, ...)"
-  for doc in 04-findings.md 05-test-scenarios.md; do
+  tc="$dir/05-test-cases.md"
+  if [ -f "$tc" ]; then
+    ncases="$(grep -cE '^### TC-[0-9]+' "$tc")"
+    nsteps="$(grep -cE '^\|[[:space:]]*#[[:space:]]*\|' "$tc")"
+    if [ "$ncases" -eq 0 ]; then problems="$problems
+- $d/05-test-cases.md has no numbered test cases (### TC-1, ### TC-2, ...): test cases are required for every task"
+    elif [ "$nsteps" -lt "$ncases" ]; then problems="$problems
+- $d/05-test-cases.md: $ncases test cases but $nsteps steps tables; every case needs its '| # | Step | Expected result |' table"
+    fi
+  fi
+  for doc in 04-findings.md 05-test-cases.md; do
     [ -f "$dir/$doc" ] && ! grep -qE '\bR[0-9]+\b' "$dir/$doc" && problems="$problems
 - $d/$doc does not refer to any requirement R*: show which requirements it covers"
   done
   # QA documents explain behaviour in words: no program code. Mermaid, SQL check queries, log lines,
   # request/response bodies and shell commands to reproduce are allowed.
-  for doc in 00-README.md 03-flows.md 04-findings.md 05-test-scenarios.md 06-ticket-notes.md confluence-page.md; do
+  for doc in 00-README.md 03-flows.md 04-findings.md 05-test-cases.md 06-ticket-notes.md confluence-page.md; do
     [ -f "$dir/$doc" ] || continue
     langs="$(grep -oE '^[[:space:]]*```[A-Za-z+#-]+' "$dir/$doc" | sed -E 's/^[[:space:]]*```//' | tr '[:upper:]' '[:lower:]' \
       | grep -xE 'java|kotlin|kt|groovy|scala|javascript|js|jsx|typescript|ts|tsx|python|py|php|go|golang|ruby|rb|c|cpp|c\+\+|cs|csharp|c#|rust|rs|swift|diff|patch' | sort -u | tr '\n' ' ')"

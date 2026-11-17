@@ -62,7 +62,7 @@ qa_workspace_repos() {
 
 # Required documents of one analysis, in reading order.
 qa_docs() {
-  printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 05-test-scenarios.md 06-ticket-notes.md
+  printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 05-test-cases.md 06-ticket-notes.md
 }
 
 # Extra output formats on top of the documents, one per line: visual, confluence.

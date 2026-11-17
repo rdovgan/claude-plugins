@@ -18,7 +18,7 @@
 
 ## What to do next
 
-- {{e.g. file the bug from 06-ticket-notes.md; run scenarios T1-T4; ask the analyst question Q1}}
+- {{e.g. file the bug from 06-ticket-notes.md; run test cases TC-1 to TC-4; ask the analyst question Q1}}
 
 ## Reading order
 
@@ -26,7 +26,7 @@
 2. [02-interview.md](02-interview.md) - {{one line}}
 3. [03-flows.md](03-flows.md) - {{one line}}
 4. [04-findings.md](04-findings.md) - {{one line}}
-5. [05-test-scenarios.md](05-test-scenarios.md) - {{one line}}
+5. [05-test-cases.md](05-test-cases.md) - {{one line}}
 6. [06-ticket-notes.md](06-ticket-notes.md) - {{one line}}
 
 ## Open questions

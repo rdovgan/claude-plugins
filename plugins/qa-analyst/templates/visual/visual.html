@@ -226,21 +226,23 @@ footer { padding-block: 32px 40px; color: var(--muted); font-size: .8rem; }
   var meta = D.meta || {};
   var L = {
     en: { next: "What to do next", flows: "How it works", timeline: "What happened", requirements: "Requirements", options: "Options",
-      steps: "Plan", scenarios: "Checks", questions: "Open questions", ticket: "Ready to paste", sources: "Sources",
+      steps: "Plan", scenarios: "Test cases", questions: "Open questions", ticket: "Ready to paste", sources: "Sources",
       confidence: "Confidence", high: "high", medium: "medium", low: "low", all: "All", ok: "matches", fail: "does not match",
       unclear: "unclear", untested: "not checked", done: "done", steps_l: "Steps", expected: "Expected result", data: "Test data",
       pre: "Preconditions", copy: "Copy", copied: "Copied", select: "Selected, press Ctrl+C", covers: "Covers", effort: "Effort", risk: "Risk",
       pros: "Pros", cons: "Cons", recommended: "Recommended", who: "Who can answer", files: "Where", cause: "first cause",
-      reqs: "requirements match", checks: "checks", open: "open questions", srcs: "sources read", details: "Details",
-      generated: "Generated from the analysis in", priority: { high: "high", medium: "medium", low: "low" } },
+      reqs: "requirements match", checks: "test cases", open: "open questions", srcs: "sources read", details: "Details",
+      generated: "Generated from the analysis in", priority: { high: "high", medium: "medium", low: "low" },
+      ctype: { positive: "positive", negative: "negative", edge: "edge", regression: "regression" } },
     uk: { next: "Що робити далі", flows: "Як це працює", timeline: "Що сталося", requirements: "Вимоги", options: "Варіанти",
-      steps: "План", scenarios: "Перевірки", questions: "Відкриті питання", ticket: "Готовий текст", sources: "Джерела",
+      steps: "План", scenarios: "Тест-кейси", questions: "Відкриті питання", ticket: "Готовий текст", sources: "Джерела",
       confidence: "Впевненість", high: "висока", medium: "середня", low: "низька", all: "Усі", ok: "відповідає", fail: "не відповідає",
       unclear: "неясно", untested: "не перевірено", done: "готово", steps_l: "Кроки", expected: "Очікуваний результат", data: "Тестові дані",
       pre: "Передумови", copy: "Копіювати", copied: "Скопійовано", select: "Виділено, натисніть Ctrl+C", covers: "Покриває", effort: "Обсяг", risk: "Ризик",
       pros: "Плюси", cons: "Мінуси", recommended: "Рекомендовано", who: "Хто може відповісти", files: "Де", cause: "першопричина",
-      reqs: "вимог відповідає", checks: "перевірок", open: "відкритих питань", srcs: "джерел прочитано", details: "Деталі",
-      generated: "Згенеровано з аналізу в", priority: { high: "високий", medium: "середній", low: "низький" } }
+      reqs: "вимог відповідає", checks: "тест-кейсів", open: "відкритих питань", srcs: "джерел прочитано", details: "Деталі",
+      generated: "Згенеровано з аналізу в", priority: { high: "високий", medium: "середній", low: "низький" },
+      ctype: { positive: "позитивний", negative: "негативний", edge: "граничний", regression: "регресія" } }
   };
   var T = L[meta.lang] || L.en;
   function $(id) { return document.getElementById(id); }
@@ -457,13 +459,18 @@ footer { padding-block: 32px 40px; color: var(--muted); font-size: .8rem; }
       c.appendChild(head);
       var meta2 = el("div", "row");
       if (s.priority) meta2.appendChild(el("span", "pill " + tone({ high: "bad", medium: "warn", low: "info" }[s.priority]), (T.priority[s.priority] || s.priority)));
+      if (s.type) meta2.appendChild(el("span", "pill tone-none", (T.ctype && T.ctype[s.type]) || s.type));
       arr(s.covers).forEach(function (r) { meta2.appendChild(el("span", "chip", r)); });
       c.appendChild(meta2);
       if (s.expected) { var k = el("div", "kv"); k.appendChild(el("b", null, T.expected)); k.appendChild(el("span", null, s.expected)); c.appendChild(k); }
       if (arr(s.steps).length || s.pre || s.data) {
         var d = el("details"); d.appendChild(el("summary", null, T.steps_l));
         if (s.pre) { var k1 = el("div", "kv"); k1.appendChild(el("b", null, T.pre)); k1.appendChild(el("span", null, s.pre)); d.appendChild(k1); }
-        if (arr(s.steps).length) { var ol = el("ol"); s.steps.forEach(function (x) { ol.appendChild(el("li", null, x)); }); d.appendChild(ol); }
+        if (arr(s.steps).length) { var ol = el("ol"); s.steps.forEach(function (x) {
+          var li = el("li");
+          if (x && typeof x === "object") { li.appendChild(el("span", null, x.action || "")); if (x.expected) li.appendChild(el("span", "muted", " → " + x.expected)); }
+          else li.textContent = String(x);
+          ol.appendChild(li); }); d.appendChild(ol); }
         if (s.data) { var k2 = el("div", "kv"); k2.appendChild(el("b", null, T.data)); k2.appendChild(el("span", "mono", s.data)); d.appendChild(k2); }
         c.appendChild(d);
       }

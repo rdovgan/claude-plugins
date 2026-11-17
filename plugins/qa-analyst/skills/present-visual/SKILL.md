@@ -1,13 +1,13 @@
 ---
 name: present-visual
-description: Output format "visual" - turn a finished QA analysis into an interactive page (verdict, next steps, flow diagrams, timeline, requirements chart, checklist of test scenarios, ready-to-paste ticket text) and publish it as a private Artifact. Run after analysis-report when the visual format is on, when the user adds --visual, or by /qa-analyst:present visual.
+description: Output format "visual" - turn a finished QA analysis into an interactive page (verdict, next steps, flow diagrams, timeline, requirements chart, checklist of test cases, ready-to-paste ticket text) and publish it as a private Artifact. Run after analysis-report when the visual format is on, when the user adds --visual, or by /qa-analyst:present visual.
 ---
 
 # present-visual
 
 For readers who take in information visually. The page shows the result at a glance and hides every long text behind an info button. It is built from a fixed template, so every analysis looks the same: you write only the data.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `03-flows.md`, `04-findings.md`, `05-test-scenarios.md` and `06-ticket-notes.md`. The page says nothing the documents do not say; if a document is missing, finish the analysis first.
+**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `03-flows.md`, `04-findings.md`, `05-test-cases.md` and `06-ticket-notes.md`. The page says nothing the documents do not say; if a document is missing, finish the analysis first.
 
 ## 1. Write `visual.json`
 
@@ -22,7 +22,7 @@ Save it as `.claude/qa-analysis/<task>/visual.json`. Every section except `meta`
   "flows": [ { "title": "Now", "tag": "differs", "tone": "bad", "info": "...", "mermaid": "flowchart TD\n  A[...] --> B{...}" } ],
   "timeline": [ { "time": "14:05:31", "service": "payment", "title": "what happened", "tone": "cause", "info": "...", "detail": "masked log line", "source": "payment.log:1244" } ],
   "requirements": [ { "id": "R1", "title": "short wording", "status": "ok", "info": "verbatim requirement or what differs", "source": "page or ticket" } ],
-  "scenarios": [ { "id": "T1", "title": "...", "priority": "high", "covers": ["R2"], "pre": "...", "steps": ["...", "..."], "expected": "...", "data": "..." } ],
+  "scenarios": [ { "id": "TC-1", "title": "...", "type": "positive", "priority": "high", "covers": ["R2"], "pre": "...", "steps": [ { "action": "...", "expected": "..." } ], "expected": "the final expected result", "data": "..." } ],
   "questions": [ { "text": "...", "who": "analyst", "info": "why it matters" } ],
   "ticket": { "title": "bug title or comment title", "text": "the text from 06-ticket-notes.md" },
   "sources": [ { "kind": "jira", "label": "ABC-123", "url": "https://..." } ]
@@ -32,7 +32,7 @@ Save it as `.claude/qa-analysis/<task>/visual.json`. Every section except `meta`
 Values:
 - `meta.lang`: `uk` or `en`, the language of the user; it sets the page labels. Write all texts in that language.
 - `verdict.tone` and `tone` elsewhere: `bad` (bug, broken), `warn` (gap, unclear, needs a decision), `good` (works as designed, fixed), `info` (neutral). Timeline `tone`: `cause` (the first cause, exactly one), `error`, `warn`, `ok`, `info`.
-- `confidence`: `high`, `medium`, `low`. Requirement `status`: `ok` (matches), `fail` (does not match), `unclear`, `untested`. Scenario `priority`: `high`, `medium`, `low`.
+- `confidence`: `high`, `medium`, `low`. Requirement `status`: `ok` (matches), `fail` (does not match), `unclear`, `untested`. Test case `priority`: `high`, `medium`, `low`; `type`: `positive`, `negative`, `edge`, `regression`; `scenarios` holds the test cases of `05-test-cases.md`, all of them, with their steps.
 - `stats`: leave it out and the page computes requirements, checks, open questions and sources. Give it only when other figures matter more (affected bookings, failed requests, period).
 
 ## 2. Keep the page light
