@@ -1,6 +1,6 @@
 {
   "name": "java-analyst",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Analysis-only task workflow for Java teams: research, interview, flow charts, findings and proposed solutions as local documents, plus optional output formats (developer guide, visual page, Confluence page). Never changes code.",
   "author": {
     "name": "Java Team Tech Lead"

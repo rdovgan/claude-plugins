@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-analyst [0.8.1] and qa-analyst [0.4.1] - 2026-11-18
+
+### Fixed
+- The `formats` row reads `JAVA_ANALYST_FORMATS` / `QA_ANALYST_FORMATS` the way the shell hooks do: an empty value counts as unset (the row used to show every format off and lock the buttons while the hooks used the plugin options), names are split on commas and spaces, and case does not matter (`Visual, impact` showed `visual` as off although the hooks ran it).
+
 ## java-analyst [0.8.0] and qa-analyst [0.4.0] - 2026-11-18
 
 ### Changed
