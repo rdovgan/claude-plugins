@@ -1,6 +1,6 @@
 ---
 name: analysis-research
-description: Phase 1 of a QA analysis - understand the question, collect the requirements and the evidence (Jira ticket, Confluence pages, logs, database, code), and write 01-research.md. Run by /qa-analyst:analyze; use it directly when a QA engineer gives a ticket, a log or a question ("is this a bug?", "why did X fail?", "what must I test?") and wants it analysed, not fixed.
+description: Phase 1 of a QA analysis - understand the question, collect the requirements and the evidence (Jira ticket, Confluence pages, logs, database, code), and write 01-research.md. Run by /qa-analyst:analyze, and by analysis-report when a report lacks the requirements. Not for questions in conversation: those are answered in chat.
 ---
 
 # analysis-research

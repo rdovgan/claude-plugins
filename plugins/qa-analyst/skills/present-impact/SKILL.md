@@ -1,13 +1,13 @@
 ---
 name: present-impact
-description: Output format "impact" - write 07-impact.md, how many and which records, users and partners the problem touches, counted in the database with a re-runnable SELECT behind every number, broken down by status, partner, period, with a conclusion on size, trend and priority. Run after analysis-report when the impact format is on, when the user adds --impact, or by /qa-analyst:present impact.
+description: Output format "impact" - write 07-impact.md, how many and which records, users and partners the problem touches, counted in the database with a re-runnable SELECT behind every number, broken down by status, partner, period, with a conclusion on size, trend and priority. Run by analysis-report when the impact format is in the report.
 ---
 
 # present-impact
 
 For the question "how big is this?": a QA engineer, a PM or a lead deciding priority, a hotfix or a data correction.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`: what the problem is and how to recognise an affected record (`04-findings.md`), the tables and fields found in research (`01-research.md`).
+**Input:** the task folder `.claude/qa-analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established: what the problem is and how to recognise an affected record, the tables and fields found.
 
 ## Steps
 
@@ -24,4 +24,4 @@ If there is no database access, write only what the logs or the ticket allow and
 - The **Conclusions** section is the point of the document: explain in plain text what the numbers mean for the user, the priority and the testing, and separate what they prove from what they only suggest. Write it in the language the user uses; keep the headings of the template.
 - No program code. SQL check queries, masked log lines and shell commands to reproduce are allowed.
 - Mask personal and secret data in every table and line.
-- When the document is done, add it to the reading order of `00-README.md` (`- [<file>](<file>) - <one line>`) and, if it changes the answer or the next steps, say so there too. Change nothing else in the other documents.
+- The summary (when it is in the report) lists this document in its reading order and uses its conclusions. If `00-README.md` exists and the summary is not part of this report, add the line `- [<file>](<file>) - <one line>` to its reading order. Change nothing else in the other documents.

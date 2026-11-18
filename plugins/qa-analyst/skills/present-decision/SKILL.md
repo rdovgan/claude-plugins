@@ -1,13 +1,13 @@
 ---
 name: present-decision
-description: Output format "decision" - write 08-decision-table.md, the decision table of the business rule (combinations of conditions -> expected result from R*, today's result) and the status transition table, with conclusions on wrong combinations and gaps in the requirements. Run after analysis-report when the decision format is on, when the user adds --decision, or by /qa-analyst:present decision.
+description: Output format "decision" - write 08-decision-table.md, the decision table of the business rule (combinations of conditions -> expected result from R*, today's result) and the status transition table, with conclusions on wrong combinations and gaps in the requirements. Run by analysis-report when the decision format is in the report.
 ---
 
 # present-decision
 
 For logic with many conditions: roles, statuses, types, flags, partner settings. The table shows every combination, so the cases that are easy to miss become visible, and the gaps in the requirements become questions.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`: the requirements `R*` (`01-research.md`), the real conditions in the code path (`04-findings.md`, technical references), the test cases if written (`05-test-cases.md`).
+**Input:** the task folder `.claude/qa-analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established: the requirements `R*`, the real conditions in the code path, the test cases if written (`05-test-cases.md`).
 
 ## Steps
 
@@ -23,4 +23,4 @@ For logic with many conditions: roles, statuses, types, flags, partner settings.
 - The **Conclusions** section is the point of the document: explain in plain text what the numbers mean for the user, the priority and the testing, and separate what they prove from what they only suggest. Write it in the language the user uses; keep the headings of the template.
 - No program code. SQL check queries, masked log lines and shell commands to reproduce are allowed.
 - Mask personal and secret data in every table and line.
-- When the document is done, add it to the reading order of `00-README.md` (`- [<file>](<file>) - <one line>`) and, if it changes the answer or the next steps, say so there too. Change nothing else in the other documents.
+- The summary (when it is in the report) lists this document in its reading order and uses its conclusions. If `00-README.md` exists and the summary is not part of this report, add the line `- [<file>](<file>) - <one line>` to its reading order. Change nothing else in the other documents.

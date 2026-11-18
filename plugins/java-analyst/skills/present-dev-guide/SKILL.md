@@ -1,19 +1,19 @@
 ---
 name: present-dev-guide
-description: Output format "dev" - a teaching guide for the developer who implements the task themselves (07-dev-guide.md) - the design in UML and sequence diagrams, the patterns this codebase already uses for this kind of change with real reference code, templates (skeletons with TODO) for the new pieces and their tests, and the traps. Explains how to build it; does not write the solution. Run after analysis-report when the dev format is on (default), when the developer adds --dev, or by /java-analyst:present dev.
+description: Output format "dev" - a teaching guide for the developer who implements the task themselves (07-dev-guide.md) - the design in UML and sequence diagrams, the patterns this codebase already uses for this kind of change with real reference code, templates (skeletons with TODO) for the new pieces and their tests, and the traps. Explains how to build it; does not write the solution. Run by analysis-report when the dev format is in the report.
 ---
 
 # present-dev-guide
 
 The reader is a developer who will write the code themselves and wants it explained in depth, not done for them. `06-implementation-guide.md` says **what** to do, step by step; this guide teaches **how** to build it in this codebase: the shape of the design, the patterns to follow, and templates to start from. You show the way; the developer walks it.
 
-**Input:** a finished analysis in `.claude/analysis/<task>/`. Re-read `01-research.md`, `03-flows.md`, `04-findings.md`, `05-proposals.md` and `06-implementation-guide.md`, and re-open the source files you will cite. The guide is for the recommended option only.
+**Input:** the task folder `.claude/analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established, and the summary documents when they exist (`03-flows.md`, `04-findings.md`, `05-proposals.md`, `06-implementation-guide.md`); re-open the source files you will cite. The guide is for the recommended option only: the one the summary recommends, or the one the conversation settled on (if none is settled, ask with `AskUserQuestion`).
 
 ## Steps
 
 1. Find the reference code: places in this codebase (or a sibling repository) that already solve a similar problem the way the team does it (a similar endpoint, listener, validator, mapper, migration, test). Use the `code-explorer` subagent for this when the area is large. Prefer recent, clean code over legacy; if the only examples are legacy, say what not to copy from them.
 2. Fill `${CLAUDE_PLUGIN_ROOT}/templates/dev-guide/07-dev-guide.md` and save it as `.claude/analysis/<task>/07-dev-guide.md`.
-3. Add it to the reading order in `00-README.md` as item 7.
+3. If `00-README.md` exists and the summary is not part of this report, add it to the reading order there. Change nothing else.
 
 ## What goes in
 

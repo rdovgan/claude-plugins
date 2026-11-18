@@ -60,18 +60,15 @@ qa_workspace_repos() {
   done
 }
 
-# Required documents of one analysis, in reading order.
-qa_docs() {
-  printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 06-ticket-notes.md
-}
-
-# Output formats on top of the core documents, one per line, in the order they run: tests (05-test-cases.md, on by default),
-# the data formats impact, decision, logs, regression (07-10), then the views confluence and visual.
+# Output formats of a report, one per line, in the order they run: tests (05-test-cases.md), the data formats
+# impact, decision, logs, regression (07-10), summary (the answer: 00-README.md, 03-flows.md, 04-findings.md,
+# 06-ticket-notes.md), then the views confluence and visual. summary and tests are on by default.
 # Source: QA_ANALYST_FORMATS (comma list, "none" for none) if set, otherwise the plugin options
 # (/plugin configure qa-analyst@team-plugins), which hooks receive as CLAUDE_PLUGIN_OPTION_<KEY>.
 qa_formats() {
   local list="${QA_ANALYST_FORMATS:-}"
   if [ -z "$list" ]; then
+    qa_truthy "${CLAUDE_PLUGIN_OPTION_SUMMARY:-true}" && list="$list,summary"
     qa_truthy "${CLAUDE_PLUGIN_OPTION_TESTS:-true}" && list="$list,tests"
     qa_truthy "${CLAUDE_PLUGIN_OPTION_IMPACT:-false}" && list="$list,impact"
     qa_truthy "${CLAUDE_PLUGIN_OPTION_DECISION_TABLE:-false}" && list="$list,decision"
@@ -80,18 +77,32 @@ qa_formats() {
     qa_truthy "${CLAUDE_PLUGIN_OPTION_VISUAL_ARTIFACT:-false}" && list="$list,visual"
     qa_truthy "${CLAUDE_PLUGIN_OPTION_CONFLUENCE_PAGE:-false}" && list="$list,confluence"
   fi
-  list="$(printf '%s' "$list" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]')"
-  local f
-  for f in tests impact decision logs regression confluence visual; do
+  qa_format_order "$list"
+}
+# Known format names from a comma or space separated list, in run order.
+qa_format_order() {
+  local list f
+  list="$(printf '%s' "$1" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]')"
+  for f in tests impact decision logs regression summary confluence visual; do
     printf '%s\n' "$list" | grep -qx "$f" && printf '%s\n' "$f"
   done
 }
-# File of a data format (written by present-<format>).
-qa_format_file() {
+# Files a format writes in the task folder.
+qa_format_files() {
   case "$1" in
+    summary) echo 00-README.md 03-flows.md 04-findings.md 06-ticket-notes.md ;;
+    tests) echo 05-test-cases.md ;;
     impact) echo 07-impact.md ;; decision) echo 08-decision-table.md ;;
     logs) echo 09-log-stats.md ;; regression) echo 10-regression.md ;;
+    confluence) echo confluence-page.md ;; visual) echo visual.json visual.html ;;
   esac
+}
+# Format a file of the task folder belongs to (empty for notes.md, 01-research.md, 02-interview.md and the rest).
+qa_file_format() {
+  local f
+  for f in tests impact decision logs regression summary confluence visual; do
+    case " $(qa_format_files "$f") " in *" $1 "*) echo "$f"; return ;; esac
+  done
 }
 qa_truthy() { case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in true|1|yes|on) return 0 ;; esac; return 1; }
 

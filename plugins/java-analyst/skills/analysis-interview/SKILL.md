@@ -1,6 +1,6 @@
 ---
 name: analysis-interview
-description: Phase 2 of an analysis - close the gaps in a task by interviewing the developer, and write 02-interview.md. Run by /java-analyst:analyze after analysis-research; also use whenever a task has unclear requirements.
+description: Phase 2 of an analysis - close the gaps in a task by interviewing the developer, and write 02-interview.md. Run by /java-analyst:analyze after analysis-research. Not for clarifications in conversation: ask those in chat.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, Edit, Write
 ---
 
@@ -27,4 +27,4 @@ Phase 2. **No code changes.** The interview is **interactive**: every question i
 11. **Zero questions beyond the confirmation is a good result** when the sources answer everything. Do not ask to fill the template.
 12. Finish when all questions are closed or the developer says to continue. Fill `${CLAUDE_PLUGIN_ROOT}/templates/analysis/02-interview.md` and save it to `.claude/analysis/<task>/02-interview.md`: the confirmation of the understanding, each question with the options offered, the decision and its reason, the questions dropped because the sources answer them, then the open questions.
 
-Questions must be concrete and specific to this task, not generic advice. Then continue with `analysis-report` in the same turn.
+Questions must be concrete and specific to this task, not generic advice. When run by `/java-analyst:analyze`, continue with `analysis-report` in the same turn.

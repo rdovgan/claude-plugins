@@ -1,13 +1,13 @@
 ---
 name: present-logs
-description: Output format "logs" - write 09-log-stats.md, statistics from the logs (errors by type and hour, first and last time, share of requests) correlated with deploys, commits and partner events, with conclusions on what the main error is and since when. Run after analysis-report when the logs format is on, when the user adds --logs, or by /qa-analyst:present logs.
+description: Output format "logs" - write 09-log-stats.md, statistics from the logs (errors by type and hour, first and last time, share of requests) correlated with deploys, commits and partner events, with conclusions on what the main error is and since when. Run by analysis-report when the logs format is in the report.
 ---
 
 # present-logs
 
-For incidents and "since when does this happen": the numbers behind the timeline in `03-flows.md`.
+For incidents and "since when does this happen": the numbers behind the timeline of the case.
 
-**Input:** the logs named in the analysis (`01-research.md`: files, services, period). If the task has no logs, say so in one line to the user and write nothing.
+**Input:** the logs named in the task folder `.claude/qa-analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established (files, services, period). If the task has no logs, say so in one line to the user and write nothing.
 
 ## Steps
 
@@ -24,4 +24,4 @@ For incidents and "since when does this happen": the numbers behind the timeline
 - The **Conclusions** section is the point of the document: explain in plain text what the numbers mean for the user, the priority and the testing, and separate what they prove from what they only suggest. Write it in the language the user uses; keep the headings of the template.
 - No program code. SQL check queries, masked log lines and shell commands to reproduce are allowed.
 - Mask personal and secret data in every table and line.
-- When the document is done, add it to the reading order of `00-README.md` (`- [<file>](<file>) - <one line>`) and, if it changes the answer or the next steps, say so there too. Change nothing else in the other documents.
+- The summary (when it is in the report) lists this document in its reading order and uses its conclusions. If `00-README.md` exists and the summary is not part of this report, add the line `- [<file>](<file>) - <one line>` to its reading order. Change nothing else in the other documents.

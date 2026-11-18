@@ -15,7 +15,8 @@ if qa_off; then
   exit 0
 fi
 
-echo "qa-analyst: QA ANALYSIS mode. The user is a QA engineer: analyse Jira tickets, Confluence requirements, logs, the database and the code, and answer in plain language a non-developer can act on (what happens, is it a bug, what to test, what to write in the ticket). No code examples and no fix proposals in the answers; code is evidence you read, not something you write. Never change source code, tests, build files (pom.xml, package.json, ...) or application configs in any repository. You MAY create and update documentation (.md/.txt/.rst/.adoc/.puml/.mmd), CLAUDE.md, .gitignore, .mcp.json and anything under .claude/ in the project; analysis documents go to .claude/qa-analysis/<task>/. Start a task with /qa-analyst:analyze <Jira key, link, description or log file>; first-time setup: /qa-analyst:setup."
+echo "qa-analyst: QA ANALYSIS mode. The user is a QA engineer: analyse Jira tickets, Confluence requirements, logs, the database and the code, and answer in plain language a non-developer can act on (what happens, is it a bug, what to test, what to write in the ticket). No code examples and no fix proposals in the answers; code is evidence you read, not something you write. Never change source code, tests, build files (pom.xml, package.json, ...) or application configs in any repository. You MAY create and update documentation (.md/.txt/.rst/.adoc/.puml/.mmd), CLAUDE.md, .gitignore, .mcp.json and anything under .claude/ in the project; analysis documents go to .claude/qa-analysis/<task>/. First-time setup: /qa-analyst:setup."
+echo "qa-analyst: CONVERSATION FIRST. Most prompts are questions and clarifications about a task: answer them in chat, reading only the sources the question needs; no report documents, no full workflow. Keep a short running record per task in .claude/qa-analysis/<task>/notes.md (sections: Understanding, Requirements as - **R1** ..., Facts with their source, Decisions, Open questions; a few lines per update, no template). A REPORT is written only when the user asks for it: the REPORT button in the formats row, /qa-analyst:report [task] [--format ...], or words like 'make the report', 'summary', 'друкуй звіт', 'оформи результат', 'we are done'. Then run the analysis-report skill, which writes only the formats of that report. /qa-analyst:analyze <task> is the full run in one go (research, interview, report) for when the user asks for it."
 for other in java-developer java-team java-analyst qa-docs; do
   if qa_plugin_enabled "$other"; then
     echo "qa-analyst: CONFLICT: $other is also enabled here. The plugins must not run together: their hooks and guards contradict each other (qa-analyst blocks code changes, the other plugin's flow or write rules block the QA analysis documents) and a bare ticket key could start either workflow. Tell the user in your first reply, once, to disable one of them (/plugin, or enabledPlugins in .claude/settings.json). Until then follow qa-analyst only: analysis, no code changes."
@@ -39,11 +40,10 @@ if [ -d "$root/.git" ]; then
 fi
 
 fmts="$(qa_formats | tr '\n' ' ')"; fmts="${fmts% }"
-extra="$(printf '%s\n' $fmts | grep -vx tests | tr '\n' ' ')"; extra="${extra% }"
 if [ -n "$fmts" ]; then
-  echo "qa-analyst: output formats on (plugin options): ${fmts// /, }.$(printf '%s\n' $fmts | grep -qx tests && printf ' analysis-report writes the test cases through present-tests.')$([ -n "$extra" ] && printf ' After the report of /qa-analyst:analyze, also run, in this order,%s for the same task folder and name the result in your final message.' "$(for f in $extra; do printf ' present-%s' "$f"; done)")"
+  echo "qa-analyst: report formats (selected in the formats row or the plugin options): ${fmts// /, }. They apply only when a report is written."
 else
-  echo "qa-analyst: output formats: core documents only, no test cases (unless the task is a test design). The user can ask for more per run (/qa-analyst:analyze <task> --tests --impact --decision --logs --regression --visual --confluence) or afterwards (/qa-analyst:present <format> [task]); switch them on for good with /plugin configure qa-analyst@team-plugins."
+  echo "qa-analyst: report formats: none selected. When the user asks for a report, ask which formats with AskUserQuestion (summary, tests, impact, decision, logs, regression, confluence, visual)."
 fi
 command -v git >/dev/null 2>&1 && echo "qa-analyst: branch $(git symbolic-ref --short -q HEAD 2>/dev/null || echo detached)"
 

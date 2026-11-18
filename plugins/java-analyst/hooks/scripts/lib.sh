@@ -60,23 +60,43 @@ ja_workspace_repos() {
   done
 }
 
-# Required documents of one analysis, in reading order.
-ja_docs() {
-  printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 05-proposals.md 06-implementation-guide.md
-}
-
-# Extra output formats on top of the documents, one per line: dev, visual, confluence.
+# Output formats of a report, one per line, in the order they run: summary (00-README.md, 03-flows.md,
+# 04-findings.md, 05-proposals.md, 06-implementation-guide.md), dev (07-dev-guide.md), then the views
+# confluence and visual. summary and dev are on by default.
 # Source: JAVA_ANALYST_FORMATS (comma list, "none" for none) if set, otherwise the plugin options
 # (/plugin configure java-analyst@team-plugins), which hooks receive as CLAUDE_PLUGIN_OPTION_<KEY>.
-# dev_guide is on unless switched off.
 ja_formats() {
   local list="${JAVA_ANALYST_FORMATS:-}"
   if [ -z "$list" ]; then
+    ja_truthy "${CLAUDE_PLUGIN_OPTION_SUMMARY:-true}" && list="$list,summary"
     ja_truthy "${CLAUDE_PLUGIN_OPTION_DEV_GUIDE:-true}" && list="$list,dev"
     ja_truthy "${CLAUDE_PLUGIN_OPTION_VISUAL_ARTIFACT:-false}" && list="$list,visual"
     ja_truthy "${CLAUDE_PLUGIN_OPTION_CONFLUENCE_PAGE:-false}" && list="$list,confluence"
   fi
-  printf '%s' "$list" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]' | grep -xE 'dev|visual|confluence' | sort -u
+  ja_format_order "$list"
+}
+# Known format names from a comma or space separated list, in run order.
+ja_format_order() {
+  local list f
+  list="$(printf '%s' "$1" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]')"
+  for f in summary dev confluence visual; do
+    printf '%s\n' "$list" | grep -qx "$f" && printf '%s\n' "$f"
+  done
+}
+# Files a format writes in the task folder.
+ja_format_files() {
+  case "$1" in
+    summary) echo 00-README.md 03-flows.md 04-findings.md 05-proposals.md 06-implementation-guide.md ;;
+    dev) echo 07-dev-guide.md ;;
+    confluence) echo confluence-page.md ;; visual) echo visual.json visual.html ;;
+  esac
+}
+# Format a file of the task folder belongs to (empty for notes.md, 01-research.md, 02-interview.md and the rest).
+ja_file_format() {
+  local f
+  for f in summary dev confluence visual; do
+    case " $(ja_format_files "$f") " in *" $1 "*) echo "$f"; return ;; esac
+  done
 }
 ja_truthy() { case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in true|1|yes|on) return 0 ;; esac; return 1; }
 

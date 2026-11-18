@@ -1,51 +1,57 @@
 {
   "name": "qa-analyst",
-  "version": "0.4.1",
-  "description": "Analysis-only task workflow for QA: reads tickets, linked requirements, logs, the database and the code, and writes plain-language documents - the answer, flows, findings, test cases and ready-to-paste ticket notes. No code examples, never changes code.",
+  "version": "0.5.0",
+  "description": "Analysis-only assistant for QA: answers questions about tickets, linked requirements, logs, the database and the code in conversation, and writes a report in the formats you pick (summary, test cases, impact, decision table, log statistics, regression scope, Confluence page, visual page) only when you ask. No code examples, never changes code.",
   "author": {
     "name": "Java Team Tech Lead"
   },
   "userConfig": {
+    "summary": {
+      "type": "boolean",
+      "title": "Summary",
+      "description": "In every report: the answer and next steps (00-README.md), business flow charts (03-flows.md), findings with evidence and requirements coverage (04-findings.md), ready-to-paste ticket notes (06-ticket-notes.md).",
+      "default": true
+    },
     "tests": {
       "type": "boolean",
       "title": "Test cases",
-      "description": "Write 05-test-cases.md with every analysis: test cases TC-* with requirements, type, priority, preconditions, test data and steps with an expected result on each step. Always written for a test design task.",
+      "description": "In every report, 05-test-cases.md: test cases TC-* with requirements, type, priority, preconditions, test data and steps with an expected result on each step.",
       "default": true
     },
     "impact": {
       "type": "boolean",
       "title": "Impact in numbers",
-      "description": "Write 07-impact.md: how many records, users and partners are affected, counted in the database (a SELECT behind every number), by status, partner and day, with conclusions on size, trend and priority.",
+      "description": "In every report, 07-impact.md: how many records, users and partners are affected, counted in the database (a SELECT behind every number), by status, partner and day, with conclusions on size, trend and priority.",
       "default": false
     },
     "decision_table": {
       "type": "boolean",
       "title": "Decision table",
-      "description": "Write 08-decision-table.md: every combination of conditions with the expected result from the requirements and today's result, the status transitions, the gaps in the requirements, with conclusions.",
+      "description": "In every report, 08-decision-table.md: every combination of conditions with the expected result from the requirements and today's result, the status transitions, the gaps in the requirements, with conclusions.",
       "default": false
     },
     "logs": {
       "type": "boolean",
       "title": "Log statistics",
-      "description": "Write 09-log-stats.md: errors by type and hour, first and last time, share of requests, lined up with deploys and commits, with conclusions. Only when the task has logs.",
+      "description": "In every report, 09-log-stats.md: errors by type and hour, first and last time, share of requests, lined up with deploys and commits, with conclusions. Only when the task has logs.",
       "default": false
     },
     "regression": {
       "type": "boolean",
       "title": "Regression scope",
-      "description": "Write 10-regression.md: what changed in the code between two releases or commits, which business areas it touches, what to retest in which order, a checklist, with conclusions on the risk.",
+      "description": "In every report, 10-regression.md: what changed in the code between two releases or commits, which business areas it touches, what to retest in which order, a checklist, with conclusions on the risk.",
       "default": false
     },
     "visual_artifact": {
       "type": "boolean",
       "title": "Visual page (Artifact)",
-      "description": "After each analysis, build an interactive page (verdict, flows, timeline, requirements, checklist of test cases) and publish it as a private Artifact on claude.ai. Personal data is masked before publishing.",
+      "description": "In every report, build an interactive page (verdict, flows, timeline, requirements, checklist of test cases) and publish it as a private Artifact on claude.ai. Personal data is masked before publishing.",
       "default": false
     },
     "confluence_page": {
       "type": "boolean",
       "title": "Confluence-style page",
-      "description": "After each analysis, also write confluence-page.md: a plain overview for BA, PM and the team, ready to paste into Confluence. Nothing is published.",
+      "description": "In every report, write confluence-page.md: a plain overview for BA, PM and the team, ready to paste into Confluence. Nothing is published.",
       "default": false
     }
   }

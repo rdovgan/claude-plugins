@@ -1,13 +1,13 @@
 ---
 name: present-visual
-description: Output format "visual" - turn a finished QA analysis into an interactive page (verdict, next steps, flow diagrams, timeline, requirements chart, checklist of test cases, ready-to-paste ticket text) and publish it as a private Artifact. Run after analysis-report when the visual format is on, when the user adds --visual, or by /qa-analyst:present visual.
+description: Output format "visual" - turn a QA analysis into an interactive page (verdict, next steps, flow diagrams, timeline, requirements chart, checklist of test cases, ready-to-paste ticket text) and publish it as a private Artifact. Run by analysis-report when the visual format is in the report, last.
 ---
 
 # present-visual
 
 For readers who take in information visually. The page shows the result at a glance and hides every long text behind an info button. It is built from a fixed template, so every analysis looks the same: you write only the data.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `03-flows.md`, `04-findings.md`, `05-test-cases.md` (when written) and `06-ticket-notes.md`, and the data formats when written: `07-impact.md` (its key numbers go into `stats`), `08-decision-table.md`, `09-log-stats.md` (the timeline), `10-regression.md` (next steps). The page says nothing the documents do not say; if a document is missing, finish the analysis first.
+**Input:** the task folder `.claude/qa-analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established, and every document of the other formats that exists: `00-README.md`, `03-flows.md`, `04-findings.md`, `06-ticket-notes.md` (summary), `05-test-cases.md`, and the data formats: `07-impact.md` (its key numbers go into `stats`), `08-decision-table.md`, `09-log-stats.md` (the timeline), `10-regression.md` (next steps). The page says nothing the sources do not say. Without the summary, take the verdict, the flows and the ticket text from the notes and the conversation; leave out a section there is nothing for.
 
 ## 1. Write `visual.json`
 
@@ -48,7 +48,7 @@ Publishing uploads the page to claude.ai. It stays private to the user until the
 - mask personal and secret data: emails, phone numbers, card numbers, names of guests or customers, passwords, tokens, API keys, internal host names and IP addresses, connection strings;
 - no raw log dumps or table dumps: only the few masked lines that prove a point;
 - no credentials or environment values, ever.
-If the case cannot be shown without such data, keep the detail in the local documents and say "see 04-findings.md" in `info`.
+If the case cannot be shown without such data, keep the detail in the local documents and say "see the local documents" in `info`.
 
 ## 4. Build
 
@@ -57,12 +57,12 @@ Run `${CLAUDE_PLUGIN_ROOT}/scripts/build-visual.sh .claude/qa-analysis/<task>`. 
 ## 5. Publish
 
 - Publish `visual.html` (absolute path) with the `Artifact` tool: `icon` "checklist", `description` one sentence with the verdict. The page title comes from the key and title in `meta`.
-- If `00-README.md` already has a `- Visual: https://...` link from an earlier conversation, update that artifact instead of creating a new one: read it first (`action: "read"` with that `url`), then publish with the same `url`.
+- If `00-README.md` or `notes.md` already has a `- Visual: https://...` link from an earlier conversation, update that artifact instead of creating a new one: read it first (`action: "read"` with that `url`), then publish with the same `url`.
 - If the `Artifact` tool is not available, or publishing is refused or fails, do not retry in a loop and do not look for other ways to host the page: tell the user in one line, and point them to the local file (it opens in a browser; diagrams then show as text).
 
 ## 6. Record it
 
-Add or update one line in the header list of `00-README.md`, under `- Type:`:
+Add or update one line in the header list of `00-README.md`, under `- Type:` (without `00-README.md`, at the top of `notes.md`):
 - `- Visual: <artifact link>`, or
 - `- Visual: not published (<reason>); local file visual.html`.
 

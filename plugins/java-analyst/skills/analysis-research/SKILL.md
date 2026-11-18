@@ -1,6 +1,6 @@
 ---
 name: analysis-research
-description: Phase 1 of an analysis - understand what must be done and where it lives in the code, and write 01-research.md. Run by /java-analyst:analyze; use it directly when the user gives a new task (Jira key, ticket link, description) and wants it analysed, not implemented.
+description: Phase 1 of an analysis - understand what must be done and where it lives in the code, and write 01-research.md. Run by /java-analyst:analyze, and by analysis-report when a report lacks the requirements. Not for questions in conversation: those are answered in chat.
 ---
 
 # analysis-research

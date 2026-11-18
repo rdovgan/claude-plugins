@@ -1,27 +1,33 @@
 {
   "name": "java-analyst",
-  "version": "0.8.1",
-  "description": "Analysis-only task workflow for Java teams: research, interview, flow charts, findings and proposed solutions as local documents, plus optional output formats (developer guide, visual page, Confluence page). Never changes code.",
+  "version": "0.9.0",
+  "description": "Analysis-only assistant for Java teams: answers questions about a task, its requirements and the code in conversation, and writes a report in the formats you pick (summary with flows, findings, proposed solutions and implementation guide; developer guide; Confluence page; visual page) only when you ask. Never changes code.",
   "author": {
     "name": "Java Team Tech Lead"
   },
   "userConfig": {
+    "summary": {
+      "type": "boolean",
+      "title": "Summary",
+      "description": "In every report: the recommendation (00-README.md), flow charts (03-flows.md), code findings (04-findings.md), solution options with code sketches (05-proposals.md) and the step-by-step implementation guide (06-implementation-guide.md).",
+      "default": true
+    },
     "dev_guide": {
       "type": "boolean",
       "title": "Developer guide",
-      "description": "After each analysis, also write 07-dev-guide.md: how to build the solution in this codebase - UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests. It explains; it does not write the solution.",
+      "description": "In every report, write 07-dev-guide.md: how to build the solution in this codebase - UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests. It explains; it does not write the solution.",
       "default": true
     },
     "visual_artifact": {
       "type": "boolean",
       "title": "Visual page (Artifact)",
-      "description": "After each analysis, build an interactive page (recommendation, flows, requirements, options with effort and risk, the plan) and publish it as a private Artifact on claude.ai. Secrets and personal data are left out.",
+      "description": "In every report, build an interactive page (recommendation, flows, requirements, options with effort and risk, the plan) and publish it as a private Artifact on claude.ai. Secrets and personal data are left out.",
       "default": false
     },
     "confluence_page": {
       "type": "boolean",
       "title": "Confluence-style page",
-      "description": "After each analysis, also write confluence-page.md: a plain overview for BA, PM, QA and the team, ready to paste into Confluence. Nothing is published.",
+      "description": "In every report, write confluence-page.md: a plain overview for BA, PM, QA and the team, ready to paste into Confluence. Nothing is published.",
       "default": false
     }
   }

@@ -1,13 +1,13 @@
 ---
 name: present-visual
-description: Output format "visual" - turn a finished analysis into an interactive page (verdict, next steps, flow diagrams, requirements chart, solution options with effort and risk, the implementation plan) and publish it as a private Artifact. Run after analysis-report when the visual format is on, when the developer adds --visual, or by /java-analyst:present visual.
+description: Output format "visual" - turn an analysis into an interactive page (verdict, next steps, flow diagrams, requirements chart, solution options with effort and risk, the implementation plan) and publish it as a private Artifact. Run by analysis-report when the visual format is in the report, last.
 ---
 
 # present-visual
 
 For readers who take in information visually. The page shows the result at a glance and hides every long text behind an info button. It is built from a fixed template, so every analysis looks the same: you write only the data.
 
-**Input:** a finished analysis in `.claude/analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `03-flows.md`, `04-findings.md`, `05-proposals.md` and `06-implementation-guide.md`. The page says nothing the documents do not say; if a document is missing, finish the analysis first.
+**Input:** the task folder `.claude/analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established, and every document of the other formats that exists (`00-README.md`, `03-flows.md`, `04-findings.md`, `05-proposals.md`, `06-implementation-guide.md`, `07-dev-guide.md`). The page says nothing the sources do not say. Without the summary, take the recommendation, the flows and the plan from the notes and the conversation; leave out a section there is nothing for.
 
 ## 1. Write `visual.json`
 
@@ -53,12 +53,12 @@ Run `${CLAUDE_PLUGIN_ROOT}/scripts/build-visual.sh .claude/analysis/<task>`. It 
 ## 5. Publish
 
 - Publish `visual.html` (absolute path) with the `Artifact` tool: `icon` "blueprint", `description` one sentence with the recommendation. The page title comes from the key and title in `meta`.
-- If `00-README.md` already has a `- Visual: https://...` link from an earlier conversation, update that artifact instead of creating a new one: read it first (`action: "read"` with that `url`), then publish with the same `url`.
+- If `00-README.md` or `notes.md` already has a `- Visual: https://...` link from an earlier conversation, update that artifact instead of creating a new one: read it first (`action: "read"` with that `url`), then publish with the same `url`.
 - If the `Artifact` tool is not available, or publishing is refused or fails, do not retry in a loop and do not look for other ways to host the page: tell the developer in one line, and point them to the local file (it opens in a browser; diagrams then show as text).
 
 ## 6. Record it
 
-Add or update one line in the header list of `00-README.md`, under `- Jira:`:
+Add or update one line in the header list of `00-README.md`, under `- Jira:` (without `00-README.md`, at the top of `notes.md`):
 - `- Visual: <artifact link>`, or
 - `- Visual: not published (<reason>); local file visual.html`.
 

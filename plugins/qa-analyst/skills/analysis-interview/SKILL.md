@@ -1,6 +1,6 @@
 ---
 name: analysis-interview
-description: Phase 2 of a QA analysis - close the gaps by interviewing the QA engineer, and write 02-interview.md. Run by /qa-analyst:analyze after analysis-research; also use whenever a QA task has unclear expected behaviour, environment or scope.
+description: Phase 2 of a QA analysis - close the gaps by interviewing the QA engineer, and write 02-interview.md. Run by /qa-analyst:analyze after analysis-research. Not for clarifications in conversation: ask those in chat.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, Edit, Write
 ---
 
@@ -29,4 +29,4 @@ The user is a QA engineer. Ask in their terms (screens, statuses, users, environ
 11. **Zero questions beyond the confirmation is a good result** when the sources answer everything. Do not ask to fill the template.
 12. Finish when all questions are closed or the user says to continue. Fill `${CLAUDE_PLUGIN_ROOT}/templates/analysis/02-interview.md` and save it to `.claude/qa-analysis/<task>/02-interview.md`: the confirmation of the understanding, each question with the options offered, the decision and its reason, the questions dropped because the sources answer them, the information the user provided, then the open questions.
 
-Questions must be concrete and specific to this task, not generic advice. Then continue with `analysis-report` in the same turn.
+Questions must be concrete and specific to this task, not generic advice. When run by `/qa-analyst:analyze`, continue with `analysis-report` in the same turn.
