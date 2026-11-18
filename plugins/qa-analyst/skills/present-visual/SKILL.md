@@ -7,7 +7,7 @@ description: Output format "visual" - turn a finished QA analysis into an intera
 
 For readers who take in information visually. The page shows the result at a glance and hides every long text behind an info button. It is built from a fixed template, so every analysis looks the same: you write only the data.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `03-flows.md`, `04-findings.md`, `05-test-cases.md` and `06-ticket-notes.md`. The page says nothing the documents do not say; if a document is missing, finish the analysis first.
+**Input:** a finished analysis in `.claude/qa-analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `03-flows.md`, `04-findings.md`, `05-test-cases.md` (when written) and `06-ticket-notes.md`, and the data formats when written: `07-impact.md` (its key numbers go into `stats`), `08-decision-table.md`, `09-log-stats.md` (the timeline), `10-regression.md` (next steps). The page says nothing the documents do not say; if a document is missing, finish the analysis first.
 
 ## 1. Write `visual.json`
 
@@ -32,7 +32,7 @@ Save it as `.claude/qa-analysis/<task>/visual.json`. Every section except `meta`
 Values:
 - `meta.lang`: `uk` or `en`, the language of the user; it sets the page labels. Write all texts in that language.
 - `verdict.tone` and `tone` elsewhere: `bad` (bug, broken), `warn` (gap, unclear, needs a decision), `good` (works as designed, fixed), `info` (neutral). Timeline `tone`: `cause` (the first cause, exactly one), `error`, `warn`, `ok`, `info`.
-- `confidence`: `high`, `medium`, `low`. Requirement `status`: `ok` (matches), `fail` (does not match), `unclear`, `untested`. Test case `priority`: `high`, `medium`, `low`; `type`: `positive`, `negative`, `edge`, `regression`; `scenarios` holds the test cases of `05-test-cases.md`, all of them, with their steps.
+- `confidence`: `high`, `medium`, `low`. Requirement `status`: `ok` (matches), `fail` (does not match), `unclear`, `untested`. Test case `priority`: `high`, `medium`, `low`; `type`: `positive`, `negative`, `edge`, `regression`; `scenarios` holds the test cases of `05-test-cases.md`, all of them, with their steps; leave it out when there is no such file.
 - `stats`: leave it out and the page computes requirements, checks, open questions and sources. Give it only when other figures matter more (affected bookings, failed requests, period).
 
 ## 2. Keep the page light

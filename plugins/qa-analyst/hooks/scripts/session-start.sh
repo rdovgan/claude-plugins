@@ -39,10 +39,11 @@ if [ -d "$root/.git" ]; then
 fi
 
 fmts="$(qa_formats | tr '\n' ' ')"; fmts="${fmts% }"
+extra="$(printf '%s\n' $fmts | grep -vx tests | tr '\n' ' ')"; extra="${extra% }"
 if [ -n "$fmts" ]; then
-  echo "qa-analyst: output formats on (plugin options): ${fmts// /, }. After the report of /qa-analyst:analyze, also run$(for f in $fmts; do printf ' present-%s' "$f"; done) for the same task folder and name the result in your final message."
+  echo "qa-analyst: output formats on (plugin options): ${fmts// /, }.$(printf '%s\n' $fmts | grep -qx tests && printf ' analysis-report writes the test cases through present-tests.')$([ -n "$extra" ] && printf ' After the report of /qa-analyst:analyze, also run, in this order,%s for the same task folder and name the result in your final message.' "$(for f in $extra; do printf ' present-%s' "$f"; done)")"
 else
-  echo "qa-analyst: output formats: documents only. The user can ask for more per run (/qa-analyst:analyze <task> --visual --confluence) or afterwards (/qa-analyst:present visual|confluence [task]); switch them on for good with /plugin configure qa-analyst@team-plugins."
+  echo "qa-analyst: output formats: core documents only, no test cases (unless the task is a test design). The user can ask for more per run (/qa-analyst:analyze <task> --tests --impact --decision --logs --regression --visual --confluence) or afterwards (/qa-analyst:present <format> [task]); switch them on for good with /plugin configure qa-analyst@team-plugins."
 fi
 command -v git >/dev/null 2>&1 && echo "qa-analyst: branch $(git symbolic-ref --short -q HEAD 2>/dev/null || echo detached)"
 

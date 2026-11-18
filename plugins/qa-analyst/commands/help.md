@@ -19,14 +19,19 @@ Output exactly this cheat sheet, then stop:
 | `02-interview.md` | questions asked and decisions made |
 | `03-flows.md` | business flow charts: how it works now and how it should work |
 | `04-findings.md` | conclusions with evidence: cause, impact, what to retest, requirements coverage; technical references for developers at the end |
-| `05-test-cases.md` | test cases `TC-*`, always: requirements, type, priority, preconditions, test data, steps with an expected result on each step |
+| `05-test-cases.md` | test cases `TC-*` (format `tests`, on by default; always for a test design): requirements, type, priority, preconditions, test data, steps with an expected result on each step |
 | `06-ticket-notes.md` | ready-to-paste texts: bug report or ticket comment, questions to the developer or analyst |
 
-**Output formats** (switch on for good: `/plugin configure qa-analyst@team-plugins` or click a format in the `formats` row above the prompt; for one run: add the flag; for a finished analysis: `/qa-analyst:present <format> [task]`):
+**Output formats** (switch on for good: `/plugin configure qa-analyst@team-plugins` or click a format in the `formats` row above the prompt; for one run: add the flag; for a finished analysis: `/qa-analyst:present <format> [task]`; any combination can be on at once, each format adds its own file):
 
 | Format | Flag | For whom | Result |
 | --- | --- | --- | --- |
-| documents | always | QA, facts first | the seven files above |
+| documents | always | QA, facts first | the files above, without `05-test-cases.md` |
+| tests | `--tests` | QA who run the checks | `05-test-cases.md`; on by default, switch off when you only need the answer |
+| impact | `--impact` | QA, PM, lead deciding priority | `07-impact.md`: affected records in numbers by status, partner and day, a `SELECT` behind each number, conclusions on size, trend and severity |
+| decision | `--decision` | QA testing logic with many conditions | `08-decision-table.md`: combinations of conditions with the expected result (`R*`) and today's, status transitions, gaps in the requirements |
+| logs | `--logs` | QA on incidents | `09-log-stats.md`: errors by type and hour, first and last time, lined up with deploys and commits, conclusions |
+| regression | `--regression` | QA on a fix check or a release | `10-regression.md`: what changed in the code, areas to retest by priority, a checklist |
 | visual | `--visual` | those who read visually | interactive page: verdict, diagrams, timeline, requirements chart, checklist of test cases, ticket text with a copy button; details open on hover. Published as a private Artifact on claude.ai; personal data is masked |
 | confluence | `--confluence` | BA, PM, the whole team | `confluence-page.md`: a plain overview with the main cases, impact, decisions and open questions, ready to paste into Confluence |
 
