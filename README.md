@@ -1,275 +1,98 @@
 # team-plugins
 
-Claude Code plugins for the Java team. The marketplace is called `team-plugins` and holds four plugins: one for each role.
+Claude Code plugins for the Java team, one per role. Enable only one of them in a project.
 
-| Plugin | Who uses it | What it does | Changes code |
+| Plugin | For | What it does | Changes code |
 | --- | --- | --- | --- |
-| [`java-developer`](#java-developer) | Developers | Takes a ticket from Jira to a reviewed branch: research, questions, spec, implementation, tests, review | Yes |
-| [`java-analyst`](#java-analyst) | Analysts, leads | Answers questions about a ticket and the code in chat; on request writes a report in the chosen formats: flows, findings, solution options, implementation guide, developer guide | No |
-| [`qa-analyst`](#qa-analyst) | QA | Answers questions about a ticket, a log or a case ("is this a bug?") in chat; on request writes a report in the chosen formats: answer, test cases, impact, decision table, log statistics, regression scope | No |
-| [`qa-docs`](#qa-docs) | QA | Documents one business domain from the code of all repositories, Jira and Confluence, verifies it, exports to Confluence | No |
+| [`java-developer`](#java-developer) | Developers | Ticket → research → spec → code and tests → review | Yes |
+| [`java-analyst`](#java-analyst) | Analysts, leads | Analyses a ticket and the code: flows, findings, solution options, implementation guide | No |
+| [`qa-analyst`](#qa-analyst) | QA | Answers "is this a bug?", "what to test?" from the ticket, logs, DB and code | No |
+| [`qa-docs`](#qa-docs) | QA | Verified documentation of a business domain from the code, exported to Confluence | No |
 
-Enable only one of them in a project or session.
-
-## Quick start
+## Install
 
 ```bash
-git clone git@github.com:rdovgan/claude-plugins.git
-cd claude-plugins
-./install.sh                        # java-developer
-PLUGIN=java-analyst ./install.sh    # or java-analyst
-PLUGIN=qa-analyst ./install.sh      # or qa-analyst
-PLUGIN=qa-docs ./install.sh         # or qa-docs (usually done by the server admin)
+git clone git@github.com:rdovgan/claude-plugins.git && cd claude-plugins
+./install.sh                       # java-developer
+PLUGIN=qa-analyst ./install.sh     # or java-analyst, qa-docs
 ```
 
-The script checks the tools (`jq`, `git`, `mvn`), connects the marketplace, installs the plugin and says which variables are missing. Then open a project, start `claude` and run:
+Then in `claude`: `/mcp` → `jira` → log in, and `/<plugin>:onboarding` for a 3-minute tour. `/<plugin>:help` is the cheat sheet. Variables, manual setup and troubleshooting: [docs/install.md](docs/install.md).
 
-1. `/mcp` → `jira` → log in with your Atlassian account.
-2. `/java-developer:onboarding`, `/java-analyst:onboarding`, `/qa-analyst:onboarding` or `/qa-docs:onboarding`: a 3-5 minute tour.
+| Variable | Needed for |
+| --- | --- |
+| `JAVA_TEAM_DB_URL`, `_USER`, `_PASSWORD` | Read-only MySQL access (optional) |
+| `JAVA_TEAM_JIRA_URL`, `_EMAIL`, `_TOKEN` | Downloading Jira attachments |
+| `JAVA_TEAM_VAULT` | Obsidian vault for session notes (java-developer) |
+| `<PLUGIN>_FORMATS` | Optional override of the selected formats, e.g. `QA_ANALYST_FORMATS=summary,impact` |
 
-Manual installation, every variable and troubleshooting: [docs/install.md](docs/install.md).
+## How the plugins work
 
-### Environment variables
-
-| Variable | Plugin | Needed for |
-| --- | --- | --- |
-| `JAVA_TEAM_DB_URL`, `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD` | developer, analyst, qa-analyst | Read-only MySQL access. Without them the DB server does not start, everything else works |
-| `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN` | developer, analyst, qa-analyst | Downloading ticket attachments. The Jira MCP server returns only their names |
-| `JAVA_DEVELOPER_FORMATS`, `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS`, `QA_DOCS_FORMATS` | all four | Optional. Overrides the output formats of the plugin options for this shell, e.g. `summary,visual`; `none` for none |
-| `JAVA_TEAM_VAULT` | developer | Obsidian vault for `session-summary` (default `~/Claude Vault`) |
-
-Never commit these values. qa-docs needs none: the admin configures `.qa-docs/config.env` on the server.
-
----
+- **Talk first.** Ask questions in chat; answers cost no documents. What is settled is kept in a short `notes.md` per task.
+- **Report on request.** Pick the formats in the row above the prompt (violet = on, click to switch) and press the yellow **▶ REPORT** button, run `/<plugin>:report`, or say "make the report". Only the selected formats are written, and only they are checked.
+- **Hooks enforce the rules.** Secrets cannot be read; the analysts and qa-docs cannot change code and use Jira, Confluence and the DB read-only.
 
 ## java-developer
 
-### Setting up a project (once)
+Give a task (`ABC-123`, a link or a text). The agent sizes it and runs only what the size needs: a trivial fix goes straight to code and tests; a bigger task gets research, questions, a spec in `.claude/specs/`, then implementation and review. Say "quick" or "full" to override. On stop, the tests of the changed modules must pass.
 
-Open the project in `claude` and say **"initialize the project"**. `project-init` scans the Maven modules, shows what it will create and, after you confirm, writes:
+First time in a project: say "initialize the project" (writes `CLAUDE.md` and `.claude/settings.json`; commit both).
 
-- `CLAUDE.md` at the root and for modules with special rules;
-- `.claude/settings.json`: permissions, sandbox, network hosts (Nexus, git, Jira), the marketplace and the plugin;
-- `.gitignore` entries.
-
-Commit `CLAUDE.md` and `.claude/settings.json`. Teammates are offered the plugin when they open the project.
-
-### Daily work
-
-Give the agent a task: a Jira key (`ABC-123`), a link, or a description. It sizes the task first and runs only the phases the size needs:
-
-| Phase | trivial (1-2 files, behavior stated) | standard | complex |
-| --- | --- | --- | --- |
-| Research: ticket, Confluence, code | ticket only | linked pages, one `code-explorer` call | full sweep, several repositories |
-| Interview: questions to you | no | open questions only | full checklist |
-| Spec in `.claude/specs/` | 3-line plan in chat | 1-3 steps | full spec |
-| `spec-reviewer` checks the plan | no | if a contract, a table or several repos change | yes |
-| Implementation and tests | directly | step by step | step by step, plan mode |
-| `java-reviewer` checks the diff | on request | yes | yes |
-
-Say **"quick"** or **"full"** to override the size. The spec is a checklist: each step has acceptance criteria and tests, and the agent ticks them as it goes. It is never committed.
-
-### What runs automatically
-
-| When | What |
-| --- | --- |
-| Every tool call | Secrets, `.env*`, prod configs and keys cannot be read. `git push --force`, pushes to `main`/`master`, `mvn deploy` and `rm -rf` outside `target/` are blocked with an explanation |
-| After a `.java` edit | Formatter and checkstyle, if `pom.xml` configures them |
-| When the agent stops | Tests of the changed modules run; a failure blocks finishing. Then one reminder to save the session |
-| Session start | Branch, Jira key, spec progress (`N of M steps done`) and the last state snapshot, so work resumes where it stopped |
-
-### Report on request
-
-When the work is done, the developer picks the formats in the `formats` row above the prompt (violet = on) and presses the yellow **▶ REPORT** button, runs `/java-developer:report [KEY] [--pr --qa --review --summary]`, or asks in words. Only the selected formats are written to `.claude/reports/<KEY>/` (excluded from git), and the Stop hook checks only them (D-48). Never unasked.
-
-| Format | Default | Result |
+| Format | Default | Result in `.claude/reports/<KEY>/` |
 | --- | --- | --- |
-| `pr` | on | `pr.md`: PR title `<TICKET> <summary>` and description from the team template, with the real test result, notes for reviewers, scope and merge order |
-| `qa` | on | `qa-handoff.md`: what changed in product words, checks from the spec's acceptance criteria with test data, areas to retest, a comment ready to paste into Jira |
-| `review` | off | `review.md`: the `java-reviewer` report on the branch with a verdict |
-| `summary` | off | A session note in Obsidian through `session-summary` |
+| `pr` | on | PR title and description from the team template |
+| `qa` | on | Handoff for QA: what changed, how to test, Jira comment |
+| `review` | off | Self-review by `java-reviewer` |
+| `summary` | off | Session note in Obsidian |
 
-### Commands and agents
-
-| Command | Action |
-| --- | --- |
-| `/java-developer:report [KEY]` | The report in the selected formats (the REPORT button does the same) |
-| `/java-developer:review` | Review the branch against `main`/`master` |
-| `/java-developer:update-claude-md` | Refresh `CLAUDE.md` and settings, keeping manual sections |
-| `/java-developer:help` | Cheat sheet |
-| "save the session" | `session-summary`: a note in Obsidian |
-| "set up permissions" | `permissions-setup` |
-
-| Agent | Model | Role |
-| --- | --- | --- |
-| `code-explorer` | Haiku | Finds related classes, similar implementations, tests, integration points. Read-only |
-| `spec-reviewer` | Opus | Checks the spec before implementation: uncovered requirements, consumers in the main project, schema, access checks. Read-only |
-| `java-reviewer` | Opus | Reviews the diff with the team checklist: blocker / must fix / consider. Read-only |
-| `test-writer` | Sonnet | Writes tests in the module's style, runs only that module's tests. Never touches production code |
-
-### Tips
-
-- `JAVA_TEAM_SKIP_VERIFY=1 claude`: no test run on stop, for research sessions.
-- Personal permission exceptions go to `.claude/settings.local.json` (git-ignored).
-- Write your own notes in `CLAUDE.md` under "Manual notes": `project-init` never changes them.
-
----
+Commands: `/java-developer:report`, `/java-developer:review`, `/java-developer:update-claude-md`. `JAVA_TEAM_SKIP_VERIFY=1` skips the tests on stop.
 
 ## java-analyst
 
-For a ticket that needs analysis before anyone writes code. The developer implements the change; the plugin prepares everything around it.
-
-```
-/java-analyst:setup                      # once per project: shows missing settings, adds them on confirmation
-/java-analyst:report [task] [--format]   # the report in the selected formats; the REPORT button does the same
-/java-analyst:analyze <key | link | text> # full run in one go: research, interview, report
-```
-
-**Talk first, report on request (D-47).** Most prompts are questions and clarifications: the plugin answers them in chat, reading only what the question needs, and writes no documents. A Jira key in a prompt starts that conversation, not the full workflow. What is settled goes into a few lines of `.claude/analysis/<task>/notes.md` (excluded from git through `.git/info/exclude`), so the next session continues from there. When the questions are settled, the developer picks the formats in the `formats` row above the prompt (violet = on) and presses the yellow **▶ REPORT** button, runs `/java-analyst:report`, or says "make the report". Only the selected formats are written, and the Stop hook checks only them. `analyze` keeps the full run (research → interview → report) for when it is wanted: requirements from the ticket and Confluence quoted verbatim and mapped to code, questions the sources already answer not asked.
-
-Nothing is written to Jira or Confluence.
-
-**Formats.** Switch them with a click in the `formats` row or `/plugin configure java-analyst@team-plugins` (the enabled ones are also in the status line under the prompt); flags replace the selection for one run (`/java-analyst:report ABC-123 --visual`); `/java-analyst:present <format> [task]` adds one later.
+Analysis before anyone writes code. Ask about the task in chat; `/java-analyst:analyze <key>` runs the full research → interview → report. Results go to `.claude/analysis/<task>/`.
 
 | Format | Default | Result |
 | --- | --- | --- |
-| `summary` | on | `00-README` (summary and index), `03-flows` (mermaid flow charts), `04-findings` (problems and risks), `05-proposals` (solution options with code examples), `06-implementation-guide` (steps with acceptance criteria) |
-| `dev` | on | `07-dev-guide.md` for a developer who codes it alone: UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests. It explains; it does not write the solution |
-| `visual` | off | An interactive page (recommendation, diagrams, requirements chart, options with effort and risk, the plan; long text behind info buttons) built from a fixed template and published as a private Artifact on claude.ai |
-| `confluence` | off | `confluence-page.md`: a plain overview for BA, PM, QA and the team, ready to paste into Confluence |
-
-**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands, MCP to read tools, the DB to `SELECT`. The agent cannot stop with an unfinished report (only the formats of that report are checked). `JAVA_ANALYST_OFF=1` turns the guards off.
-
----
+| `summary` | on | Flows, findings, solution options, implementation guide |
+| `dev` | on | Developer guide: UML, patterns with reference code, templates |
+| `visual` | off | Interactive page, published as a private Artifact |
+| `confluence` | off | Page for the team, ready to paste into Confluence |
 
 ## qa-analyst
 
-For a QA engineer who needs an answer, not a fix: is this a bug or expected, why did a case fail, what must be tested, did the fix change the right thing. The plugin reads the Jira ticket and its Confluence pages, the logs, the database (read-only) and the code, and explains the result in plain language. It gives no code examples and no implementation advice; code is evidence it reads.
-
-```
-/qa-analyst:setup                                    # once per project: shows missing settings, adds them on confirmation
-/qa-analyst:report [task] [--format]                 # the report in the selected formats; the REPORT button does the same
-/qa-analyst:analyze <key | link | text | log path>   # full run in one go: research, interview, report
-```
-
-**Talk first, report on request (D-47).** Most QA prompts are questions and clarifications: the plugin answers them in chat, reading only what the question needs, and writes no documents, so a quick question costs little. A Jira key in a prompt starts that conversation, not the full workflow. What is settled goes into a few lines of `.claude/qa-analysis/<task>/notes.md` (excluded from git through `.git/info/exclude`), so the next session continues from there. When the requirements and the details are settled, QA picks the formats in the `formats` row above the prompt (violet = on) and presses the yellow **▶ REPORT** button, runs `/qa-analyst:report`, or says "make the report". Only the selected formats are written, and the Stop hook checks only them: with just `impact` selected, the report is `07-impact.md` and nothing else. `analyze` keeps the full run (research → interview → report): requirements quoted verbatim (`R1`, `R2`, ...), logs turned into a timeline (big ones by the `log-reader` agent, personal data masked), the data of the case checked with `SELECT` queries QA can re-run, an interview in product terms that asks only what the sources do not answer.
-
-Nothing is published to Jira or Confluence.
-
-**Formats**, any combination at once. Switch them with a click in the `formats` row or `/plugin configure qa-analyst@team-plugins` (the enabled ones are also in the status line under the prompt); flags replace the selection for one run (`/qa-analyst:report ABC-123 --impact --visual`); `/qa-analyst:present <format> [task]` adds one later.
+For QA who need an answer, not a fix. Reads the ticket and its Confluence pages, logs, the DB and the code, and answers in plain language without code. `/qa-analyst:analyze <key | log>` runs the full research → interview → report. Results go to `.claude/qa-analysis/<task>/`.
 
 | Format | Default | Result |
 | --- | --- | --- |
-| `summary` | on | `00-README` (the answer, what to do next, reading order), `03-flows` (business flow charts: now vs expected, timeline of the case), `04-findings` (cause, impact, what to retest, requirements coverage, technical references for developers), `06-ticket-notes` (ready-to-paste bug report or ticket comment, questions to the team) |
-| `tests` | on | `05-test-cases.md`: test cases `TC-*` with requirements, type, priority, preconditions, test data, steps with an expected result on each |
-| `impact` | off | `07-impact.md`: affected records in numbers (by status, partner, day), a `SELECT` behind every number, conclusions on size, trend and severity |
-| `decision` | off | `08-decision-table.md`: every combination of conditions with the expected result from `R*` and today's result, status transitions, gaps in the requirements |
-| `logs` | off | `09-log-stats.md`: errors by type and hour, first and last time, lined up with deploys and commits; only for tasks with logs |
-| `regression` | off | `10-regression.md`: what changed in the code between two releases or commits, areas to retest by priority, a checklist |
-| `visual` | off | An interactive page for those who read visually: verdict, next steps, "now vs expected" diagrams, the log timeline, a requirements chart, a checklist of test cases, the ticket text with a copy button; long text behind info buttons. Built from a fixed template and published as a private Artifact on claude.ai, personal data masked |
-| `confluence` | off | `confluence-page.md`: a plain overview for BA, PM and the team (main cases, impact, decisions, open questions), ready to paste into Confluence |
-
-**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands (`zgrep`/`zcat` included for compressed logs), MCP to read tools, the DB to one `SELECT` per call. The agent cannot stop with an unfinished report (only the formats of that report are checked) or with program code in the QA documents. `QA_ANALYST_OFF=1` turns the guards off.
-
----
+| `summary` | on | The answer, flows, findings, ready-to-paste ticket text |
+| `tests` | on | Test cases with steps and expected results |
+| `impact` | off | Affected records in numbers, with the queries |
+| `decision` | off | Decision table of the business rule |
+| `logs` | off | Error statistics from the logs |
+| `regression` | off | What changed between releases and what to retest |
+| `visual` | off | Interactive page, published as a private Artifact |
+| `confluence` | off | Page for the team, ready to paste into Confluence |
 
 ## qa-docs
 
-Builds a verified document per business domain from the real code of every repository (Java, PHP, JS), plus Jira and Confluence. QA uses it as the source of truth for requirements and test planning.
-
-It runs on a shared server. Sources are read-only mirrors of `master`/`main`, refreshed by cron. Each QA uses their own account and Claude login, and results in `<workspace>/qa-docs/` are shared.
-
-### Starting
-
-Always start in the workspace root, the folder that holds all repositories:
-
-```bash
-ssh <qa-user>@<server>
-cd /srv/projects && claude
-```
-
-Only there does the session load the workspace settings (secret rules, Confluence write confirmation, sandbox). From inside one repository, that repository's settings apply instead. The first time: `/mcp` → `jira`, then `/qa-docs:check` and `/qa-docs:onboarding`.
-
-### Commands
+Runs on a shared server over read-only mirrors of all repositories. Start in the workspace root (`cd /srv/projects && claude`).
 
 | Command | Action |
 | --- | --- |
-| `/qa-docs:ask <question>` | One answer from the code with `repo/path:line`, writes nothing. Cheapest option |
-| `/qa-docs:document <domain \| flow \| key \| page>` | Full document: scope (you confirm) → Jira/Confluence → code research → pages in `doc/` → verification |
-| `/qa-docs:verify <slug>` | Check a document again: references, facts against the code, approval by a person |
-| `/qa-docs:refresh <slug>` | Update a document after the code changed |
-| `/qa-docs:confluence <slug>` | Build the Confluence pages from the document, with a local preview; publishes nothing |
-| `/qa-docs:report [slug]` | Build the selected output formats of a documented domain (the REPORT button does the same) |
-| `/qa-docs:export <slug>` | Publish the Confluence pages as a page tree with the diagrams as pictures, keeping manual edits on each page |
-| `/qa-docs:update-page <link>` | New version of an old Confluence page in its own structure, with a list of what changed. The old page only gets a link comment |
-| `/qa-docs:rewrite <slug>` | Move a 0.2 single-file document into the page set, without new research |
-| `/qa-docs:map` | Build or update `qa-docs/modules.md` (repositories and their connections) and `qa-docs/domains.md` (domains and their status) |
-| `/qa-docs:check` | Tools, server setup, freshness of sources and maps |
-| `/qa-docs:help` | Cheat sheet |
+| `/qa-docs:ask <question>` | Quick answer from the code, writes nothing |
+| `/qa-docs:document <domain>` | Full verified document: process pages with diagrams, rules, differences from Jira/Confluence |
+| `/qa-docs:refresh`, `/qa-docs:verify` | Update after code changes, check again |
+| `/qa-docs:report`, `/qa-docs:export` | Build the formats; publish to Confluence (asks first) |
+| `/qa-docs:update-page <link>` | Bring an old Confluence page up to date in its own structure |
 
-A document is a set of short linked pages in `domains/<slug>/doc/`:
+Formats: `confluence` (on, the pages with a local preview) and `visual` (off, an interactive overview). Server setup: [plugins/qa-docs/server/README.md](plugins/qa-docs/server/README.md).
 
-| Page | Content |
-| --- | --- |
-| `README.md` | Summary, overview diagram of actors, systems and data stores, list of processes |
-| `flows/<flow>.md` | One process: sequence or flow diagram, steps, rules it applies, error paths, edge cases, what to test |
-| `reference/` | `rules.md` (each rule stated once, linked from the process pages), `states.md`, `data.md`, `config.md`, `integrations.md` |
-| `differences.md`, `open-questions.md` | Where the code disagrees with Jira/Confluence; what is still unknown |
+## Developing
 
-`doc/` is the checked record, with a code reference in every statement. After approval the same facts are written as Confluence pages in `domains/<slug>/confluence/`: Confluence HTML exactly as the export sends it (info and warning panels, status lozenges, Jira cards, "I need to... → page" routing, worked examples, code references folded into expands), `pages.json` for the tree, and `confluence/preview/index.html` to see them in a browser before publishing. `/qa-docs:confluence <slug>` rebuilds them; nobody edits them by hand.
-
-Diagrams are rendered to PNG on the server with mermaid-cli (`doc/diagrams/`). The export uploads them as attachments of their pages with each QA's own Atlassian API token (`QA_DOCS_CONFLUENCE_EMAIL`, `QA_DOCS_CONFLUENCE_TOKEN` in `~/.profile`), because the MCP server cannot upload attachments. Without the token the pages show the PNG path.
-
-### Output formats
-
-Built after a document is approved, or later with `/qa-docs:report <slug>` or the yellow **▶ REPORT** button in the `formats` row (violet = on). Only the selected formats are built, and the Stop hook checks only them (D-48). An updated old page (`/qa-docs:update-page`) always gets its Confluence page.
-
-| Format | Default | Result |
-| --- | --- | --- |
-| `confluence` | on | `confluence/`: the pages exactly as they will be published, with a local preview. Publishing stays `/qa-docs:export` |
-| `visual` | off | `visual/visual.html`: an interactive overview of the domain (processes with diagrams, rules, differences, what to test, open questions), published as a private Artifact; the same template as the qa-analyst page |
-
-### Usage limits
-
-A full document on a large workspace is the most expensive thing the team does with Claude. Agents run on Sonnet. Research covers at most `QA_DOCS_MAX_SUBFLOWS` sub-flows (default 6) and then asks whether to continue. Searches skip build output and dependencies. Use `/qa-docs:ask` when you only need an answer.
-
-### Guarantees
-
-Hooks block:
-
-- secret files;
-- reads outside the workspace;
-- writes anywhere except documents in `qa-docs/`;
-- two sessions working on one domain at once;
-- non-read-only Bash and Jira calls;
-- Confluence writes outside the configured parent page or to pages qa-docs did not create (diagram uploads too);
-- commands that mention the Atlassian token.
-
-On stop, the documents must be consistent and every `repo/path:line` reference must resolve. The guards have no off switch.
-
-Server setup (accounts, permissions, cron, settings): [plugins/qa-docs/server/README.md](plugins/qa-docs/server/README.md).
-
----
-
-## Developing the plugins
-
-Changes go through a PR reviewed by the tech lead. Every behavior change bumps `version` in the plugin's `.claude-plugin/plugin.json` and adds a [CHANGELOG](CHANGELOG.md) entry. Design decisions and open questions are in [docs/decisions.md](docs/decisions.md).
-
-Before a release:
+Changes go through a PR. Every behavior change bumps `version` in the plugin's `plugin.json` and adds a [CHANGELOG](CHANGELOG.md) entry; design decisions are in [docs/decisions.md](docs/decisions.md). Before a release:
 
 ```bash
-claude plugin validate . --strict
-for p in java-developer java-analyst qa-analyst qa-docs; do claude plugin validate plugins/$p --strict; done
+for p in . plugins/*; do claude plugin validate "$p" --strict; done
 shellcheck plugins/*/hooks/scripts/*.sh plugins/qa-docs/scripts/*.sh plugins/qa-docs/server/*.sh
 test-fixtures/qa-docs/test-guards.sh
-```
-
-```
-.claude-plugin/marketplace.json   marketplace definition
-plugins/java-developer/           skills, agents, commands, hooks, templates, .mcp.json
-plugins/java-analyst/             analysis skills, read-only guard hooks, document templates
-plugins/qa-analyst/               QA analysis skills, log reader, read-only guard hooks, document templates
-plugins/qa-docs/                  domain skills, agents, guard hooks, templates, server/ admin scripts
-test-fixtures/                    sample Maven project and review bait for acceptance tests
-docs/                             install guide, decisions, feature cheat sheet
 ```

@@ -65,6 +65,12 @@ Tell the agent: "initialize the project". Review the summary of changes and conf
 ## Hook controls
 
 - `JAVA_TEAM_SKIP_VERIFY=1` - disable the test check on stop (for research without code changes).
+- `JAVA_ANALYST_OFF=1`, `QA_ANALYST_OFF=1` - turn the read-only guards of the analysts off (work outside their purpose). qa-docs has no off switch.
+- `JAVA_DEVELOPER_FORMATS`, `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS`, `QA_DOCS_FORMATS` - override the report formats selected in the plugin options for this shell, comma separated (`summary,visual`); `none` for none. While set, the formats row above the prompt only shows them.
+
+## qa-docs: diagrams in Confluence
+
+The export uploads the diagram PNGs as page attachments with each QA's own Atlassian API token, because the MCP server cannot upload attachments. Set `QA_DOCS_CONFLUENCE_EMAIL` and `QA_DOCS_CONFLUENCE_TOKEN` in `~/.profile` on the server; `/qa-docs:check` tells whether they are set. Without them the pages show the PNG path. The rest of the qa-docs setup is the admin's: [plugins/qa-docs/server/README.md](../plugins/qa-docs/server/README.md).
 
 ## Demo for a team (show the whole onboarding again)
 
