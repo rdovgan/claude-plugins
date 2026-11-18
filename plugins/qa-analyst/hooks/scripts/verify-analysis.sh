@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Stop: a QA analysis started in this session must be complete (all documents, no placeholders, a flow chart,
-# numbered requirements referenced by the findings and the test cases, a confirmed understanding, an answer,
+# numbered requirements referenced by the findings and the test cases (when written), a confirmed understanding, an answer,
 # and no program code in the QA-facing documents).
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
@@ -41,12 +41,16 @@ while IFS= read -r d; do
 - $d/02-interview.md does not record that the user confirmed your understanding of the task"
   [ -f "$dir/00-README.md" ] && ! grep -q '^## Answer' "$dir/00-README.md" && problems="$problems
 - $d/00-README.md has no Answer section: state the verdict in plain language"
+  # Test cases: a format (on by default), and always for a test design task.
   tc="$dir/05-test-cases.md"
-  if [ -f "$tc" ]; then
+  if [ ! -f "$tc" ] && { printf '%s\n' $formats | grep -qx tests || grep -qiE '^- Type:.*test design' "$dir/00-README.md" 2>/dev/null; }; then
+    problems="$problems
+- $d/05-test-cases.md is missing: the test cases format is on (or the task is a test design); run the present-tests skill"
+  elif [ -f "$tc" ]; then
     ncases="$(grep -cE '^### TC-[0-9]+' "$tc")"
     nsteps="$(grep -cE '^\|[[:space:]]*#[[:space:]]*\|' "$tc")"
     if [ "$ncases" -eq 0 ]; then problems="$problems
-- $d/05-test-cases.md has no numbered test cases (### TC-1, ### TC-2, ...): test cases are required for every task"
+- $d/05-test-cases.md has no numbered test cases (### TC-1, ### TC-2, ...)"
     elif [ "$nsteps" -lt "$ncases" ]; then problems="$problems
 - $d/05-test-cases.md: $ncases test cases but $nsteps steps tables; every case needs its '| # | Step | Expected result |' table"
     fi
@@ -57,7 +61,7 @@ while IFS= read -r d; do
   done
   # QA documents explain behaviour in words: no program code. Mermaid, SQL check queries, log lines,
   # request/response bodies and shell commands to reproduce are allowed.
-  for doc in 00-README.md 03-flows.md 04-findings.md 05-test-cases.md 06-ticket-notes.md confluence-page.md; do
+  for doc in 00-README.md 03-flows.md 04-findings.md 05-test-cases.md 06-ticket-notes.md 07-impact.md 08-decision-table.md 09-log-stats.md 10-regression.md confluence-page.md; do
     [ -f "$dir/$doc" ] || continue
     langs="$(grep -oE '^[[:space:]]*```[A-Za-z+#-]+' "$dir/$doc" | sed -E 's/^[[:space:]]*```//' | tr '[:upper:]' '[:lower:]' \
       | grep -xE 'java|kotlin|kt|groovy|scala|javascript|js|jsx|typescript|ts|tsx|python|py|php|go|golang|ruby|rb|c|cpp|c\+\+|cs|csharp|c#|rust|rs|swift|diff|patch' | sort -u | tr '\n' ' ')"
@@ -67,6 +71,28 @@ while IFS= read -r d; do
   # Output formats switched on in the plugin options (or QA_ANALYST_FORMATS).
   for fmt in $formats; do
     case "$fmt" in
+      tests) ;; # checked above
+      impact|decision|logs|regression)
+        file="$(qa_format_file "$fmt")"
+        if [ ! -f "$dir/$file" ]; then
+          # logs: a task without logs gets no file; research names its log sources.
+          [ "$fmt" = logs ] && ! grep -qiE '\.log|log file|logs?:' "$dir/01-research.md" 2>/dev/null && continue
+          problems="$problems
+- $d: the $fmt format is on but $file is missing: run the present-$fmt skill"
+        else
+          grep -q '{{' "$dir/$file" && problems="$problems
+- $d/$file still has {{placeholders}}"
+          grep -q '^## Conclusions' "$dir/$file" || problems="$problems
+- $d/$file has no '## Conclusions' section: explain what the data means"
+          grep -qE '^\|.*\|' "$dir/$file" || problems="$problems
+- $d/$file has no table with the data"
+          [ "$fmt" = impact ] && ! grep -q '^```sql' "$dir/$file" && ! grep -q '^## Limits' "$dir/$file" && problems="$problems
+- $d/$file has no SELECT behind its numbers ('## How to check'), and no '## Limits' saying why"
+          [ "$fmt" = decision ] && ! grep -qE '\bR[0-9]+\b' "$dir/$file" && problems="$problems
+- $d/$file does not refer to any requirement R*: every expected result comes from one"
+          [ "$fmt" = regression ] && ! grep -qE '^- \[ \]' "$dir/$file" && problems="$problems
+- $d/$file has no checklist (- [ ] ...)"
+        fi ;;
       visual)
         [ -f "$dir/visual.json" ] && [ -f "$dir/visual.html" ] || problems="$problems
 - $d: the visual format is on but visual.json/visual.html are missing: run the present-visual skill"

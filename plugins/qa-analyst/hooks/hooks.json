@@ -1,4 +1,5 @@
 {
+  "modules": ["./formats.tsx"],
   "hooks": {
     "SessionStart": [
       { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh\"", "timeout": 10 } ] }

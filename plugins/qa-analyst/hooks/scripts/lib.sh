@@ -62,19 +62,36 @@ qa_workspace_repos() {
 
 # Required documents of one analysis, in reading order.
 qa_docs() {
-  printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 05-test-cases.md 06-ticket-notes.md
+  printf '%s\n' 00-README.md 01-research.md 02-interview.md 03-flows.md 04-findings.md 06-ticket-notes.md
 }
 
-# Extra output formats on top of the documents, one per line: visual, confluence.
+# Output formats on top of the core documents, one per line, in the order they run: tests (05-test-cases.md, on by default),
+# the data formats impact, decision, logs, regression (07-10), then the views confluence and visual.
 # Source: QA_ANALYST_FORMATS (comma list, "none" for none) if set, otherwise the plugin options
 # (/plugin configure qa-analyst@team-plugins), which hooks receive as CLAUDE_PLUGIN_OPTION_<KEY>.
 qa_formats() {
   local list="${QA_ANALYST_FORMATS:-}"
   if [ -z "$list" ]; then
+    qa_truthy "${CLAUDE_PLUGIN_OPTION_TESTS:-true}" && list="$list,tests"
+    qa_truthy "${CLAUDE_PLUGIN_OPTION_IMPACT:-false}" && list="$list,impact"
+    qa_truthy "${CLAUDE_PLUGIN_OPTION_DECISION_TABLE:-false}" && list="$list,decision"
+    qa_truthy "${CLAUDE_PLUGIN_OPTION_LOGS:-false}" && list="$list,logs"
+    qa_truthy "${CLAUDE_PLUGIN_OPTION_REGRESSION:-false}" && list="$list,regression"
     qa_truthy "${CLAUDE_PLUGIN_OPTION_VISUAL_ARTIFACT:-false}" && list="$list,visual"
     qa_truthy "${CLAUDE_PLUGIN_OPTION_CONFLUENCE_PAGE:-false}" && list="$list,confluence"
   fi
-  printf '%s' "$list" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]' | grep -xE 'visual|confluence' | sort -u
+  list="$(printf '%s' "$list" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]')"
+  local f
+  for f in tests impact decision logs regression confluence visual; do
+    printf '%s\n' "$list" | grep -qx "$f" && printf '%s\n' "$f"
+  done
+}
+# File of a data format (written by present-<format>).
+qa_format_file() {
+  case "$1" in
+    impact) echo 07-impact.md ;; decision) echo 08-decision-table.md ;;
+    logs) echo 09-log-stats.md ;; regression) echo 10-regression.md ;;
+  esac
 }
 qa_truthy() { case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in true|1|yes|on) return 0 ;; esac; return 1; }
 

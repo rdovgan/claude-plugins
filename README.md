@@ -126,7 +126,7 @@ For a ticket that needs analysis before anyone writes code. The developer implem
 
 Nothing is written to Jira or Confluence.
 
-**Output formats.** On top of the documents, the result can be presented for different readers. Turn formats on or off with `/plugin configure java-analyst@team-plugins`, add one for a single run with a flag (`/java-analyst:analyze ABC-123 --visual`), or build one later from a finished analysis with `/java-analyst:present <format> [task]`.
+**Output formats.** On top of the documents, the result can be presented for different readers. Turn formats on or off with `/plugin configure java-analyst@team-plugins` or by clicking one in the `formats` row above the prompt (violet = on; the enabled ones are also in the status line under the prompt), add one for a single run with a flag (`/java-analyst:analyze ABC-123 --visual`), or build one later from a finished analysis with `/java-analyst:present <format> [task]`.
 
 | Format | Default | Result |
 | --- | --- | --- |
@@ -156,15 +156,20 @@ For a QA engineer who needs an answer, not a fix: is this a bug or expected, why
 | `02-interview` | Questions and answers |
 | `03-flows` | Business flow charts: now vs expected, timeline of the case |
 | `04-findings` | Cause, impact, what to retest, requirements coverage; technical references for developers |
-| `05-test-cases` | Test cases `TC-*`, required for every task: requirements, type, priority, preconditions, test data, steps with an expected result on each |
+| `05-test-cases` | Test cases `TC-*` (format `tests`, on by default; always for a test design): requirements, type, priority, preconditions, test data, steps with an expected result on each |
 | `06-ticket-notes` | Ready-to-paste bug report or ticket comment, questions to the team |
 
 Nothing is published to Jira or Confluence.
 
-**Output formats.** The documents are always written; for readers who need another view, turn formats on with `/plugin configure qa-analyst@team-plugins`, add one for a single run (`/qa-analyst:analyze ABC-123 --visual`), or build one later with `/qa-analyst:present <format> [task]`.
+**Output formats.** The core documents are always written; test cases and the views for other readers are formats, any combination of them at once. Turn formats on or off with `/plugin configure qa-analyst@team-plugins` or by clicking one in the `formats` row above the prompt (violet = on; the enabled ones are also in the status line under the prompt), add one for a single run (`/qa-analyst:analyze ABC-123 --tests --visual`), or build one later with `/qa-analyst:present <format> [task]`.
 
 | Format | Default | Result |
 | --- | --- | --- |
+| `tests` | on | `05-test-cases.md` (above); switch it off when only the answer is needed. A test design task always gets it |
+| `impact` | off | `07-impact.md`: affected records in numbers (by status, partner, day), a `SELECT` behind every number, conclusions on size, trend and severity |
+| `decision` | off | `08-decision-table.md`: every combination of conditions with the expected result from `R*` and today's result, status transitions, gaps in the requirements |
+| `logs` | off | `09-log-stats.md`: errors by type and hour, first and last time, lined up with deploys and commits; only for tasks with logs |
+| `regression` | off | `10-regression.md`: what changed in the code between two releases or commits, areas to retest by priority, a checklist |
 | `visual` | off | An interactive page for those who read visually: verdict, next steps, "now vs expected" diagrams, the log timeline, a requirements chart, a checklist of test cases, the ticket text with a copy button; long text behind info buttons. Built from a fixed template and published as a private Artifact on claude.ai, personal data masked |
 | `confluence` | off | `confluence-page.md`: a plain overview for BA, PM and the team (main cases, impact, decisions, open questions), ready to paste into Confluence |
 

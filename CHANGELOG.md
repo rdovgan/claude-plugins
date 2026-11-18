@@ -2,6 +2,15 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-analyst [0.8.0] and qa-analyst [0.4.0] - 2026-11-18
+
+### Changed
+- qa-analyst: test cases are an output format, `tests` (D-45), on by default, so nothing changes until someone switches it off. Off, `05-test-cases.md` is not written and the Stop hook does not ask for it, except for a test design task. Per run: `--tests`; for a finished analysis: `/qa-analyst:present tests`. The new `present-tests` skill holds the rules for the cases; `analysis-report` runs it before `00-README.md`.
+
+### Added
+- qa-analyst data formats (D-46), each a document with tables and a `## Conclusions` section in plain text, off by default: `impact` (`07-impact.md`, affected records counted in the DB with the queries), `decision` (`08-decision-table.md`, decision and status transition tables against `R*`), `logs` (`09-log-stats.md`, error statistics lined up with deploys and commits), `regression` (`10-regression.md`, changes between two releases, areas to retest, checklist). Flags `--impact --decision --logs --regression`, `/qa-analyst:present <format>`, one skill each (`present-*`). They run after `00-README.md` and before the views, which use their numbers. The Stop hook checks each one that is on.
+- Format toggles (D-44): a `formats` row above the prompt shows the plugin's output formats, the enabled ones on a violet background; a click turns one on or off, the same as `/plugin configure`. The enabled formats are also the plugin's status line under the prompt (`formats: dev, visual`). With `*_FORMATS` set the row only shows the formats and says so. Needs a Claude Code build with hooks modules (`hooks/formats.tsx`); the shell hooks work without it.
+
 ## [0.10.1], java-analyst [0.7.1], qa-analyst [0.3.1] and qa-docs [0.4.1] - 2026-11-18
 
 ### Changed
