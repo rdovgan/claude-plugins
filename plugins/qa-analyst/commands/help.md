@@ -4,30 +4,20 @@ description: Cheat sheet - what the qa-analyst plugin does and how to use it
 
 Output exactly this cheat sheet, then stop:
 
-**What it is** - an analysis assistant for QA. You give it a ticket, a question or a log; it reads the Jira ticket and the Confluence pages with the requirements, the logs, the database (read-only) and the code, asks you what the sources do not answer, and writes plain-language documents: what happens, is it a bug, what to test, what to write in the ticket. **No code examples and no fix instructions**, and it **never changes code**. Documentation (`.md`, `.txt`, ...), `CLAUDE.md` and `.claude/` files it can write, so `/init` works.
+**What it is** - an analysis assistant for QA. Ask it about a ticket, a requirement or a log; it reads the Jira ticket and the Confluence pages with the requirements, the logs, the database (read-only) and the code, and answers in plain language: what happens, is it a bug, what to test, what to write in the ticket. **No code examples and no fix instructions**, and it **never changes code**. Documentation (`.md`, `.txt`, ...), `CLAUDE.md` and `.claude/` files it can write, so `/init` works.
 
 **First time:** `/qa-analyst:setup` (shows which project settings are missing and adds them after you confirm), then `/qa-analyst:onboarding` (3-minute tour).
 
-**Start:** `/qa-analyst:analyze ABC-123` (or a ticket link, a description, or a path to a log file). Good inputs: "is this a bug or expected?", "why did booking 4711 fail at 14:05?", "what must I test for ABC-123?", "check the fix for ABC-123".
+**Talk first.** Just ask: "what does ABC-123 change for partners?", "is this a bug or expected?", "why did booking 4711 fail at 14:05?". Answers come in chat, no documents, so a quick question costs little. What is settled is kept in a few lines in `.claude/qa-analysis/<task>/notes.md`, so the next session goes on from there.
 
-**What you get** in `.claude/qa-analysis/<task>/` (local, not committed):
+**Report when you are done.** Pick the formats in the `formats` row above the prompt (violet = on; a click switches), then press the yellow **▶ REPORT** button, run `/qa-analyst:report [task]`, or just say "make the report". Only the selected formats are written, and only they are checked. For one run, flags replace the selection: `/qa-analyst:report ABC-123 --impact`. `/qa-analyst:present <format> [task]` adds one more format later. `/qa-analyst:analyze ABC-123` is the full run in one go: research, interview (answers with the keyboard), report.
 
-| File | Content |
-| --- | --- |
-| `00-README.md` | the answer (verdict), what to do next, reading order, open questions |
-| `01-research.md` | the task, requirements `R*`, sources read, evidence from logs and the DB |
-| `02-interview.md` | questions asked and decisions made |
-| `03-flows.md` | business flow charts: how it works now and how it should work |
-| `04-findings.md` | conclusions with evidence: cause, impact, what to retest, requirements coverage; technical references for developers at the end |
-| `05-test-cases.md` | test cases `TC-*` (format `tests`, on by default; always for a test design): requirements, type, priority, preconditions, test data, steps with an expected result on each step |
-| `06-ticket-notes.md` | ready-to-paste texts: bug report or ticket comment, questions to the developer or analyst |
-
-**Output formats** (switch on for good: `/plugin configure qa-analyst@team-plugins` or click a format in the `formats` row above the prompt; for one run: add the flag; for a finished analysis: `/qa-analyst:present <format> [task]`; any combination can be on at once, each format adds its own file):
+**Formats** (switch on for good: click in the `formats` row or `/plugin configure qa-analyst@team-plugins`; any combination; files land in `.claude/qa-analysis/<task>/`, local, not committed):
 
 | Format | Flag | For whom | Result |
 | --- | --- | --- | --- |
-| documents | always | QA, facts first | the files above, without `05-test-cases.md` |
-| tests | `--tests` | QA who run the checks | `05-test-cases.md`; on by default, switch off when you only need the answer |
+| summary | `--summary` | QA, facts first | `00-README.md` (the answer, next steps, open questions), `03-flows.md` (flow charts: now and as required), `04-findings.md` (evidence, cause, impact, requirements coverage, technical references), `06-ticket-notes.md` (bug report or ticket comment to paste); on by default |
+| tests | `--tests` | QA who run the checks | `05-test-cases.md`: test cases `TC-*` with requirements, type, priority, preconditions, test data, steps with an expected result on each step; on by default |
 | impact | `--impact` | QA, PM, lead deciding priority | `07-impact.md`: affected records in numbers by status, partner and day, a `SELECT` behind each number, conclusions on size, trend and severity |
 | decision | `--decision` | QA testing logic with many conditions | `08-decision-table.md`: combinations of conditions with the expected result (`R*`) and today's, status transitions, gaps in the requirements |
 | logs | `--logs` | QA on incidents | `09-log-stats.md`: errors by type and hour, first and last time, lined up with deploys and commits, conclusions |
@@ -35,8 +25,10 @@ Output exactly this cheat sheet, then stop:
 | visual | `--visual` | those who read visually | interactive page: verdict, diagrams, timeline, requirements chart, checklist of test cases, ticket text with a copy button; details open on hover. Published as a private Artifact on claude.ai; personal data is masked |
 | confluence | `--confluence` | BA, PM, the whole team | `confluence-page.md`: a plain overview with the main cases, impact, decisions and open questions, ready to paste into Confluence |
 
-**Logs:** give a path (`/qa-analyst:analyze ~/Downloads/app.log booking 4711`), paste a fragment, or attach it to the Jira ticket (downloaded with your Jira API token). Big logs are read by the `log-reader` agent; personal data is masked in the documents.
+Working files, never checked: `notes.md` (the conversation's record), `01-research.md` and `02-interview.md` (written by `/qa-analyst:analyze`).
+
+**Logs:** give a path (`~/Downloads/app.log, why did booking 4711 fail?`), paste a fragment, or attach it to the Jira ticket (downloaded with your Jira API token). Big logs are read by the `log-reader` agent; personal data is masked in the documents.
 
 **Rules that will stop the agent:** no writes to source code, tests, build files (`pom.xml`, `package.json`) or application configs; writes only inside the project; only read-only shell commands (`ls`, `grep`, `zgrep`, `sed -n`, `git log/diff/show`, ...); no reading `.env`/prod configs; Jira, Confluence and the DB are read-only (DB: one `SELECT` per call); the documents must not contain program code.
 
-**Tips:** the interview starts by showing how the task was understood: correct it there, it is the cheapest moment; it does not ask what the ticket or Confluence already answer, so a short interview is normal; requirements get ids (`R1`, `R2`, ...) and test cases (`TC-1`, `TC-2`, ...) that every document refers to; documents are written in the language you use. To continue an analysis, run the command again with the same key. `QA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.
+**Tips:** in `/qa-analyst:analyze` the interview starts by showing how the task was understood: correct it there, it is the cheapest moment; it does not ask what the ticket or Confluence already answer, so a short interview is normal; requirements get ids (`R1`, `R2`, ...) and test cases (`TC-1`, `TC-2`, ...) that every document refers to; documents are written in the language you use. To continue a task, mention its key: the notes are read first. `QA_ANALYST_OFF=1 claude` switches the guards off for work outside this plugin's purpose.

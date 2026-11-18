@@ -1,13 +1,13 @@
 ---
 name: present-regression
-description: Output format "regression" - write 10-regression.md, what changed in the code between two releases or commits (git, read-only), which business areas it touches, a prioritised list of areas to retest and a checklist, with conclusions on the overall risk. Run after analysis-report when the regression format is on, when the user adds --regression, or by /qa-analyst:present regression.
+description: Output format "regression" - write 10-regression.md, what changed in the code between two releases or commits (git, read-only), which business areas it touches, a prioritised list of areas to retest and a checklist, with conclusions on the overall risk. Run by analysis-report when the regression format is in the report.
 ---
 
 # present-regression
 
 For a fix check or a release: what to retest besides the ticket itself, and in what order.
 
-**Input:** a finished analysis in `.claude/qa-analysis/<task>/`: the code path and the technical references (`04-findings.md`), the test cases if written. The range to compare: the release tags, the fix branch or the commits named in the ticket; if none is known, ask the user once with `AskUserQuestion` (offer the last tag and the default branch).
+**Input:** the task folder `.claude/qa-analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established: the code path and the technical references, the test cases if written. The range to compare: the release tags, the fix branch or the commits named in the ticket; if none is known, ask the user once with `AskUserQuestion` (offer the last tag and the default branch).
 
 ## Steps
 
@@ -23,4 +23,4 @@ For a fix check or a release: what to retest besides the ticket itself, and in w
 - The **Conclusions** section is the point of the document: explain in plain text what the numbers mean for the user, the priority and the testing, and separate what they prove from what they only suggest. Write it in the language the user uses; keep the headings of the template.
 - No program code. SQL check queries, masked log lines and shell commands to reproduce are allowed.
 - Mask personal and secret data in every table and line.
-- When the document is done, add it to the reading order of `00-README.md` (`- [<file>](<file>) - <one line>`) and, if it changes the answer or the next steps, say so there too. Change nothing else in the other documents.
+- The summary (when it is in the report) lists this document in its reading order and uses its conclusions. If `00-README.md` exists and the summary is not part of this report, add the line `- [<file>](<file>) - <one line>` to its reading order. Change nothing else in the other documents.

@@ -1,6 +1,6 @@
 ---
-description: QA analysis of a task end to end - research (ticket, requirements, logs, DB, code), interview, then plain-language documents with the answer, flows, findings, test cases and ticket notes. Does not change code.
-argument-hint: <Jira key | ticket link | description | path to a log file> [--tests] [--impact] [--decision] [--logs] [--regression] [--visual] [--confluence]
+description: Full QA analysis in one go - research (ticket, requirements, logs, DB, code), interview, then the report in the selected formats. For questions and clarifications just ask in chat; for a report of what the conversation settled use /qa-analyst:report. Does not change code.
+argument-hint: <Jira key | ticket link | description | path to a log file> [--summary] [--tests] [--impact] [--decision] [--logs] [--regression] [--visual] [--confluence]
 ---
 
 Analyse this task for QA: $ARGUMENTS
@@ -13,8 +13,8 @@ The reader is a QA engineer, possibly not technical. The documents say what happ
 2. Run the three phases in order, each through its skill, without asking "shall I continue" between them. The one stop is at the start of the interview, where the user confirms your understanding of the task before the report is written. Take the time research needs: a correct answer is the goal, not a fast one.
    - `analysis-research` -> writes `01-research.md`
    - `analysis-interview` -> writes `02-interview.md`
-   - `analysis-report` -> writes `03-flows.md`, `04-findings.md`, `05-test-cases.md` (when the tests format is on, through `present-tests`), `06-ticket-notes.md` and `00-README.md`
-3. **Output formats.** The core documents are always written. On top of them, every format that is on for this run: the formats the session context lists as on (the plugin options), plus the flags `--tests`, `--impact`, `--decision`, `--logs`, `--regression`, `--visual`, `--confluence` that `$ARGUMENTS` contains (strip them from the task text). Any combination can be on at once; run each one. `tests` is written inside the report, before `00-README.md` (step 3 of `analysis-report`). The others run after `00-README.md`, in this order, so the views can use the data: `present-impact` (`07-impact.md`), `present-decision` (`08-decision-table.md`), `present-logs` (`09-log-stats.md`, only when the task has logs), `present-regression` (`10-regression.md`), then `present-confluence` (`confluence-page.md`) and `present-visual` (interactive page, published as a private Artifact).
-4. Finish with one short message in plain language: the folder path, the answer in one or two sentences (the verdict), what QA should do next, the open questions that still need an answer, and the artifact link or the Confluence page file if those formats ran. Do not paste the documents.
+   - `analysis-report` -> writes the report in the formats of this run (step 3)
+3. **Formats of this run.** The flags `--summary`, `--tests`, `--impact`, `--decision`, `--logs`, `--regression`, `--visual`, `--confluence` in `$ARGUMENTS` when there are any (strip them from the task text); otherwise the formats selected now (the line "formats selected now" in the context, else the session start list). Any combination can be on at once. `analysis-report` writes exactly those and nothing else.
+4. Finish with one short message in plain language: the folder path, the answer in one or two sentences (the verdict), what QA should do next, the open questions that still need an answer, the files written, and the artifact link if `visual` ran. Do not paste the documents.
 
 If `$ARGUMENTS` is empty, ask the user for the task with `AskUserQuestion`.

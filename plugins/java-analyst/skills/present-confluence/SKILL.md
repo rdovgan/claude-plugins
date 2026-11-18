@@ -1,13 +1,13 @@
 ---
 name: present-confluence
-description: Output format "confluence" - turn a finished analysis into one Confluence-style page (confluence-page.md) for BA, PM, QA and developers alike - what the feature or problem is, how it works, the main cases, impact, decisions and open questions, at a middle level of detail. Run after analysis-report when the Confluence format is on, when the user adds --confluence, or by /java-analyst:present confluence. Nothing is published.
+description: Output format "confluence" - turn an analysis into one Confluence-style page (confluence-page.md) for BA, PM, QA and developers alike - what the feature or problem is, how it works, the main cases, impact, decisions and open questions, at a middle level of detail. Run by analysis-report when the confluence format is in the report. Nothing is published.
 ---
 
 # present-confluence
 
 One page in the style of a team Confluence page. The reader is anyone on the team: a business analyst, a product manager, a QA engineer, a developer who wants the overview, someone updating the documentation. It is the middle cut: easy to read and informative, covers the main cases, and leaves edge cases, log lines, queries and code to the analysis documents.
 
-**Input:** a finished analysis in `.claude/analysis/<task>/`. Re-read `00-README.md`, `01-research.md`, `02-interview.md`, `03-flows.md`, `04-findings.md` and `05-proposals.md`. The page says nothing the documents do not say.
+**Input:** the task folder `.claude/analysis/<task>/` (`notes.md`, and `01-research.md` and `02-interview.md` when written) and what this conversation established, and every document of the other formats that exists (`00-README.md`, `03-flows.md`, `04-findings.md`, `05-proposals.md`). The page says nothing the sources do not say.
 
 ## Steps
 

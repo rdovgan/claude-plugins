@@ -16,12 +16,7 @@
 
 ## Reading order
 
-1. [01-research.md](01-research.md) - {{one line}}
-2. [02-interview.md](02-interview.md) - {{one line}}
-3. [03-flows.md](03-flows.md) - {{one line}}
-4. [04-findings.md](04-findings.md) - {{one line}}
-5. [05-proposals.md](05-proposals.md) - {{one line}}
-6. [06-implementation-guide.md](06-implementation-guide.md) - {{one line}}
+{{one line per document that exists in the folder, in this order: notes.md, 01-research.md, 02-interview.md, 03-flows.md, 04-findings.md, 05-proposals.md, 06-implementation-guide.md, 07-dev-guide.md, confluence-page.md; format: - [file](file) - one line}}
 
 ## Open questions
 

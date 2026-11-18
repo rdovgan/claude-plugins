@@ -22,12 +22,7 @@
 
 ## Reading order
 
-1. [01-research.md](01-research.md) - {{one line}}
-2. [02-interview.md](02-interview.md) - {{one line}}
-3. [03-flows.md](03-flows.md) - {{one line}}
-4. [04-findings.md](04-findings.md) - {{one line}}
-5. [05-test-cases.md](05-test-cases.md) - {{one line; delete this line when the test cases format is off}}
-6. [06-ticket-notes.md](06-ticket-notes.md) - {{one line}}
+{{one line per document that exists in the folder, in this order: notes.md, 01-research.md, 02-interview.md, 03-flows.md, 04-findings.md, 05-test-cases.md, 06-ticket-notes.md, 07-10 data documents, confluence-page.md; format: - [file](file) - one line}}
 
 ## Open questions
 

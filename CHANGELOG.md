@@ -2,6 +2,19 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-analyst [0.9.0] and qa-analyst [0.5.0] - 2026-11-18
+
+### Changed
+- Talk first, report on request (D-47). Questions and clarifications are answered in chat without documents; a Jira key in a prompt no longer starts the full workflow. What is settled is kept in a few lines of `<task>/notes.md`. The `analysis-research` and `analysis-interview` skills run only inside `/analyze` (or to fill a gap in a report), not on every question.
+- The Stop hook checks only the formats of the report written in this session (listed in `<task>/.formats`, or the format files written when there is none), never a conversation. With only `impact` selected, only `07-impact.md` is required.
+- The core documents are a format, `summary`, on by default: qa-analyst `00-README`, `03-flows`, `04-findings`, `06-ticket-notes`; java-analyst `00-README`, `03-flows`, `04-findings`, `05-proposals`, `06-implementation-guide`. `01-research` and `02-interview` are working files of `/analyze`.
+- qa-analyst: a test design task no longer forces `05-test-cases.md`; select `tests` for it.
+- `/<plugin>:present <format>` no longer needs a finished analysis; it is `/<plugin>:report <task> --<format>`.
+
+### Added
+- `/java-analyst:report` and `/qa-analyst:report [task] [--format ...]`: write the report in the selected formats from the notes, the research and the conversation. Saying "make the report" does the same.
+- A yellow **▶ REPORT** button at the end of the `formats` row runs the report command with the formats switched on there.
+
 ## java-analyst [0.8.1] and qa-analyst [0.4.1] - 2026-11-18
 
 ### Fixed

@@ -1,23 +1,28 @@
 ---
 name: analysis-report
-description: Phase 3 of an analysis - write the flow charts, code findings, proposed solutions with code examples, and the implementation guide, as local documents. Run by /java-analyst:analyze after analysis-interview. Never changes code.
+description: Write the report of a task in the formats asked for, and only those - summary (flows, findings, proposals, implementation guide), dev, confluence, visual - from the notes, the research and the conversation. Run by /java-analyst:report (the REPORT button), /java-analyst:present and /java-analyst:analyze, or when the developer asks for the report in words. Not for answering questions: those are answered in chat. Never changes code.
 ---
 
 # analysis-report
 
-Phase 3. **No code changes.** You write documents in `.claude/analysis/<task>/` and nothing else. Code in the documents is illustration inside markdown code blocks; it is never applied.
+**No code changes.** You write documents in `.claude/analysis/<task>/` and nothing else. A report is the end of a conversation: the developer has settled the questions and now wants the result in the formats they picked. Write those formats and nothing more. Code in the documents is illustration inside markdown code blocks; it is never applied.
 
 The reader is a developer who will implement this alone, who may not know the legacy code. Explain the why, name the exact files, and prefer a concrete example over an abstract rule. Write in the language the developer uses. Keep each document focused; link between them instead of repeating.
 
 ## Steps
 
-Re-read `01-research.md` and `02-interview.md`, and re-open the key source files you cite: do not write from memory of the summary. The requirements `R*` in `01-research.md` are the backbone of the report: cite their ids wherever a finding, option or step serves one.
+1. **Formats.** Take the list the caller gives (the flags of the command, or the formats selected now). Write it, space separated, to `.claude/analysis/<task>/.formats` before anything else, for example `summary dev`. The Stop hook checks exactly these formats and nothing else.
+2. **Sources.** Read `notes.md`, and `01-research.md` and `02-interview.md` when they exist, and use what this conversation established. Re-open the key source files you cite: do not write from memory of a summary. Research only what the formats need and the conversation did not cover; do not redo it.
+3. **Requirements.** The requirements `R*` are the backbone of the report: cite their ids wherever a finding, option or step serves one. If neither `notes.md` nor `01-research.md` numbers them, add `## Requirements` with `- **R1** ...` (each with its source) to `notes.md` first, from the ticket and the pages already read.
+4. **Write the formats, in this order**, skipping those not in the list: `summary` (the five documents below, `00-README.md` last), `dev` -> `present-dev-guide` (`07-dev-guide.md`), `confluence` -> `present-confluence` (`confluence-page.md`), `visual` -> `present-visual` (published as a private Artifact).
+
+## The summary format
 
 1. **`03-flows.md`** (`templates/analysis/03-flows.md`): mermaid diagrams. At least: the current flow of the area (flowchart or sequence, from the real call path) and the proposed flow. Add a data/state diagram or a repository interaction diagram when it helps. Each diagram is followed by a short walk-through naming the classes. Keep diagrams small (under about 15 nodes); split if larger.
 2. **`04-findings.md`** (`templates/analysis/04-findings.md`): conclusions about the code, each with evidence (`repo/path/File.java`, method, what it does) and a "so what" for this task: how it works now, constraints, legacy and style to follow, impact on other repositories, risks, and non-obvious traps. Separate facts (seen in code) from assumptions. End with the requirements coverage table: every `R*`, where the code handles it today (or "not handled"), and what that means for the task.
 3. **`05-proposals.md`** (`templates/analysis/05-proposals.md`): two or three realistic options (one may be "minimal"). For each: idea, what changes where, code example (a sketch against the real classes, marked "illustration, not applied", with the target file), pros, cons, risks, effort (S/M/L). Then a comparison table, a recommendation and why, and what would change the recommendation. Honour the interview decisions. Say which `R*` each option covers; an option that leaves a requirement out says so openly.
 4. **`06-implementation-guide.md`** (`templates/analysis/06-implementation-guide.md`) for the recommended option: prerequisites (branch name `<fix|feature|epic>/<TICKET>/<Short-description>`, base branch, Java version if several are maintained, a DB change that must deploy first, merge order across repositories); ordered steps, each with the requirements it implements (`R*`), the files to change, what to do, acceptance criteria as `- [ ]`, and the tests to write or run; every `R*` is covered by at least one step or explicitly marked out of scope with the reason; where to start reading; common mistakes; a final self-check list. The developer ticks the boxes themselves.
-5. **`00-README.md`** (`templates/analysis/00-README.md`), last: the task in one sentence, a TL;DR with the recommended solution, the reading order with one line per document, the open questions, and the status.
+5. **`00-README.md`** (`templates/analysis/00-README.md`), last: the task in one sentence, a TL;DR with the recommended solution, the reading order with one line per document in the folder, the open questions, and the status.
 
 ## Rules
 

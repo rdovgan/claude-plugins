@@ -15,7 +15,8 @@ if ja_off; then
   exit 0
 fi
 
-echo "java-analyst: ANALYSIS mode. Never change source code, tests, build files (pom.xml, package.json, ...) or application configs in any repository. You MAY create and update documentation (.md/.txt/.rst/.adoc/.puml/.mmd), CLAUDE.md, .gitignore, .mcp.json and anything under .claude/ in the project; analysis documents go to .claude/analysis/<task>/. Start a task with /java-analyst:analyze <Jira key, link or description>; first-time setup: /java-analyst:setup."
+echo "java-analyst: ANALYSIS mode. Never change source code, tests, build files (pom.xml, package.json, ...) or application configs in any repository. You MAY create and update documentation (.md/.txt/.rst/.adoc/.puml/.mmd), CLAUDE.md, .gitignore, .mcp.json and anything under .claude/ in the project; analysis documents go to .claude/analysis/<task>/. First-time setup: /java-analyst:setup."
+echo "java-analyst: CONVERSATION FIRST. Most prompts are questions and clarifications about a task: answer them in chat, reading only the sources the question needs; no report documents, no full workflow. Keep a short running record per task in .claude/analysis/<task>/notes.md (sections: Understanding, Requirements as - **R1** ..., Facts with their source, Decisions, Open questions; a few lines per update, no template). A REPORT is written only when the developer asks for it: the REPORT button in the formats row, /java-analyst:report [task] [--format ...], or words like 'make the report', 'summary', 'друкуй звіт', 'оформи результат', 'we are done'. Then run the analysis-report skill, which writes only the formats of that report. /java-analyst:analyze <task> is the full run in one go (research, interview, report) for when the developer asks for it."
 if ja_plugin_enabled java-developer || ja_plugin_enabled java-team; then
   echo "java-analyst: CONFLICT: java-developer is also enabled here. The two plugins must not run together: the read-only guards of java-analyst block the implementation flow of java-developer (specs, code, tests, commits) and a bare ticket key could start either one. Tell the developer in your first reply, once, to disable one of them (/plugin, or enabledPlugins in .claude/settings.json). Until then follow java-analyst only: analysis, no code changes."
 fi
@@ -38,9 +39,9 @@ fi
 
 fmts="$(ja_formats | tr '\n' ' ')"; fmts="${fmts% }"
 if [ -n "$fmts" ]; then
-  echo "java-analyst: output formats on (plugin options): ${fmts// /, }. After the report of /java-analyst:analyze, also run$(for f in $fmts; do [ "$f" = dev ] && f=dev-guide; printf ' present-%s' "$f"; done) for the same task folder and name the results in your final message."
+  echo "java-analyst: report formats (selected in the formats row or the plugin options): ${fmts// /, }. They apply only when a report is written."
 else
-  echo "java-analyst: output formats: documents only. The developer can ask for more per run (/java-analyst:analyze <task> --dev --visual --confluence) or afterwards (/java-analyst:present dev|visual|confluence [task]); switch them on for good with /plugin configure java-analyst@team-plugins."
+  echo "java-analyst: report formats: none selected. When the developer asks for a report, ask which formats with AskUserQuestion (summary, dev, confluence, visual)."
 fi
 command -v git >/dev/null 2>&1 && echo "java-analyst: branch $(git symbolic-ref --short -q HEAD 2>/dev/null || echo detached)"
 

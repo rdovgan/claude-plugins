@@ -5,8 +5,8 @@ Claude Code plugins for the Java team. The marketplace is called `team-plugins` 
 | Plugin | Who uses it | What it does | Changes code |
 | --- | --- | --- | --- |
 | [`java-developer`](#java-developer) | Developers | Takes a ticket from Jira to a reviewed branch: research, questions, spec, implementation, tests, review | Yes |
-| [`java-analyst`](#java-analyst) | Analysts, leads | Analyses a ticket and writes local documents: flows, findings, solution options, implementation guide | No |
-| [`qa-analyst`](#qa-analyst) | QA | Analyses a ticket, a log or a question ("is this a bug?") and writes plain-language documents: answer, flows, findings, test cases, ticket notes | No |
+| [`java-analyst`](#java-analyst) | Analysts, leads | Answers questions about a ticket and the code in chat; on request writes a report in the chosen formats: flows, findings, solution options, implementation guide, developer guide | No |
+| [`qa-analyst`](#qa-analyst) | QA | Answers questions about a ticket, a log or a case ("is this a bug?") in chat; on request writes a report in the chosen formats: answer, test cases, impact, decision table, log statistics, regression scope | No |
 | [`qa-docs`](#qa-docs) | QA | Documents one business domain from the code of all repositories, Jira and Confluence, verifies it, exports to Confluence | No |
 
 Enable only one of them in a project or session.
@@ -35,7 +35,7 @@ Manual installation, every variable and troubleshooting: [docs/install.md](docs/
 | --- | --- | --- |
 | `JAVA_TEAM_DB_URL`, `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD` | developer, analyst, qa-analyst | Read-only MySQL access. Without them the DB server does not start, everything else works |
 | `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN` | developer, analyst, qa-analyst | Downloading ticket attachments. The Jira MCP server returns only their names |
-| `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS` | analyst, qa-analyst | Optional. Overrides the output formats of the plugin options for this shell, e.g. `visual,confluence`; `none` for documents only |
+| `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS` | analyst, qa-analyst | Optional. Overrides the output formats of the plugin options for this shell, e.g. `summary,visual`; `none` for none |
 | `JAVA_TEAM_VAULT` | developer | Obsidian vault for `session-summary` (default `~/Claude Vault`) |
 
 Never commit these values. qa-docs needs none: the admin configures `.qa-docs/config.env` on the server.
@@ -109,32 +109,24 @@ For a ticket that needs analysis before anyone writes code. The developer implem
 
 ```
 /java-analyst:setup                      # once per project: shows missing settings, adds them on confirmation
-/java-analyst:analyze <key | link | text>
+/java-analyst:report [task] [--format]   # the report in the selected formats; the REPORT button does the same
+/java-analyst:analyze <key | link | text> # full run in one go: research, interview, report
 ```
 
-`analyze` runs research → interview → report. Requirements from the ticket and Confluence are quoted verbatim and mapped to code, and questions the sources already answer are not asked. The result lands in `.claude/analysis/<task>/` (excluded from git through `.git/info/exclude`):
-
-| File | Content |
-| --- | --- |
-| `00-README` | Summary and index |
-| `01-research` | Requirements, code, call paths |
-| `02-interview` | Questions and answers |
-| `03-flows` | Mermaid flow charts |
-| `04-findings` | Problems and risks found |
-| `05-proposals` | Solution options with code examples |
-| `06-implementation-guide` | Steps with acceptance criteria |
+**Talk first, report on request (D-47).** Most prompts are questions and clarifications: the plugin answers them in chat, reading only what the question needs, and writes no documents. A Jira key in a prompt starts that conversation, not the full workflow. What is settled goes into a few lines of `.claude/analysis/<task>/notes.md` (excluded from git through `.git/info/exclude`), so the next session continues from there. When the questions are settled, the developer picks the formats in the `formats` row above the prompt (violet = on) and presses the yellow **▶ REPORT** button, runs `/java-analyst:report`, or says "make the report". Only the selected formats are written, and the Stop hook checks only them. `analyze` keeps the full run (research → interview → report) for when it is wanted: requirements from the ticket and Confluence quoted verbatim and mapped to code, questions the sources already answer not asked.
 
 Nothing is written to Jira or Confluence.
 
-**Output formats.** On top of the documents, the result can be presented for different readers. Turn formats on or off with `/plugin configure java-analyst@team-plugins` or by clicking one in the `formats` row above the prompt (violet = on; the enabled ones are also in the status line under the prompt), add one for a single run with a flag (`/java-analyst:analyze ABC-123 --visual`), or build one later from a finished analysis with `/java-analyst:present <format> [task]`.
+**Formats.** Switch them with a click in the `formats` row or `/plugin configure java-analyst@team-plugins` (the enabled ones are also in the status line under the prompt); flags replace the selection for one run (`/java-analyst:report ABC-123 --visual`); `/java-analyst:present <format> [task]` adds one later.
 
 | Format | Default | Result |
 | --- | --- | --- |
+| `summary` | on | `00-README` (summary and index), `03-flows` (mermaid flow charts), `04-findings` (problems and risks), `05-proposals` (solution options with code examples), `06-implementation-guide` (steps with acceptance criteria) |
 | `dev` | on | `07-dev-guide.md` for a developer who codes it alone: UML and sequence diagrams, the patterns to follow with real reference code, templates with TODOs for the new classes and tests. It explains; it does not write the solution |
 | `visual` | off | An interactive page (recommendation, diagrams, requirements chart, options with effort and risk, the plan; long text behind info buttons) built from a fixed template and published as a private Artifact on claude.ai |
 | `confluence` | off | `confluence-page.md`: a plain overview for BA, PM, QA and the team, ready to paste into Confluence |
 
-**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands, MCP to read tools, the DB to `SELECT`. The agent cannot stop with an unfinished analysis. `JAVA_ANALYST_OFF=1` turns the guards off.
+**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands, MCP to read tools, the DB to `SELECT`. The agent cannot stop with an unfinished report (only the formats of that report are checked). `JAVA_ANALYST_OFF=1` turns the guards off.
 
 ---
 
@@ -144,28 +136,20 @@ For a QA engineer who needs an answer, not a fix: is this a bug or expected, why
 
 ```
 /qa-analyst:setup                                    # once per project: shows missing settings, adds them on confirmation
-/qa-analyst:analyze <key | link | text | log path>
+/qa-analyst:report [task] [--format]                 # the report in the selected formats; the REPORT button does the same
+/qa-analyst:analyze <key | link | text | log path>   # full run in one go: research, interview, report
 ```
 
-`analyze` runs research → interview → report. Requirements and expected behaviour from the ticket and Confluence are quoted verbatim (`R1`, `R2`, ...); logs are turned into a timeline (big ones by the `log-reader` agent, personal data masked); the data of the case is checked with `SELECT` queries that QA can re-run. The interview asks in product terms only what the sources do not answer. The result lands in `.claude/qa-analysis/<task>/` (excluded from git through `.git/info/exclude`):
-
-| File | Content |
-| --- | --- |
-| `00-README` | The answer (verdict), what to do next, reading order |
-| `01-research` | Requirements, sources, evidence from logs and the DB |
-| `02-interview` | Questions and answers |
-| `03-flows` | Business flow charts: now vs expected, timeline of the case |
-| `04-findings` | Cause, impact, what to retest, requirements coverage; technical references for developers |
-| `05-test-cases` | Test cases `TC-*` (format `tests`, on by default; always for a test design): requirements, type, priority, preconditions, test data, steps with an expected result on each |
-| `06-ticket-notes` | Ready-to-paste bug report or ticket comment, questions to the team |
+**Talk first, report on request (D-47).** Most QA prompts are questions and clarifications: the plugin answers them in chat, reading only what the question needs, and writes no documents, so a quick question costs little. A Jira key in a prompt starts that conversation, not the full workflow. What is settled goes into a few lines of `.claude/qa-analysis/<task>/notes.md` (excluded from git through `.git/info/exclude`), so the next session continues from there. When the requirements and the details are settled, QA picks the formats in the `formats` row above the prompt (violet = on) and presses the yellow **▶ REPORT** button, runs `/qa-analyst:report`, or says "make the report". Only the selected formats are written, and the Stop hook checks only them: with just `impact` selected, the report is `07-impact.md` and nothing else. `analyze` keeps the full run (research → interview → report): requirements quoted verbatim (`R1`, `R2`, ...), logs turned into a timeline (big ones by the `log-reader` agent, personal data masked), the data of the case checked with `SELECT` queries QA can re-run, an interview in product terms that asks only what the sources do not answer.
 
 Nothing is published to Jira or Confluence.
 
-**Output formats.** The core documents are always written; test cases and the views for other readers are formats, any combination of them at once. Turn formats on or off with `/plugin configure qa-analyst@team-plugins` or by clicking one in the `formats` row above the prompt (violet = on; the enabled ones are also in the status line under the prompt), add one for a single run (`/qa-analyst:analyze ABC-123 --tests --visual`), or build one later with `/qa-analyst:present <format> [task]`.
+**Formats**, any combination at once. Switch them with a click in the `formats` row or `/plugin configure qa-analyst@team-plugins` (the enabled ones are also in the status line under the prompt); flags replace the selection for one run (`/qa-analyst:report ABC-123 --impact --visual`); `/qa-analyst:present <format> [task]` adds one later.
 
 | Format | Default | Result |
 | --- | --- | --- |
-| `tests` | on | `05-test-cases.md` (above); switch it off when only the answer is needed. A test design task always gets it |
+| `summary` | on | `00-README` (the answer, what to do next, reading order), `03-flows` (business flow charts: now vs expected, timeline of the case), `04-findings` (cause, impact, what to retest, requirements coverage, technical references for developers), `06-ticket-notes` (ready-to-paste bug report or ticket comment, questions to the team) |
+| `tests` | on | `05-test-cases.md`: test cases `TC-*` with requirements, type, priority, preconditions, test data, steps with an expected result on each |
 | `impact` | off | `07-impact.md`: affected records in numbers (by status, partner, day), a `SELECT` behind every number, conclusions on size, trend and severity |
 | `decision` | off | `08-decision-table.md`: every combination of conditions with the expected result from `R*` and today's result, status transitions, gaps in the requirements |
 | `logs` | off | `09-log-stats.md`: errors by type and hour, first and last time, lined up with deploys and commits; only for tasks with logs |
@@ -173,7 +157,7 @@ Nothing is published to Jira or Confluence.
 | `visual` | off | An interactive page for those who read visually: verdict, next steps, "now vs expected" diagrams, the log timeline, a requirements chart, a checklist of test cases, the ticket text with a copy button; long text behind info buttons. Built from a fixed template and published as a private Artifact on claude.ai, personal data masked |
 | `confluence` | off | `confluence-page.md`: a plain overview for BA, PM and the team (main cases, impact, decisions, open questions), ready to paste into Confluence |
 
-**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands (`zgrep`/`zcat` included for compressed logs), MCP to read tools, the DB to one `SELECT` per call. The agent cannot stop with an unfinished analysis or with program code in the QA documents. `QA_ANALYST_OFF=1` turns the guards off.
+**Hooks enforce the guarantees, not prompts.** Source code, tests, build files and application configs cannot be written (documentation, `CLAUDE.md` and `.claude/` can, so `/init` works). Bash is limited to read-only commands (`zgrep`/`zcat` included for compressed logs), MCP to read tools, the DB to one `SELECT` per call. The agent cannot stop with an unfinished report (only the formats of that report are checked) or with program code in the QA documents. `QA_ANALYST_OFF=1` turns the guards off.
 
 ---
 
