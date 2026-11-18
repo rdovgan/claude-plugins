@@ -1,6 +1,6 @@
 {
   "name": "java-analyst",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Analysis-only assistant for Java teams: answers questions about a task, its requirements and the code in conversation, and writes a report in the formats you pick (summary with flows, findings, proposed solutions and implementation guide; developer guide; Confluence page; visual page) only when you ask. Never changes code.",
   "author": {
     "name": "Java Team Tech Lead"

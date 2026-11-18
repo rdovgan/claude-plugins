@@ -52,6 +52,9 @@ if [ -d "$out" ]; then
 fi
 
 ws="$(ja_workspace_dir)"
+# Team terms (D-49): the rule and the glossary.
+. "$(dirname "$0")/glossary.sh"
+gl_context java-analyst "$root/.claude/glossary.md" "${CLAUDE_PLUGIN_ROOT}" "$ws" "$root/.claude/glossary.md"
 echo "java-analyst: workspace $ws (all repositories are siblings of this project)."
 main="${JAVA_ANALYST_MAIN_PROJECT:-}"
 if [ -n "$main" ] && [ "$(basename "$root")" != "$main" ] && [ -d "$ws/$main" ]; then

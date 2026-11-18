@@ -2,6 +2,12 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-developer [0.12.0], java-analyst [0.10.0], qa-analyst [0.6.0] and qa-docs [0.6.0] - 2026-11-18
+
+### Added
+- Team terms (D-49). In Ukrainian texts the agent keeps terms from the code, Jira and Confluence and developer jargon in English (`nightly rate`, `unbundling`, `задеплоїти`) instead of translating them word for word. The session start gives the rule and the glossary: `reference/glossary.md` of the plugin, `glossary.md` in the workspace root (`JAVA_TEAM_GLOSSARY`), and the project's `.claude/glossary.md` (qa-docs: `qa-docs/glossary.md`), where the agent adds a term the user corrected.
+- The Stop hooks send back a report (qa-docs: a document) that contains a translation from the glossary's "Avoid" column; `*` in an entry matches any ending, so case forms are caught. Shared script `hooks/scripts/glossary.sh`, the same in all four plugins.
+
 ## java-developer [0.11.0] and qa-docs [0.5.0] - 2026-11-18
 
 ### Added

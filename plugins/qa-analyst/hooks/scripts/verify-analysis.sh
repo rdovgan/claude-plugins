@@ -7,6 +7,8 @@
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
+# shellcheck source=glossary.sh
+. "$(dirname "$0")/glossary.sh"
 qa_require_jq
 qa_off && exit 0
 
@@ -75,6 +77,17 @@ for dir in "$out"/*/; do
       [ -n "$langs" ] && add "$d/$file contains program code (${langs% }): QA documents describe behaviour in words; name the place in the technical references instead of quoting code"
     done
   done
+  # Team terms (D-49): no translation from the glossary's "avoid" column in the files of this report.
+  files=()
+  for fmt in $fmts; do
+    for file in $(qa_format_files "$fmt"); do
+      case "$file" in *.html) continue ;; esac
+      [ -f "$dir/$file" ] && files+=("$dir/$file")
+    done
+  done
+  while IFS= read -r t; do
+    [ -n "$t" ] && add "${t#"$out"/} (glossary)"
+  done < <(gl_check ${files[@]+"${files[@]}"} -- "${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}" "$(qa_workspace_dir)" "$(qa_project_dir)/.claude/glossary.md")
 done
 
 [ -n "$problems" ] || exit 0
