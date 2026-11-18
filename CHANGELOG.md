@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## [0.10.1], java-analyst [0.7.1], qa-analyst [0.3.1] and qa-docs [0.4.1] - 2026-11-18
+
+### Changed
+- The `jira` MCP server uses `https://mcp.atlassian.com/v2/mcp`. Atlassian removes the `/v1/mcp` endpoint on 2027-03-01. Re-authorize the server after the update (`/mcp`).
+
 ## qa-analyst [0.3.0] - 2026-11-17
 
 ### Changed
