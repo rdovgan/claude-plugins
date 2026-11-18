@@ -24,6 +24,14 @@ if jt_plugin_enabled java-analyst; then
   echo "java-developer: CONFLICT: java-analyst is also enabled here. The two plugins must not run together: the read-only guards of java-analyst block the implementation flow (specs, code, tests, commits) and a bare ticket key could start either one. Tell the developer in your first reply, once, to disable one of them (/plugin, or enabledPlugins in .claude/settings.json)."
 fi
 
+fmts="$(jt_formats | tr '\n' ' ')"; fmts="${fmts% }"
+echo "java-developer: REPORT on request only (D-48): when the developer presses the REPORT button in the formats row, runs /java-developer:report, or asks for the PR description, the QA handoff or the report in words, run the task-report skill. It writes only the selected formats (now: ${fmts:-none}; names: pr, qa, review, summary) to .claude/reports/<KEY>/. Never write a report unasked."
+root_git="$(jt_project_dir)/.git"
+if [ -d "$root_git" ]; then
+  mkdir -p "$root_git/info" 2>/dev/null
+  grep -qxF '.claude/reports/' "$root_git/info/exclude" 2>/dev/null || printf '.claude/reports/\n' >> "$root_git/info/exclude" 2>/dev/null
+fi
+
 command -v git >/dev/null 2>&1 || exit 0
 branch="$(jt_branch)"
 key="$(jt_jira_key "$branch")"
@@ -40,7 +48,7 @@ if [ -n "$key" ] && [ -f ".claude/specs/$key.md" ]; then
     if [ -n "$nxt" ]; then
       echo "java-developer: spec progress: $1 of $2 steps done. Next: $nxt ($3 criteria open). Continue from it; tick criteria in the spec as you verify them."
     else
-      echo "java-developer: spec progress: all $2 steps done. Next: self-check against the criteria, then /java-developer:review."
+      echo "java-developer: spec progress: all $2 steps done. Next: self-check against the criteria, then /java-developer:review, then the report if the developer wants it (REPORT button or /java-developer:report)."
     fi
   fi
 elif [ -n "$key" ]; then

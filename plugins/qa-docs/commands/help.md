@@ -15,6 +15,7 @@ Output this cheat sheet in the user's language, then stop:
 | `/qa-docs:rewrite <slug>` | Move a document of the old single-file format into the page set; no new research |
 | `/qa-docs:verify <slug>` | Verify again: references, fact-check, your approval |
 | `/qa-docs:confluence <slug>` | Build the Confluence pages from the document and a local preview; publishes nothing |
+| `/qa-docs:report [slug]` | Build the selected output formats of a domain: `confluence` (on by default, the pages and the preview) and `visual` (an interactive overview as a private Artifact). Pick them in the `formats` row above the prompt (violet = on); the yellow **▶ REPORT** button runs this command. They are also built after the approval |
 | `/qa-docs:export <slug>` | Publish the Confluence pages as a page tree, with the diagrams as pictures (asks for your approval) |
 | `/qa-docs:map` | Build or update `modules.md` and `domains.md` |
 | `/qa-docs:check` | Check the workspace and the server setup |
@@ -30,6 +31,7 @@ Output this cheat sheet in the user's language, then stop:
 | `doc/differences.md`, `doc/open-questions.md` | where Jira/Confluence differ from the code; what is still unknown |
 | `doc/diagrams/` | every diagram as `.png` and its mermaid source `.mmd` |
 | `confluence/*.html`, `confluence/pages.json` | the same document as Confluence pages, exactly as they will be published: panels, statuses, Jira cards, code references in expands |
+| `visual/visual.html` | the visual overview (format `visual`), published as a private Artifact; the link is in `meta.json` |
 | `confluence/preview/index.html` | open in a browser to see the pages before publishing |
 | `doc/page.md`, `doc/changes.md` | instead of the above, for an updated old Confluence page: the page in its old structure, and what changed |
 | `00-scope.md` | what is in and out, actors, entry points |

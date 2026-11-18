@@ -8,7 +8,14 @@ jt_require_jq
 prompt="$(jq -r '.prompt // empty' <<<"$(cat)")"
 root="$(jt_project_dir)"
 
+case "$prompt" in
+  /java-developer:report*)
+    fmts="$(jt_formats | tr '\n' ' ')"; fmts="${fmts% }"
+    echo "java-developer: formats selected now: ${fmts:-none}. Flags in the command replace them for this run." ;;
+esac
+
 for key in $(printf '%s' "$prompt" | grep -oE '[A-Z][A-Z0-9]+-[0-9]+' | sort -u); do
+  case "$prompt" in /java-developer:*) continue ;; esac
   if [ ! -f "$root/.claude/specs/$key.md" ]; then
     echo "java-developer: the prompt mentions task $key and .claude/specs/$key.md does not exist. Start with task-research; its task-triage step decides the level. Trivial: a short plan in chat, then the change. Standard/complex: task-interview and task-spec; do not change code before the spec is confirmed."
   fi

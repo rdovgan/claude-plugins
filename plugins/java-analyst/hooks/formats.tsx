@@ -6,7 +6,7 @@ import type { ConfigRow, EngineInterface, Register } from 'claude-code'
 // The yellow REPORT button at the end runs /<plugin>:report with the formats on now (D-47): the plugin
 // talks by default and writes documents only when asked.
 // Runs only in Claude Code builds with hooks modules; the shell hooks do not depend on it.
-// Kept the same in qa-analyst and java-analyst, except the *_FORMATS variable (D-19).
+// Kept the same in java-developer, java-analyst, qa-analyst and qa-docs, except the *_FORMATS variable (D-19).
 
 const VIOLET = '#8b5cf6'
 const YELLOW = '#facc15'

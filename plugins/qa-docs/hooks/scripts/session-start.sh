@@ -18,6 +18,8 @@ echo "qa-docs: the code is the source of truth. Jira and Confluence say what was
 [ -n "$lang" ] && echo "qa-docs: write documents in $lang (team setting)."
 command -v "$(qd_conf QA_DOCS_MMDC mmdc)" >/dev/null 2>&1 || echo "qa-docs: mermaid-cli is not installed: diagrams stay as mermaid code without PNG; say so once when a document is written."
 echo "qa-docs: research budget QA_DOCS_MAX_SUBFLOWS=$(qd_conf QA_DOCS_MAX_SUBFLOWS 6) sub-flows per run; agents search inside the repositories in scope, never the whole workspace. A plain question goes to /qa-docs:ask, not a full document."
+fmts="$(qd_formats | tr '\n' ' ')"; fmts="${fmts% }"
+echo "qa-docs: output formats (selected in the formats row or the plugin options): ${fmts:-none}; names: confluence, visual. They are built after a document is approved, or on request: the REPORT button in the formats row, /qa-docs:report <slug>, or the user asking for the Confluence pages or the visual page of a documented domain. Build only the selected ones; publishing to Confluence stays /qa-docs:export."
 
 # Sources: freshness and failures reported by server/update-sources.sh.
 tsv="$admin/sources.tsv"

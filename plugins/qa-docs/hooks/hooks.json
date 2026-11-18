@@ -1,7 +1,11 @@
 {
+  "modules": ["./formats.tsx"],
   "hooks": {
     "SessionStart": [
       { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh\"", "timeout": 15 } ] }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/prompt-submit.sh\"", "timeout": 5 } ] }
     ],
     "PreToolUse": [
       { "matcher": "Bash", "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/guard-bash.sh\"", "timeout": 5 } ] },

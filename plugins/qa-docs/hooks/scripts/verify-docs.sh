@@ -71,6 +71,15 @@ $(printf '%s\n' "$cpages" | sed 's/^/    /')"
     [ -n "$refs" ] && add "broken code references:
 $(printf '%s\n' "$refs" | sed 's/^/    /')"
   fi
+  # Output formats of a report run (/qa-docs:report writes .formats.txt first): every one of them must be built.
+  if [ -f "$dir/.formats.txt" ] && [ "$dir/.formats.txt" -nt "$marker" ]; then
+    for fmt in $(qd_format_order "$(cat "$dir/.formats.txt")"); do
+      case "$fmt" in
+        confluence) [ -f "$dir/confluence/pages.json" ] || [ -f "$dir/confluence/page.html" ] || add "$d: the confluence format is in this report but confluence/ is not built: run domain-confluence" ;;
+        visual) [ -f "$dir/visual/visual.html" ] || add "$d: the visual format is in this report but visual/visual.html is missing: run domain-visual" ;;
+      esac
+    done
+  fi
   grep -q "$today" "$dir/history.md" 2>/dev/null || \
     add "$d/history.md has no entry for today: append what this session did, who ($(qd_user)), and the commits it used"
 done
