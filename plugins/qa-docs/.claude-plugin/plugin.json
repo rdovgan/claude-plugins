@@ -1,8 +1,22 @@
 {
   "name": "qa-docs",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Domain documentation for QA: researches the code of many repositories, Jira and Confluence, and writes a verified domain document as short linked pages (overview, one page per process, reference pages) with diagrams rendered to PNG, then builds Confluence pages from it (Confluence HTML with a local preview) and exports them as a page tree with the diagrams uploaded as pictures; also brings old Confluence pages up to date in their own structure. Never changes code.",
   "author": {
     "name": "Java Team Tech Lead"
+  },
+  "userConfig": {
+    "confluence_pages": {
+      "type": "boolean",
+      "title": "Confluence pages",
+      "description": "After a document is approved (or with /qa-docs:report), build confluence/: the pages as they will be published, with a local preview. Publishing is still /qa-docs:export.",
+      "default": true
+    },
+    "visual_page": {
+      "type": "boolean",
+      "title": "Visual page (Artifact)",
+      "description": "After a document is approved (or with /qa-docs:report), build an interactive overview of the domain (processes with diagrams, rules, differences from Jira/Confluence, what to test, open questions) and publish it as a private Artifact on claude.ai.",
+      "default": false
+    }
   }
 }

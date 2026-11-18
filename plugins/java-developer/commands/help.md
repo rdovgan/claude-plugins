@@ -12,6 +12,7 @@ Output exactly this cheat sheet, then stop:
 | Set up a project for Claude | say "initialize the project" |
 | Refresh `CLAUDE.md` after project changes | `/java-developer:update-claude-md` |
 | Review my branch before a PR | `/java-developer:review` |
+| Get the PR description, the QA handoff, a self-review | pick the formats in the `formats` row above the prompt (violet = on), then the yellow **▶ REPORT** button or `/java-developer:report [KEY] [--pr --qa --review --summary]`; files in `.claude/reports/<KEY>/` |
 | Save a session note | say "run session-summary" |
 | Connect Jira | `/mcp` -> `jira` -> OAuth |
 | Let the agent open Jira attachments | set `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL` and `JAVA_TEAM_JIRA_TOKEN` (API token) |

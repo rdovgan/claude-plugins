@@ -175,3 +175,26 @@ qd_current_shas() {
     printf '%s\t%s\n' "$(basename "$r")" "$(git -C "$r" rev-parse --short=12 HEAD 2>/dev/null || echo '?')"
   done < <(qd_repos)
 }
+
+# Output formats of a domain document (D-48), one per line, in the order they run: confluence (confluence/, the
+# pages as they will be published, on by default), visual (visual/visual.html, an interactive overview published
+# as a private Artifact). Built after the approval, or later with /qa-docs:report. A mirror of an old page
+# (/qa-docs:update-page) always gets its Confluence page.
+# Source: QA_DOCS_FORMATS (comma list, "none" for none) if set, otherwise the plugin options
+# (/plugin configure qa-docs@team-plugins), which hooks receive as CLAUDE_PLUGIN_OPTION_<KEY>.
+qd_truthy() { case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in true|1|yes|on) return 0 ;; esac; return 1; }
+qd_formats() {
+  local list="${QA_DOCS_FORMATS:-}"
+  if [ -z "$list" ]; then
+    qd_truthy "${CLAUDE_PLUGIN_OPTION_CONFLUENCE_PAGES:-true}" && list="$list,confluence"
+    qd_truthy "${CLAUDE_PLUGIN_OPTION_VISUAL_PAGE:-false}" && list="$list,visual"
+  fi
+  qd_format_order "$list"
+}
+qd_format_order() {
+  local list f
+  list="$(printf '%s' "$1" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]')"
+  for f in confluence visual; do
+    printf '%s\n' "$list" | grep -qx "$f" && printf '%s\n' "$f"
+  done
+}

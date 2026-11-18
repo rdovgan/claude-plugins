@@ -136,3 +136,31 @@ jt_plugin_enabled() {
   done
   return 1
 }
+
+# Report formats (D-48), one per line, in the order they run: review (review.md), pr (pr.md), qa (qa-handoff.md),
+# summary (a session note in the Obsidian vault, no file here). Written to .claude/reports/<KEY>/ only when the
+# developer asks for the report. pr and qa are on by default.
+# Source: JAVA_DEVELOPER_FORMATS (comma list, "none" for none) if set, otherwise the plugin options
+# (/plugin configure java-developer@team-plugins), which hooks receive as CLAUDE_PLUGIN_OPTION_<KEY>.
+jt_truthy() { case "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" in true|1|yes|on) return 0 ;; esac; return 1; }
+jt_formats() {
+  local list="${JAVA_DEVELOPER_FORMATS:-}"
+  if [ -z "$list" ]; then
+    jt_truthy "${CLAUDE_PLUGIN_OPTION_PR:-true}" && list="$list,pr"
+    jt_truthy "${CLAUDE_PLUGIN_OPTION_QA_HANDOFF:-true}" && list="$list,qa"
+    jt_truthy "${CLAUDE_PLUGIN_OPTION_REVIEW:-false}" && list="$list,review"
+    jt_truthy "${CLAUDE_PLUGIN_OPTION_SUMMARY:-false}" && list="$list,summary"
+  fi
+  jt_format_order "$list"
+}
+jt_format_order() {
+  local list f
+  list="$(printf '%s' "$1" | tr ', ' '\n\n' | tr '[:upper:]' '[:lower:]')"
+  for f in review pr qa summary; do
+    printf '%s\n' "$list" | grep -qx "$f" && printf '%s\n' "$f"
+  done
+}
+jt_format_file() {
+  case "$1" in review) echo review.md ;; pr) echo pr.md ;; qa) echo qa-handoff.md ;; esac
+}
+jt_reports_dir() { printf '%s/.claude/reports' "$(jt_project_dir)"; }

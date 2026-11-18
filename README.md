@@ -35,7 +35,7 @@ Manual installation, every variable and troubleshooting: [docs/install.md](docs/
 | --- | --- | --- |
 | `JAVA_TEAM_DB_URL`, `JAVA_TEAM_DB_USER`, `JAVA_TEAM_DB_PASSWORD` | developer, analyst, qa-analyst | Read-only MySQL access. Without them the DB server does not start, everything else works |
 | `JAVA_TEAM_JIRA_URL`, `JAVA_TEAM_JIRA_EMAIL`, `JAVA_TEAM_JIRA_TOKEN` | developer, analyst, qa-analyst | Downloading ticket attachments. The Jira MCP server returns only their names |
-| `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS` | analyst, qa-analyst | Optional. Overrides the output formats of the plugin options for this shell, e.g. `summary,visual`; `none` for none |
+| `JAVA_DEVELOPER_FORMATS`, `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS`, `QA_DOCS_FORMATS` | all four | Optional. Overrides the output formats of the plugin options for this shell, e.g. `summary,visual`; `none` for none |
 | `JAVA_TEAM_VAULT` | developer | Obsidian vault for `session-summary` (default `~/Claude Vault`) |
 
 Never commit these values. qa-docs needs none: the admin configures `.qa-docs/config.env` on the server.
@@ -78,10 +78,22 @@ Say **"quick"** or **"full"** to override the size. The spec is a checklist: eac
 | When the agent stops | Tests of the changed modules run; a failure blocks finishing. Then one reminder to save the session |
 | Session start | Branch, Jira key, spec progress (`N of M steps done`) and the last state snapshot, so work resumes where it stopped |
 
+### Report on request
+
+When the work is done, the developer picks the formats in the `formats` row above the prompt (violet = on) and presses the yellow **▶ REPORT** button, runs `/java-developer:report [KEY] [--pr --qa --review --summary]`, or asks in words. Only the selected formats are written to `.claude/reports/<KEY>/` (excluded from git), and the Stop hook checks only them (D-48). Never unasked.
+
+| Format | Default | Result |
+| --- | --- | --- |
+| `pr` | on | `pr.md`: PR title `<TICKET> <summary>` and description from the team template, with the real test result, notes for reviewers, scope and merge order |
+| `qa` | on | `qa-handoff.md`: what changed in product words, checks from the spec's acceptance criteria with test data, areas to retest, a comment ready to paste into Jira |
+| `review` | off | `review.md`: the `java-reviewer` report on the branch with a verdict |
+| `summary` | off | A session note in Obsidian through `session-summary` |
+
 ### Commands and agents
 
 | Command | Action |
 | --- | --- |
+| `/java-developer:report [KEY]` | The report in the selected formats (the REPORT button does the same) |
 | `/java-developer:review` | Review the branch against `main`/`master` |
 | `/java-developer:update-claude-md` | Refresh `CLAUDE.md` and settings, keeping manual sections |
 | `/java-developer:help` | Cheat sheet |
@@ -187,6 +199,7 @@ Only there does the session load the workspace settings (secret rules, Confluenc
 | `/qa-docs:verify <slug>` | Check a document again: references, facts against the code, approval by a person |
 | `/qa-docs:refresh <slug>` | Update a document after the code changed |
 | `/qa-docs:confluence <slug>` | Build the Confluence pages from the document, with a local preview; publishes nothing |
+| `/qa-docs:report [slug]` | Build the selected output formats of a documented domain (the REPORT button does the same) |
 | `/qa-docs:export <slug>` | Publish the Confluence pages as a page tree with the diagrams as pictures, keeping manual edits on each page |
 | `/qa-docs:update-page <link>` | New version of an old Confluence page in its own structure, with a list of what changed. The old page only gets a link comment |
 | `/qa-docs:rewrite <slug>` | Move a 0.2 single-file document into the page set, without new research |
@@ -206,6 +219,15 @@ A document is a set of short linked pages in `domains/<slug>/doc/`:
 `doc/` is the checked record, with a code reference in every statement. After approval the same facts are written as Confluence pages in `domains/<slug>/confluence/`: Confluence HTML exactly as the export sends it (info and warning panels, status lozenges, Jira cards, "I need to... → page" routing, worked examples, code references folded into expands), `pages.json` for the tree, and `confluence/preview/index.html` to see them in a browser before publishing. `/qa-docs:confluence <slug>` rebuilds them; nobody edits them by hand.
 
 Diagrams are rendered to PNG on the server with mermaid-cli (`doc/diagrams/`). The export uploads them as attachments of their pages with each QA's own Atlassian API token (`QA_DOCS_CONFLUENCE_EMAIL`, `QA_DOCS_CONFLUENCE_TOKEN` in `~/.profile`), because the MCP server cannot upload attachments. Without the token the pages show the PNG path.
+
+### Output formats
+
+Built after a document is approved, or later with `/qa-docs:report <slug>` or the yellow **▶ REPORT** button in the `formats` row (violet = on). Only the selected formats are built, and the Stop hook checks only them (D-48). An updated old page (`/qa-docs:update-page`) always gets its Confluence page.
+
+| Format | Default | Result |
+| --- | --- | --- |
+| `confluence` | on | `confluence/`: the pages exactly as they will be published, with a local preview. Publishing stays `/qa-docs:export` |
+| `visual` | off | `visual/visual.html`: an interactive overview of the domain (processes with diagrams, rules, differences, what to test, open questions), published as a private Artifact; the same template as the qa-analyst page |
 
 ### Usage limits
 

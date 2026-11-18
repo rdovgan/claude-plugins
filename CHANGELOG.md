@@ -2,6 +2,16 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-developer [0.11.0] and qa-docs [0.5.0] - 2026-11-18
+
+### Added
+- The `formats` row with the yellow **▶ REPORT** button (D-44, D-47) in java-developer and qa-docs too; all four plugins share `hooks/formats.tsx`.
+- java-developer: a report on request (D-48), `/java-developer:report [KEY] [--pr --qa --review --summary]` and the `task-report` skill, into `.claude/reports/<KEY>/` (excluded from git). Formats: `pr` (PR description from the team template, on), `qa` (QA handoff with checks from the acceptance criteria and a Jira comment, new template `qa-handoff.md`, on), `review` (`java-reviewer` report, off), `summary` (session note in Obsidian, off). A new Stop hook, `verify-report.sh`, checks only the formats of the report. `JAVA_DEVELOPER_FORMATS` overrides the options.
+- qa-docs: output formats (D-48) `confluence` (on) and `visual` (off, new `domain-visual` skill and `scripts/build-visual.sh`, an interactive overview published as a private Artifact). `/qa-docs:report [slug]` builds them for a documented domain; the Stop hook checks the formats of that run (`.formats.txt`). `QA_DOCS_FORMATS` overrides the options.
+
+### Changed
+- qa-docs: after the approval only the selected formats are built; with `confluence` off, `confluence/` is not built (an updated old page still gets it).
+
 ## java-analyst [0.9.0] and qa-analyst [0.5.0] - 2026-11-18
 
 ### Changed
