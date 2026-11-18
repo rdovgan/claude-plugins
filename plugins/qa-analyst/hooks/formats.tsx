@@ -18,8 +18,9 @@ function nameOf(key: string): string {
 async function formats($: EngineInterface): Promise<{ list: Format[]; isEnv: boolean }> {
   const prefix = `${$.plugin.name}.`
   const rows: ConfigRow[] = (await $.config.list()).filter(r => r.key.startsWith(prefix) && typeof r.value === 'boolean')
+  // Read as the shell hooks do (lib.sh): empty is unset, names are split on commas and spaces, case does not matter.
   const env = await $.env.get('QA_ANALYST_FORMATS')
-  const envList = env === undefined ? null : env.split(',').map(x => x.trim())
+  const envList = env ? env.toLowerCase().split(/[\s,]+/).filter(Boolean) : null
   const list = rows.map(r => {
     const name = nameOf(r.key.slice(prefix.length))
     return { key: r.key, name, enabled: envList ? envList.includes(name) : r.value === true }
