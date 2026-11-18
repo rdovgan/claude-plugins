@@ -126,7 +126,7 @@ For a ticket that needs analysis before anyone writes code. The developer implem
 
 Nothing is written to Jira or Confluence.
 
-**Output formats.** On top of the documents, the result can be presented for different readers. Turn formats on or off with `/plugin configure java-analyst@team-plugins`, add one for a single run with a flag (`/java-analyst:analyze ABC-123 --visual`), or build one later from a finished analysis with `/java-analyst:present <format> [task]`.
+**Output formats.** On top of the documents, the result can be presented for different readers. Turn formats on or off with `/plugin configure java-analyst@team-plugins` or by clicking one in the `formats` row above the prompt (violet = on; the enabled ones are also in the status line under the prompt), add one for a single run with a flag (`/java-analyst:analyze ABC-123 --visual`), or build one later from a finished analysis with `/java-analyst:present <format> [task]`.
 
 | Format | Default | Result |
 | --- | --- | --- |
@@ -161,7 +161,7 @@ For a QA engineer who needs an answer, not a fix: is this a bug or expected, why
 
 Nothing is published to Jira or Confluence.
 
-**Output formats.** The documents are always written; for readers who need another view, turn formats on with `/plugin configure qa-analyst@team-plugins`, add one for a single run (`/qa-analyst:analyze ABC-123 --visual`), or build one later with `/qa-analyst:present <format> [task]`.
+**Output formats.** The documents are always written; for readers who need another view, turn formats on with `/plugin configure qa-analyst@team-plugins` or by clicking one in the `formats` row above the prompt (violet = on; the enabled ones are also in the status line under the prompt), add one for a single run (`/qa-analyst:analyze ABC-123 --visual`), or build one later with `/qa-analyst:present <format> [task]`.
 
 | Format | Default | Result |
 | --- | --- | --- |

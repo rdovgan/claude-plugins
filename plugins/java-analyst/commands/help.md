@@ -22,7 +22,7 @@ Output exactly this cheat sheet, then stop:
 | `05-proposals.md` | solution options with trade-offs, a recommendation, code examples |
 | `06-implementation-guide.md` | step-by-step plan with acceptance criteria and tests, for you to implement |
 
-**Output formats** (switch on or off for good: `/plugin configure java-analyst@team-plugins`; for one run: add the flag; for a finished analysis: `/java-analyst:present <format> [task]`):
+**Output formats** (switch on or off for good: `/plugin configure java-analyst@team-plugins` or click a format in the `formats` row above the prompt; for one run: add the flag; for a finished analysis: `/java-analyst:present <format> [task]`):
 
 | Format | Default | Flag | For whom | Result |
 | --- | --- | --- | --- | --- |

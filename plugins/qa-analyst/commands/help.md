@@ -22,7 +22,7 @@ Output exactly this cheat sheet, then stop:
 | `05-test-cases.md` | test cases `TC-*`, always: requirements, type, priority, preconditions, test data, steps with an expected result on each step |
 | `06-ticket-notes.md` | ready-to-paste texts: bug report or ticket comment, questions to the developer or analyst |
 
-**Output formats** (switch on for good: `/plugin configure qa-analyst@team-plugins`; for one run: add the flag; for a finished analysis: `/qa-analyst:present <format> [task]`):
+**Output formats** (switch on for good: `/plugin configure qa-analyst@team-plugins` or click a format in the `formats` row above the prompt; for one run: add the flag; for a finished analysis: `/qa-analyst:present <format> [task]`):
 
 | Format | Flag | For whom | Result |
 | --- | --- | --- | --- |

@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-analyst [0.8.0] and qa-analyst [0.4.0] - 2026-11-18
+
+### Added
+- Format toggles (D-44): a `formats` row above the prompt shows the plugin's output formats, the enabled ones on a violet background; a click turns one on or off, the same as `/plugin configure`. The enabled formats are also the plugin's status line under the prompt (`formats: dev, visual`). With `*_FORMATS` set the row only shows the formats and says so. Needs a Claude Code build with hooks modules (`hooks/formats.tsx`); the shell hooks work without it.
+
 ## [0.10.1], java-analyst [0.7.1], qa-analyst [0.3.1] and qa-docs [0.4.1] - 2026-11-18
 
 ### Changed
