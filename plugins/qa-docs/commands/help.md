@@ -41,3 +41,5 @@ Output this cheat sheet in the user's language, then stop:
 | `history.md`, `meta.json` | who changed what, on which commits; status and Confluence pages |
 
 **Good to know**: the code wins over Jira and Confluence, and every difference is listed; every statement has a code reference you can open; one person edits a domain at a time; when the code changes, the session start names the domains to refresh; nothing is published without your approval. For the diagrams to show as pictures in Confluence, set your Atlassian API token once (`QA_DOCS_CONFLUENCE_EMAIL`, `QA_DOCS_CONFLUENCE_TOKEN`; `/qa-docs:check` tells whether it is set).
+
+**Terms:** in Ukrainian texts, terms from the code and developer jargon stay in English, following the glossary (`glossary.md` in the workspace root). If a term comes out translated, say so: the agent fixes it and adds it to the glossary.

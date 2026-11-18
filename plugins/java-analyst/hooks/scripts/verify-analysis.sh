@@ -7,6 +7,8 @@
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
+# shellcheck source=glossary.sh
+. "$(dirname "$0")/glossary.sh"
 ja_require_jq
 ja_off && exit 0
 
@@ -54,6 +56,17 @@ for dir in "$out"/*/; do
         grep -qE '\bR[0-9]+\b' "$g" || add "$d/07-dev-guide.md does not refer to any requirement R*" ;;
     esac
   done
+  # Team terms (D-49): no translation from the glossary's "avoid" column in the files of this report.
+  files=()
+  for fmt in $fmts; do
+    for file in $(ja_format_files "$fmt"); do
+      case "$file" in *.html) continue ;; esac
+      [ -f "$dir/$file" ] && files+=("$dir/$file")
+    done
+  done
+  while IFS= read -r t; do
+    [ -n "$t" ] && add "${t#"$out"/} (glossary)"
+  done < <(gl_check ${files[@]+"${files[@]}"} -- "${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}" "$(ja_workspace_dir)" "$(ja_project_dir)/.claude/glossary.md")
 done
 
 [ -n "$problems" ] || exit 0

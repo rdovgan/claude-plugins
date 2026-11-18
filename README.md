@@ -30,6 +30,7 @@ Then in `claude`: `/mcp` → `jira` → log in, and `/<plugin>:onboarding` for a
 
 - **Talk first.** Ask questions in chat; answers cost no documents. What is settled is kept in a short `notes.md` per task.
 - **Report on request.** Pick the formats in the row above the prompt (violet = on, click to switch) and press the yellow **▶ REPORT** button, run `/<plugin>:report`, or say "make the report". Only the selected formats are written, and only they are checked.
+- **Team terms stay as the team says them.** In Ukrainian texts, terms from the code and developer jargon stay in English (`nightly rate`, `unbundling`, `задеплоїти`), following a glossary; a report with a listed wrong translation is sent back. Add your terms to `glossary.md` in the workspace root.
 - **Hooks enforce the rules.** Secrets cannot be read; the analysts and qa-docs cannot change code and use Jira, Confluence and the DB read-only.
 
 ## java-developer

@@ -5,6 +5,8 @@
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
+# shellcheck source=glossary.sh
+. "$(dirname "$0")/glossary.sh"
 qd_require_jq
 
 input="$(cat)"
@@ -80,6 +82,13 @@ $(printf '%s\n' "$refs" | sed 's/^/    /')"
       esac
     done
   fi
+  # Team terms (D-49): no translation from the glossary's "avoid" column in what this session wrote.
+  files=()
+  while IFS= read -r f; do files+=("$f"); done < <(find "$dir/doc" "$dir/confluence" "$dir/visual" -type f \( -name '*.md' -o -name '*.html' -o -name 'visual.json' \) \
+      -not -path '*/preview/*' -not -name 'visual.html' -newer "$marker" 2>/dev/null)
+  while IFS= read -r t; do
+    [ -n "$t" ] && add "${t#"$dom"/} (glossary)"
+  done < <(gl_check ${files[@]+"${files[@]}"} -- "${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}" "$(qd_root)" "$(qd_out)/glossary.md")
   grep -q "$today" "$dir/history.md" 2>/dev/null || \
     add "$d/history.md has no entry for today: append what this session did, who ($(qd_user)), and the commits it used"
 done

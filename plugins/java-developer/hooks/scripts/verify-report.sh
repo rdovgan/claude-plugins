@@ -4,6 +4,8 @@
 # Blocks once; with stop_hook_active it only warns, so there is no loop.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
+# shellcheck source=glossary.sh
+. "$(dirname "$0")/glossary.sh"
 jt_require_jq
 
 input="$(cat)"
@@ -31,6 +33,15 @@ for f in "$out"/*/.formats; do
       review) grep -qiE '^## (Verdict|Summary)' "$dir/$file" || add "$d/review.md has no '## Verdict' section" ;;
     esac
   done
+  # Team terms (D-49): no translation from the glossary's "avoid" column in the files of this report.
+  files=()
+  for fmt in $(jt_format_order "$(cat "$f")"); do
+    file="$(jt_format_file "$fmt")"
+    [ -n "$file" ] && [ -f "$dir/$file" ] && files+=("$dir/$file")
+  done
+  while IFS= read -r t; do
+    [ -n "$t" ] && add "${t#"$out"/} (glossary)"
+  done < <(gl_check ${files[@]+"${files[@]}"} -- "${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}" "$(jt_workspace_dir)" "$(jt_project_dir)/.claude/glossary.md")
 done
 
 [ -n "$problems" ] || exit 0

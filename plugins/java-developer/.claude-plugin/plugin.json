@@ -1,6 +1,6 @@
 {
   "name": "java-developer",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Maven project setup for Claude Code, secret protection, automatic checks and a single task workflow for Java teams, with a report on request (PR description, QA handoff, self-review, session note)",
   "author": {
     "name": "Java Team Tech Lead"

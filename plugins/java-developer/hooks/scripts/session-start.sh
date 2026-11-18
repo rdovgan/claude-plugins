@@ -57,6 +57,9 @@ fi
 
 # Workspace map: sibling repositories, curated notes, live scan of poms.
 ws="$(jt_workspace_dir)"
+# Team terms (D-49): the rule and the glossary.
+. "$(dirname "$0")/glossary.sh"
+gl_context java-developer "$root/.claude/glossary.md" "${CLAUDE_PLUGIN_ROOT}" "$ws" "$root/.claude/glossary.md"
 echo "java-developer: workspace $ws (all repositories are siblings of this project)."
 main="${JAVA_TEAM_MAIN_PROJECT:-}"
 if [ -n "$main" ] && [ "$(basename "$root")" != "$main" ] && [ -d "$ws/$main" ]; then

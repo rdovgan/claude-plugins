@@ -22,3 +22,5 @@ Output exactly this cheat sheet, then stop:
 **Naming:** branch `<fix|feature|epic>/<TICKET>/<Short-description>`; commit `<TICKET> <imperative summary>`; PR title `<TICKET> <summary>`; before a PR run `mvn -o test` for the whole module.
 
 **Switches:** `JAVA_TEAM_SKIP_VERIFY=1` disables the test check on stop.
+
+**Terms:** in Ukrainian texts, terms from the code and developer jargon stay in English, following the glossary (`glossary.md` in the workspace root). If a term comes out translated, say so: the agent fixes it and adds it to the glossary.

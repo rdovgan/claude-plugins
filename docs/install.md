@@ -68,6 +68,16 @@ Tell the agent: "initialize the project". Review the summary of changes and conf
 - `JAVA_ANALYST_OFF=1`, `QA_ANALYST_OFF=1` - turn the read-only guards of the analysts off (work outside their purpose). qa-docs has no off switch.
 - `JAVA_DEVELOPER_FORMATS`, `JAVA_ANALYST_FORMATS`, `QA_ANALYST_FORMATS`, `QA_DOCS_FORMATS` - override the report formats selected in the plugin options for this shell, comma separated (`summary,visual`); `none` for none. While set, the formats row above the prompt only shows them.
 
+## Team glossary
+
+Every plugin keeps terms from the code and developer jargon in English when it writes in Ukrainian, and reads a glossary: `| Term | We say | Avoid |`. "Avoid" lists wrong translations (comma separated, `*` for any ending: `нічн* цін*`); the Stop hook sends back a report that contains one.
+
+- `plugins/<plugin>/reference/glossary.md`: common jargon and the first team terms, shipped with the plugins.
+- `glossary.md` in the workspace root (next to `modules.md`; `JAVA_TEAM_GLOSSARY` overrides the path): the team's terms. Add a row when a term keeps coming out wrong.
+- `.claude/glossary.md` in a project (`qa-docs/glossary.md` for qa-docs): terms the agent added after you corrected it. Commit it, or move the rows to the workspace file.
+
+Keep "Avoid" narrow: a common Ukrainian word there blocks normal sentences.
+
 ## qa-docs: diagrams in Confluence
 
 The export uploads the diagram PNGs as page attachments with each QA's own Atlassian API token, because the MCP server cannot upload attachments. Set `QA_DOCS_CONFLUENCE_EMAIL` and `QA_DOCS_CONFLUENCE_TOKEN` in `~/.profile` on the server; `/qa-docs:check` tells whether they are set. Without them the pages show the PNG path. The rest of the qa-docs setup is the admin's: [plugins/qa-docs/server/README.md](../plugins/qa-docs/server/README.md).

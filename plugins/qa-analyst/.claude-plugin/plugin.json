@@ -1,6 +1,6 @@
 {
   "name": "qa-analyst",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Analysis-only assistant for QA: answers questions about tickets, linked requirements, logs, the database and the code in conversation, and writes a report in the formats you pick (summary, test cases, impact, decision table, log statistics, regression scope, Confluence page, visual page) only when you ask. No code examples, never changes code.",
   "author": {
     "name": "Java Team Tech Lead"
