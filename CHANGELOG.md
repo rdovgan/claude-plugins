@@ -2,6 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/), versions follow semver. Every behavior change bumps the version in `plugin.json`.
 
+## java-developer [0.12.1], java-analyst [0.10.1], qa-analyst [0.6.1] and qa-docs [0.6.1] - 2026-11-19
+
+### Fixed
+- Switching a format or pressing **▶ REPORT** no longer shows `⚠ <plugin>: formats: ...` under the prompt. Claude Code draws a plugin's status line with a ⚠ mark, so the list of formats looked like a warning; the `formats` row above the prompt already shows them, and the status line is gone (D-44).
+
 ## java-developer [0.12.0], java-analyst [0.10.0], qa-analyst [0.6.0] and qa-docs [0.6.0] - 2026-11-18
 
 ### Added

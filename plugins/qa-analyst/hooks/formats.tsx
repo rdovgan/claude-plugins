@@ -1,8 +1,8 @@
 import type { ConfigRow, EngineInterface, Register } from 'claude-code'
 
 // Output format toggles (D-44): the plugin's boolean userConfig fields as buttons above
-// the prompt, the enabled ones on a violet background, and the enabled list as the
-// plugin's status line under it. A press changes the option as /config does.
+// the prompt, the enabled ones on a violet background. A press changes the option as /config does.
+// No $.ui.status: Claude Code draws a plugin's status line with a ⚠ mark, which reads as a warning.
 // The yellow REPORT button at the end runs /<plugin>:report with the formats on now (D-47): the plugin
 // talks by default and writes documents only when asked.
 // Runs only in Claude Code builds with hooks modules; the shell hooks do not depend on it.
@@ -31,16 +31,9 @@ async function formats($: EngineInterface): Promise<{ list: Format[]; isEnv: boo
   return { list, isEnv: envList !== null }
 }
 
-async function showStatus($: EngineInterface): Promise<void> {
-  const { list } = await formats($)
-  const on = list.filter(f => f.enabled).map(f => f.name)
-  $.ui.status(list.length ? `formats: ${on.length ? on.join(', ') : 'none'}` : undefined)
-}
-
 async function toggle($: EngineInterface, f: Format): Promise<void> {
   const { deny } = await $.config.set({ key: f.key, value: !f.enabled })
   if (deny) $.ui.toast(`${f.name}: ${deny}`)
-  await showStatus($)
   $.ui.invalidate('ui.render')
 }
 
@@ -55,12 +48,6 @@ async function report($: EngineInterface): Promise<void> {
 }
 
 export const register: Register = on => {
-  on('session.start', async ($, e, next) => {
-    const result = await next(e)
-    await showStatus($)
-    return result
-  })
-
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const { list, isEnv } = await formats($)
